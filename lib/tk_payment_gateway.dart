@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Type {
-  final String path;
+  final String path, name;
 
-  const Type._internal({required this.path});
+  const Type._internal({required this.path, required this.name});
 
-  static const otc = Type._internal(path: 'otc');
-  static const sendToko = Type._internal(path: 'sendToko');
+  static const buyToko = Type._internal(path: 'otc', name: 'Buy TOKO');
+  static const sendToko = Type._internal(path: 'sendToko', name: 'Send TOKO');
 }
 
 class Env {
@@ -17,9 +17,9 @@ class Env {
 
   const Env._internal(
       {required this.packageName,
-        required this.appStoreLink,
-        required this.appStoreId,
-        required this.prefixUrl});
+      required this.appStoreLink,
+      required this.appStoreId,
+      required this.prefixUrl});
 
   static const prod = Env._internal(
       packageName: 'com.tokoin.wallet',
@@ -30,6 +30,11 @@ class Env {
       packageName: 'com.tokoin.wallet.dev', appStoreId: '0', appStoreLink: '', prefixUrl: 'tokoin.co/wallet');
 }
 
+/// Tokoin Payment Gateway Button
+/// [child] customize your button, default button will be used if not provided
+/// [type] buy or send token
+/// [env] prod or stage
+/// [amount] amount to buy or send
 class PaymentButton extends StatelessWidget {
   final Widget? child;
   final Type type;
@@ -44,7 +49,14 @@ class PaymentButton extends StatelessWidget {
     return InkWell(onTap: _onPressed, child: child ?? _defaultButton());
   }
 
-  _defaultButton() => Text(type.path);
+  _defaultButton() => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(15))),
+      child: Text(type.name));
 
   _onPressed() async {
     String url = await _createDynamicLink();
