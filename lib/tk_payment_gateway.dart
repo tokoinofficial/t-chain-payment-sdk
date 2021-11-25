@@ -40,8 +40,10 @@ class PaymentButton extends StatelessWidget {
   final Type type;
   final Env env;
   final num amount;
+  final String address;
 
-  const PaymentButton({this.child, required this.type, this.env = Env.prod, this.amount = 0, Key? key})
+  const PaymentButton(
+      {this.child, required this.type, this.env = Env.prod, this.amount = 0, this.address = '', Key? key})
       : super(key: key);
 
   @override
@@ -64,6 +66,6 @@ class PaymentButton extends StatelessWidget {
   }
 
   Future<String> _createDynamicLink() async {
-    return 'https://${env.prefixUrl}/?link=https://tokoin.co/${type.path}?amount=$amount&apn=${env.packageName}&amv=3250001&ibi=${env.packageName}&isi=${env.appStoreId}&ius=${env.appStoreLink}';
+    return 'https://${env.prefixUrl}/?link=https://tokoin.co/${type.path}?address=$address%26amount=$amount&apn=${env.packageName}&amv=3250001&ibi=${env.packageName}&isi=${env.appStoreId}&ius=${env.appStoreLink}';
   }
 }

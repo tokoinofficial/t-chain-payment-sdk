@@ -61,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
               type: Type.sendToko,
               amount: _amount,
               env: Env.stag,
+              address: '0xabc',
             ),
             const SizedBox(height: 10),
             PaymentButton(
