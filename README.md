@@ -24,11 +24,12 @@ Add this to your flutter app to:
 ```dart
 PaymentButton(
  type: Type.sendToko,
- amount: _amount
-),
+ amount: _amount,
+ address: _recipientAddress
+)
 
 PaymentButton(
  type: Type.buyToko,
  amount: _amount
-),
+)
 ```
