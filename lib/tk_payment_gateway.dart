@@ -1,15 +1,16 @@
 library tk_payment_gateway;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Type {
-  final String path, name;
+  final String path, icon;
 
-  const Type._internal({required this.path, required this.name});
+  const Type._internal({required this.path, required this.icon});
 
-  static const buyToko = Type._internal(path: 'otc', name: 'Buy TOKO');
-  static const sendToko = Type._internal(path: 'sendToko', name: 'Send TOKO');
+  static const buyToko = Type._internal(path: 'otc', icon: 'otc');
+  static const sendToko = Type._internal(path: 'sendToko', icon: 'send_toko');
 }
 
 class Env {
@@ -41,9 +42,16 @@ class PaymentButton extends StatelessWidget {
   final Env env;
   final num amount;
   final String address;
+  final bool isDarkMode;
 
   const PaymentButton(
-      {this.child, required this.type, this.env = Env.prod, this.amount = 0, this.address = '', Key? key})
+      {this.child,
+      required this.type,
+      this.env = Env.prod,
+      this.amount = 0,
+      this.address = '',
+      this.isDarkMode = true,
+      Key? key})
       : super(key: key);
 
   @override
@@ -51,14 +59,7 @@ class PaymentButton extends StatelessWidget {
     return InkWell(onTap: _onPressed, child: child ?? _defaultButton());
   }
 
-  _defaultButton() => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black,
-          ),
-          borderRadius: const BorderRadius.all(Radius.circular(15))),
-      child: Text(type.name));
+  _defaultButton() => SvgPicture.asset('assets/${type.icon}${isDarkMode ? '_dark' : ''}.svg', package: 'tk_payment_gateway');
 
   _onPressed() async {
     String url = await _createDynamicLink();

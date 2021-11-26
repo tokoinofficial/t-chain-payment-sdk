@@ -11,10 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
   url_launcher: ^6.0.15
+  flutter_svg: ^0.23.0+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
 
+# The following section is specific to Flutter.
 flutter:
+  assets:
+    - assets/
