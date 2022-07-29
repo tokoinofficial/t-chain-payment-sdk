@@ -52,14 +52,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
     TWPaymentSDK.instance.init(
       appID: 'appID',
-      schemeCallback: 'mtwalletcallback',
+      bundleID: 'com.example.example',
+      delegate: _onHandlePaymentResult,
     );
+  }
+
+  @override
+  void dispose() {
+    TWPaymentSDK.instance.close();
+    super.dispose();
   }
 
   void _incrementCounter() {
     setState(() {
       _amount++;
     });
+  }
+
+  _onHandlePaymentResult(TWPaymentResult result) {
+    _showResult(result);
   }
 
   @override
@@ -135,6 +146,10 @@ class _MyHomePageState extends State<MyHomePage> {
       productPrice: product.price,
     );
 
+    _showResult(result);
+  }
+
+  _showResult(TWPaymentResult result) {
     switch (result.status) {
       case TWPaymentResultStatus.failed:
         ScaffoldMessenger.of(context).showSnackBar(
@@ -142,12 +157,26 @@ class _MyHomePageState extends State<MyHomePage> {
         );
         break;
 
-      case TWPaymentResultStatus.unknown:
+      case TWPaymentResultStatus.waiting:
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Unknown')),
+          const SnackBar(content: Text('waiting')),
         );
         break;
-      default:
+
+      case TWPaymentResultStatus.success:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('success')),
+        );
+        break;
+      case TWPaymentResultStatus.operationInProgress:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('operationInProgress')),
+        );
+        break;
+      case TWPaymentResultStatus.cancelled:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('cancelled')),
+        );
         break;
     }
   }

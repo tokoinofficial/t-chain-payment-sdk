@@ -1,7 +1,12 @@
 library tk_payment_gateway;
 
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Type {
@@ -87,17 +92,30 @@ class TWPaymentSDK {
   TWPaymentSDK._();
 
   late String appID;
-  late String schemeCallback;
+  late String bundleID;
   late Env env;
+  late Function(TWPaymentResult) delegate;
+
+  bool _initialURILinkHandled = false;
+  StreamSubscription? _streamSubscription;
 
   init({
     required String appID,
-    required String schemeCallback,
+    required String bundleID,
     Env env = Env.stag,
+    required Function(TWPaymentResult) delegate,
   }) {
     this.appID = appID;
-    this.schemeCallback = schemeCallback;
+    this.bundleID = bundleID;
     this.env = env;
+    this.delegate = delegate;
+
+    _initURIHandler();
+    _incomingLinkHandler();
+  }
+
+  close() {
+    _streamSubscription?.cancel();
   }
 
   Future<TWPaymentResult> buyProduct({
@@ -105,7 +123,7 @@ class TWPaymentSDK {
     required double productPrice,
   }) async {
     final url =
-        'mtwallet://otc?product_id=$productID&product_price=$productPrice&env=${env.type}&scheme_callback=$schemeCallback';
+        'mtwallet://otc?product_id=$productID&product_price=$productPrice&env=${env.type}&bundle_id=$bundleID';
     final result = await canLaunch(url);
 
     if (result == false) {
@@ -114,10 +132,62 @@ class TWPaymentSDK {
 
     launch(url);
 
-    return TWPaymentResult(status: TWPaymentResultStatus.unknown);
+    return TWPaymentResult(status: TWPaymentResultStatus.waiting);
   }
 
   static withdraw() {}
+
+  Future<void> _initURIHandler() async {
+    if (!_initialURILinkHandled) {
+      _initialURILinkHandled = true;
+      print('init URI Handler');
+
+      try {
+        final initialURI = await getInitialUri();
+        // Use the initialURI and warn the user if it is not correct,
+        // but keep in mind it could be `null`.
+        _checkDeepLink(initialURI);
+      } on PlatformException {
+        // Platform messages may fail, so we use a try/catch PlatformException.
+        // Handle exception by warning the user their action did not succeed
+        debugPrint("Failed to receive initial uri");
+      } on FormatException catch (err) {
+        debugPrint('Malformed Initial URI received: $err');
+      }
+    }
+  }
+
+  /// Handle incoming links - the ones that the app will receive from the OS
+  /// while already started.
+  void _incomingLinkHandler() {
+    if (!kIsWeb) {
+      // It will handle app links while the app is already started - be it in
+      // the foreground or in the background.
+      _streamSubscription = uriLinkStream.listen((Uri? uri) {
+        debugPrint('Received URI: $uri');
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _checkDeepLink(uri);
+        });
+      }, onError: (Object err) {
+        debugPrint('Error occurred: $err');
+      });
+    }
+  }
+
+  _checkDeepLink(Uri? deepLink) {
+    if (deepLink == null) return;
+
+    switch (deepLink.path) {
+      case 'success':
+        final result = TWPaymentResult(status: TWPaymentResultStatus.success);
+        delegate.call(result);
+        break;
+      case 'cancelled':
+        final result = TWPaymentResult(status: TWPaymentResultStatus.cancelled);
+        delegate.call(result);
+        break;
+    }
+  }
 }
 
 class TWPaymentResult {
@@ -141,5 +211,5 @@ enum TWPaymentResultStatus {
   cancelled,
   failed,
   operationInProgress,
-  unknown
+  waiting,
 }

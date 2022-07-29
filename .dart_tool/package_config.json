@@ -176,6 +176,24 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "uni_links",
+      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/uni_links-0.5.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "uni_links_platform_interface",
+      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/uni_links_platform_interface-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "uni_links_web",
+      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/uni_links_web-0.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "url_launcher",
       "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher-6.0.15",
       "packageUri": "lib/",
@@ -230,7 +248,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2022-07-29T10:50:33.315324Z",
+  "generated": "2022-07-29T19:48:25.606793Z",
   "generator": "pub",
   "generatorVersion": "2.17.6"
 }
