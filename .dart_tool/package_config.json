@@ -129,7 +129,7 @@
     },
     {
       "name": "plugin_platform_interface",
-      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-2.0.2",
+      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-2.1.2",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -195,7 +195,19 @@
     },
     {
       "name": "url_launcher",
-      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher-6.0.15",
+      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher-6.1.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "url_launcher_android",
+      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_android-6.0.17",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "url_launcher_ios",
+      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_ios-6.0.17",
       "packageUri": "lib/",
       "languageVersion": "2.14"
     },
@@ -213,7 +225,7 @@
     },
     {
       "name": "url_launcher_platform_interface",
-      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_platform_interface-2.0.4",
+      "rootUri": "file:///Users/yoyo/Development/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_platform_interface-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -248,7 +260,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2022-07-29T19:48:25.606793Z",
+  "generated": "2022-07-31T08:32:15.499013Z",
   "generator": "pub",
   "generatorVersion": "2.17.6"
 }

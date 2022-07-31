@@ -122,15 +122,27 @@ class TWPaymentSDK {
     required String productID,
     required double productPrice,
   }) async {
-    final url =
-        'mtwallet://otc?product_id=$productID&product_price=$productPrice&env=${env.type}&bundle_id=$bundleID';
-    final result = await canLaunch(url);
+    final Map<String, dynamic> params = {
+      'product_id': productID,
+      'product_price': productPrice.toString(),
+      'env': env.type,
+      'bundle_id': bundleID,
+    };
+
+    final Uri uri = Uri(
+      scheme: 'mtwallet',
+      host: 'app',
+      path: 'otc',
+      queryParameters: params,
+    );
+
+    final result = await canLaunchUrl(uri);
 
     if (result == false) {
       return TWPaymentResult(status: TWPaymentResultStatus.failed);
     }
 
-    launch(url);
+    launchUrl(uri, mode: LaunchMode.externalApplication);
 
     return TWPaymentResult(status: TWPaymentResultStatus.waiting);
   }
@@ -140,7 +152,7 @@ class TWPaymentSDK {
   Future<void> _initURIHandler() async {
     if (!_initialURILinkHandled) {
       _initialURILinkHandled = true;
-      print('init URI Handler');
+      debugPrint('init URI Handler');
 
       try {
         final initialURI = await getInitialUri();
@@ -178,11 +190,11 @@ class TWPaymentSDK {
     if (deepLink == null) return;
 
     switch (deepLink.path) {
-      case 'success':
+      case '/success':
         final result = TWPaymentResult(status: TWPaymentResultStatus.success);
         delegate.call(result);
         break;
-      case 'cancelled':
+      case '/cancelled':
         final result = TWPaymentResult(status: TWPaymentResultStatus.cancelled);
         delegate.call(result);
         break;
