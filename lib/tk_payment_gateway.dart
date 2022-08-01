@@ -1,7 +1,6 @@
 library tk_payment_gateway;
 
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -147,7 +146,32 @@ class TWPaymentSDK {
     return TWPaymentResult(status: TWPaymentResultStatus.waiting);
   }
 
-  static withdraw() {}
+  Future<TWPaymentResult> withdraw({
+    required double amount,
+  }) async {
+    final Map<String, dynamic> params = {
+      'amount': amount.toString(),
+      'env': env.type,
+      'bundle_id': bundleID,
+    };
+
+    final Uri uri = Uri(
+      scheme: 'mtwallet',
+      host: 'app',
+      path: 'sendToko',
+      queryParameters: params,
+    );
+
+    final result = await canLaunchUrl(uri);
+
+    if (result == false) {
+      return TWPaymentResult(status: TWPaymentResultStatus.failed);
+    }
+
+    launchUrl(uri, mode: LaunchMode.externalApplication);
+
+    return TWPaymentResult(status: TWPaymentResultStatus.waiting);
+  }
 
   Future<void> _initURIHandler() async {
     if (!_initialURILinkHandled) {

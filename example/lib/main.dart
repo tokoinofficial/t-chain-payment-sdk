@@ -93,6 +93,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             ),
+            ElevatedButton(
+              onPressed: () {
+                TWPaymentSDK.instance.withdraw(amount: _amount.toDouble());
+              },
+              child: const Text('Withdraw'),
+            ),
             const Divider(),
             const Text(
               'Amount to send:',
