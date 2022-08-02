@@ -46,12 +46,20 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   ];
 
+  final List<Product> withdrawalPackages = [
+    const Product(
+      id: 'ID_1',
+      name: 'Claim \$100',
+      price: 100,
+    ),
+  ];
+
   @override
   void initState() {
     super.initState();
 
     TWPaymentSDK.instance.init(
-      appID: 'appID',
+      merchantID: 'merchantID',
       bundleID: 'com.example.example',
       delegate: _onHandlePaymentResult,
     );
@@ -93,11 +101,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             ),
-            ElevatedButton(
-              onPressed: () {
-                TWPaymentSDK.instance.withdraw(amount: _amount.toDouble());
+            ...withdrawalPackages.map(
+              (e) {
+                return _buildItem(
+                  itemName: e.name,
+                  itemId: e.id,
+                  itemPrice: e.price,
+                  onTap: () => _claim(e),
+                );
               },
-              child: const Text('Withdraw'),
             ),
             const Divider(),
             const Text(
@@ -109,17 +121,16 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headline4,
             ),
             const SizedBox(height: 10),
-            PaymentButton(
-              type: Type.sendToko,
-              amount: _amount,
-              env: Env.stag,
-              address: '0xabc',
+            TWPaymentButton(
+              action: TWPaymentAction.deposit,
+              amount: _amount.toDouble(),
+              onResult: (result) => _showResult(result),
             ),
             const SizedBox(height: 10),
-            PaymentButton(
-              type: Type.buyToko,
-              amount: _amount,
-              env: Env.stag,
+            TWPaymentButton(
+              action: TWPaymentAction.withdraw,
+              amount: _amount.toDouble(),
+              onResult: (result) => _showResult(result),
             ),
           ],
         ),
@@ -147,9 +158,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _buyProduct(Product product) async {
-    final result = await TWPaymentSDK.instance.buyProduct(
-      productID: product.id,
-      productPrice: product.price,
+    final result = await TWPaymentSDK.instance.purchase(
+      orderID: product.id,
+      amount: product.price,
+    );
+
+    _showResult(result);
+  }
+
+  _claim(Product product) async {
+    final result = await TWPaymentSDK.instance.withdraw(
+      orderID: product.id,
+      amount: product.price,
     );
 
     _showResult(result);
@@ -171,7 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       case TWPaymentResultStatus.success:
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('success')),
+          SnackBar(content: Text('success ${result.transactionID ?? ''}')),
         );
         break;
       case TWPaymentResultStatus.operationInProgress:
