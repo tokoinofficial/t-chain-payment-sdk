@@ -9,6 +9,7 @@ import 'package:tk_payment_gateway/config/tw_payment_action.dart';
 import 'package:tk_payment_gateway/data/tw_payment_result.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 export 'package:tk_payment_gateway/config/tw_env.dart';
 export 'package:tk_payment_gateway/config/tw_payment_action.dart';
@@ -91,6 +92,8 @@ class TWPaymentSDK {
     final result = await canLaunchUrl(uri);
 
     if (result == false) {
+      launchUrlString(env.downloadUrl);
+
       return TWPaymentResult(status: TWPaymentResultStatus.failed);
     }
 

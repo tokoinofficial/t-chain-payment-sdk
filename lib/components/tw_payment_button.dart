@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tk_payment_gateway/config/tw_payment_action.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tk_payment_gateway/data/tw_payment_result.dart';
 import 'package:tk_payment_gateway/tk_payment_gateway.dart';
 
-/// Tokoin Payment Gateway Button
-/// [child] customize your button, default button will be used if not provided
-/// [type] buy or send token
-/// [env] prod or stage
-/// [amount] amount to buy or send
 class TWPaymentButton extends StatelessWidget {
   final Widget? child;
   final TWPaymentAction action;
@@ -52,8 +45,4 @@ class TWPaymentButton extends StatelessWidget {
         break;
     }
   }
-
-  // Future<String> _createDynamicLink() async {
-  //   return 'https://${env.prefixUrl}/?link=https://tokoin.co/${type.path}?amount=$amount&apn=${env.packageName}&amv=3250001&ibi=${env.packageName}&isi=${env.appStoreId}&ius=${env.appStoreLink}';
-  // }
 }

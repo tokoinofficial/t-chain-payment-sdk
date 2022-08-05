@@ -1,3 +1,5 @@
+import 'dart:io';
+
 enum TWEnv {
   dev,
   prod,
@@ -16,16 +18,32 @@ extension TWEnvExtension on TWEnv {
   String get downloadUrl {
     switch (this) {
       case TWEnv.dev:
+        if (Platform.isIOS) {
+          return 'https://apps.apple.com/us/app/my-t-wallet/id1489276175';
+        }
+
+        if (Platform.isAndroid) {
+          return 'market://details?id=com.tokoin.wallet';
+        }
+
         return '';
       case TWEnv.prod:
-        return 'https://apps.apple.com/us/app/my-t-wallet/id1489276175';
+        if (Platform.isIOS) {
+          return 'https://apps.apple.com/us/app/my-t-wallet/id1489276175';
+        }
+
+        if (Platform.isAndroid) {
+          return 'market://details?id=com.tokoin.wallet';
+        }
+
+        return '';
     }
   }
 
   String get scheme {
     switch (this) {
       case TWEnv.dev:
-        return 'mtwallet';
+        return 'mtwallet.dev';
       case TWEnv.prod:
         return 'mtwallet';
     }
