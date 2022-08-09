@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:tk_payment_gateway/tk_payment_gateway.dart';
 import 'mock_url_launcher_platform.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
@@ -9,6 +8,11 @@ void main() {
   late MockUrlLauncher mock;
 
   setUp(() {
+    TWPaymentSDK.instance.init(
+      merchantID: 'merchantID',
+      bundleID: 'bundleID',
+      delegate: (result) {},
+    );
     mock = MockUrlLauncher();
     UrlLauncherPlatform.instance = mock;
   });
@@ -16,12 +20,20 @@ void main() {
   testWidgets('test buttons', (WidgetTester tester) async {
     await tester.runAsync(() async {
       Widget testWidget = const MediaQuery(
-          data: MediaQueryData(),
-          child: MaterialApp(home: Scaffold(body: PaymentButton(type: Type.sendToko))));
+        data: MediaQueryData(),
+        child: MaterialApp(
+          home: Scaffold(
+            body: TWPaymentButton(
+              action: TWPaymentAction.deposit,
+              amount: 10,
+            ),
+          ),
+        ),
+      );
       mock
         ..setLaunchExpectations(
           url:
-              'https://deeplink-wallet.tokoin.io/wallet/?link=https://tokoin.co/sendToko?address=%26amount=0&apn=com.tokoin.wallet&amv=3250001&ibi=com.tokoin.wallet&isi=1489276175&ius=https://apps.apple.com/us/app/my-t-wallet/id1489276175',
+              'mtwallet://app/otc?merchant_id=merchantID&order_id=&amount=10&bundle_id=bundleID',
           useSafariVC: true,
           useWebView: false,
           universalLinksOnly: false,
@@ -32,8 +44,8 @@ void main() {
         )
         ..setResponse(true);
       await tester.pumpWidget(testWidget);
-      expect(find.byType(PaymentButton), findsOneWidget);
-      await tester.tap(find.byType(PaymentButton));
+      expect(find.byType(TWPaymentButton), findsOneWidget);
+      await tester.tap(find.byType(TWPaymentButton));
       await tester.pumpAndSettle();
     });
   });
