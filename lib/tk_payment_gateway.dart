@@ -158,6 +158,22 @@ class TWPaymentSDK {
         );
         delegate.call(result);
         break;
+      case '/fail':
+        final result = TWPaymentResult(
+          status: TWPaymentResultStatus.failed,
+          orderID: orderID,
+          transactionID: transactionID,
+        );
+        delegate.call(result);
+        break;
+      case '/proceeding':
+        final result = TWPaymentResult(
+          status: TWPaymentResultStatus.proceeding,
+          orderID: orderID,
+          transactionID: transactionID,
+        );
+        delegate.call(result);
+        break;
       case '/cancelled':
         final result = TWPaymentResult(
           status: TWPaymentResultStatus.cancelled,

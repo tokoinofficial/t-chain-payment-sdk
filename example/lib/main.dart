@@ -59,7 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     TWPaymentSDK.instance.init(
-      merchantID: 'merchantID',
+      merchantID:
+          '0xc3f2f0deaf2a9e4d20aae37e8802b1efef589d1a9e45e89ce1a2e179516df071',
       bundleID: 'com.example.example',
       delegate: _onHandlePaymentResult,
     );
@@ -179,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (result.status) {
       case TWPaymentResultStatus.failed:
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed')),
+          SnackBar(content: Text('Failed ${result.transactionID ?? ''}')),
         );
         break;
 
@@ -194,9 +195,9 @@ class _MyHomePageState extends State<MyHomePage> {
           SnackBar(content: Text('success ${result.transactionID ?? ''}')),
         );
         break;
-      case TWPaymentResultStatus.operationInProgress:
+      case TWPaymentResultStatus.proceeding:
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('operationInProgress')),
+          SnackBar(content: Text('proceeding ${result.transactionID ?? ''}')),
         );
         break;
       case TWPaymentResultStatus.cancelled:

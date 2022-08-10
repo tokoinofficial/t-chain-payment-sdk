@@ -2,7 +2,7 @@ enum TWPaymentResultStatus {
   success,
   cancelled,
   failed,
-  operationInProgress,
+  proceeding,
   waiting,
 }
 
