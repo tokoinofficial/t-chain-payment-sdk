@@ -75,6 +75,10 @@ class TWPaymentSDK {
     required String orderID,
     required double amount,
   }) async {
+    if (amount <= 0) {
+      return TWPaymentResult(status: TWPaymentResultStatus.error);
+    }
+
     final Map<String, dynamic> params = {
       'merchant_id': merchantID,
       'order_id': orderID,
