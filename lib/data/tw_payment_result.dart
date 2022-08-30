@@ -4,6 +4,7 @@ enum TWPaymentResultStatus {
   failed,
   proceeding,
   waiting,
+  error,
 }
 
 class TWPaymentResult {
