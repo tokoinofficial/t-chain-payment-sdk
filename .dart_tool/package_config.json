@@ -254,13 +254,13 @@
       "languageVersion": "2.14"
     },
     {
-      "name": "tk_payment_gateway",
+      "name": "t_chain_payment_sdk",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2022-07-31T16:30:09.842428Z",
+  "generated": "2022-08-30T06:15:10.822477Z",
   "generator": "pub",
   "generatorVersion": "2.17.6"
 }

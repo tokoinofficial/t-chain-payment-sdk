@@ -1,7 +1,7 @@
 import 'package:example/data/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tk_payment_gateway/tk_payment_gateway.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
 void main() {
   runApp(const MyApp());
@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    TWPaymentSDK.instance.init(
+    TChainPaymentSDK.instance.init(
       merchantID: merchantID,
       bundleID: bundleID,
       delegate: _onHandlePaymentResult,
@@ -75,11 +75,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    TWPaymentSDK.instance.close();
+    TChainPaymentSDK.instance.close();
     super.dispose();
   }
 
-  _onHandlePaymentResult(TWPaymentResult result) {
+  _onHandlePaymentResult(TChainPaymentResult result) {
     _showResult(result);
   }
 
@@ -158,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _buyProduct(Product product) async {
-    final result = await TWPaymentSDK.instance.purchase(
+    final result = await TChainPaymentSDK.instance.purchase(
       orderID: product.id,
       amount: product.price,
     );
@@ -167,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _claim(Product product) async {
-    final result = await TWPaymentSDK.instance.withdraw(
+    final result = await TChainPaymentSDK.instance.withdraw(
       orderID: product.id,
       amount: product.price,
     );
@@ -175,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _showResult(result);
   }
 
-  _showResult(TWPaymentResult result) {
+  _showResult(TChainPaymentResult result) {
     setState(() {
       status = result.status.name;
       txn = result.transactionID ?? '';

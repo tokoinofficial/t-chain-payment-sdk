@@ -1,4 +1,4 @@
-enum TWPaymentResultStatus {
+enum TChainPaymentStatus {
   success,
   cancelled,
   failed,
@@ -7,14 +7,14 @@ enum TWPaymentResultStatus {
   error,
 }
 
-class TWPaymentResult {
-  TWPaymentResult({
+class TChainPaymentResult {
+  TChainPaymentResult({
     required this.status,
     this.transactionID,
     this.orderID,
   });
 
-  final TWPaymentResultStatus status;
+  final TChainPaymentStatus status;
   final String? orderID;
   final String? transactionID;
 }

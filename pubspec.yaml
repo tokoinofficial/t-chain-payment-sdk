@@ -1,5 +1,5 @@
-name: tk_payment_gateway
-description: Tokoin Payment Gateway
+name: t_chain_payment_sdk
+description: T-Chain Payment SDK
 version: 0.0.1
 homepage: https://www.tokoin.io/
 

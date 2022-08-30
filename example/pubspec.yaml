@@ -41,7 +41,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^1.0.0
-  tk_payment_gateway:
+  t_chain_payment_sdk:
     path: ../
 
 flutter:
