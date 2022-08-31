@@ -7,12 +7,7 @@ enum TChainPaymentEnv {
 
 extension TChainPaymentEnvExt on TChainPaymentEnv {
   String get packageName {
-    switch (this) {
-      case TChainPaymentEnv.dev:
-        return 'com.tokoin.wallet.dev';
-      case TChainPaymentEnv.prod:
-        return 'com.tokoin.wallet';
-    }
+    return 'com.tokoin.wallet';
   }
 
   String get downloadUrl {
@@ -33,7 +28,7 @@ extension TChainPaymentEnvExt on TChainPaymentEnv {
         }
 
         if (Platform.isAndroid) {
-          return 'market://details?id=com.tokoin.wallet';
+          return 'market://details?id=$packageName';
         }
 
         return '';
@@ -41,11 +36,6 @@ extension TChainPaymentEnvExt on TChainPaymentEnv {
   }
 
   String get scheme {
-    switch (this) {
-      case TChainPaymentEnv.dev:
-        return 'mtwallet';
-      case TChainPaymentEnv.prod:
-        return 'mtwallet';
-    }
+    return 'mtwallet';
   }
 }

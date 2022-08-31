@@ -83,6 +83,7 @@ class TChainPaymentSDK {
       'order_id': orderID,
       'amount': amount.toString(),
       'bundle_id': bundleID,
+      'env': env.name,
     };
 
     final Uri uri = Uri(
