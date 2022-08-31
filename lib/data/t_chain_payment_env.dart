@@ -43,7 +43,7 @@ extension TChainPaymentEnvExt on TChainPaymentEnv {
   String get scheme {
     switch (this) {
       case TChainPaymentEnv.dev:
-        return 'mtwallet.dev';
+        return 'mtwallet';
       case TChainPaymentEnv.prod:
         return 'mtwallet';
     }

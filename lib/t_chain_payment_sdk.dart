@@ -52,7 +52,7 @@ class TChainPaymentSDK {
     required double amount,
   }) async {
     return await _callPaymentAction(
-      action: TWPaymentAction.deposit,
+      action: TChainPaymentAction.deposit,
       orderID: orderID,
       amount: amount,
     );
@@ -63,14 +63,14 @@ class TChainPaymentSDK {
     required double amount,
   }) async {
     return await _callPaymentAction(
-      action: TWPaymentAction.withdraw,
+      action: TChainPaymentAction.withdraw,
       orderID: orderID,
       amount: amount,
     );
   }
 
   Future<TChainPaymentResult> _callPaymentAction({
-    required TWPaymentAction action,
+    required TChainPaymentAction action,
     required String orderID,
     required double amount,
   }) async {

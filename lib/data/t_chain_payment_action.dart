@@ -1,24 +1,15 @@
-enum TWPaymentAction {
+enum TChainPaymentAction {
   deposit,
   withdraw,
 }
 
-extension TWPaymentActionExtension on TWPaymentAction {
+extension TChainPaymentActionExtension on TChainPaymentAction {
   String get path {
     switch (this) {
-      case TWPaymentAction.deposit:
+      case TChainPaymentAction.deposit:
         return 'payment_deposit';
-      case TWPaymentAction.withdraw:
+      case TChainPaymentAction.withdraw:
         return 'payment_withdraw';
-    }
-  }
-
-  String get icon {
-    switch (this) {
-      case TWPaymentAction.deposit:
-        return 'otc';
-      case TWPaymentAction.withdraw:
-        return 'send_toko';
     }
   }
 }
