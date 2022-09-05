@@ -47,7 +47,7 @@ class TChainPaymentSDK {
     _streamSubscription?.cancel();
   }
 
-  Future<TChainPaymentResult> purchase({
+  Future<TChainPaymentResult> deposit({
     required String orderID,
     required double amount,
   }) async {
