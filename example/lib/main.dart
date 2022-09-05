@@ -152,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _buyProduct(Product product) async {
-    final result = await TChainPaymentSDK.instance.purchase(
+    final result = await TChainPaymentSDK.instance.deposit(
       orderID: product.id,
       amount: product.price,
     );
