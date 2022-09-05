@@ -12,9 +12,11 @@ class TChainPaymentResult {
     required this.status,
     this.transactionID,
     this.orderID,
+    this.errorMessage,
   });
 
   final TChainPaymentStatus status;
   final String? orderID;
   final String? transactionID;
+  final String? errorMessage;
 }

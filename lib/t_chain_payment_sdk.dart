@@ -62,10 +62,9 @@ class TChainPaymentSDK {
     required String orderID,
     required double amount,
   }) async {
-    return await _callPaymentAction(
-      action: TChainPaymentAction.withdraw,
-      orderID: orderID,
-      amount: amount,
+    return TChainPaymentResult(
+      status: TChainPaymentStatus.error,
+      errorMessage: 'Coming soon',
     );
   }
 
@@ -75,7 +74,10 @@ class TChainPaymentSDK {
     required double amount,
   }) async {
     if (amount <= 0) {
-      return TChainPaymentResult(status: TChainPaymentStatus.error);
+      return TChainPaymentResult(
+        status: TChainPaymentStatus.error,
+        errorMessage: 'Invalid parameter',
+      );
     }
 
     final Map<String, dynamic> params = {

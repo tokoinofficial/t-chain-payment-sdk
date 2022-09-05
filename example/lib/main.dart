@@ -45,12 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
       desc: '\$2',
       price: 2,
     ),
-    const Product(
-      id: 'ID_2',
-      name: 'Package 2 (Buy 1000 game coins)',
-      desc: '\$1000',
-      price: 1000,
-    ),
   ];
 
   final List<Product> withdrawalPackages = [
@@ -180,5 +174,22 @@ class _MyHomePageState extends State<MyHomePage> {
       status = result.status.name;
       txn = result.transactionID ?? '';
     });
+
+    if (result.status == TChainPaymentStatus.error) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(result.errorMessage ?? 'Unknown'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
