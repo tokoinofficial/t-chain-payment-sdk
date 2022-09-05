@@ -15,9 +15,13 @@ and the Flutter guide for
 
 ## Getting Started
 
-- Need register your project at (Tokoin page)[https://developer.tokoin.io/guides/creating-a-project] to get `merchantID` which will be used in SDK
+- Need register your project at [Tokoin dev page](https://developer.tokoin.io/guides/creating-a-project) to get `merchantID` which will be used in SDK
 
 ## Flow
+
+<p align="center">
+  <img src="/resource/deposit_flow.png" alt="T-Chain Deposit Flow" />
+</p>
 
 
 ## Integration
@@ -36,7 +40,7 @@ and the Flutter guide for
      <action android:name="android.intent.action.VIEW" />
      <category android:name="android.intent.category.DEFAULT" />
      <category android:name="android.intent.category.BROWSABLE" />
-     <data android:scheme="merchaint.${applicationId} "
+     <data android:scheme="merchaint.${applicationId}"
                     android:host="app" />
    </intent-filter>
 </activity>
@@ -51,14 +55,14 @@ and the Flutter guide for
 <key>CFBundleURLTypes</key>
 <array>
   <dict>
-  		<key>CFBundleTypeRole</key>
-  		<string>Editor</string>
-  		<key>CFBundleURLName</key>
-  		<string>Payment Scheme Callback</string>
-  		<key>CFBundleURLSchemes</key>
-  		<array>
-  				<string>merchant.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-  		</array>
+    <key>CFBundleTypeRole</key>
+    <string>Editor</string>
+    <key>CFBundleURLName</key>
+    <string>Payment Scheme Callback</string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>merchant.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    </array>
   </dict>
 </array>
 <key>LSApplicationQueriesSchemes</key>
