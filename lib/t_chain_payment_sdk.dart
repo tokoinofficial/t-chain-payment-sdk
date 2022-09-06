@@ -1,11 +1,14 @@
 library t_chain_payment_sdk;
 
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
+import 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,6 +16,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
+export 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 
 class TChainPaymentSDK {
@@ -43,6 +47,13 @@ class TChainPaymentSDK {
     _incomingLinkHandler();
   }
 
+  handleNotification(Map<String, dynamic> json) {
+    // 1. convert json to payment result
+
+    // 2. calling delegate to continue doing on your app
+    // delegate.call()
+  }
+
   close() {
     _streamSubscription?.cancel();
   }
@@ -68,6 +79,38 @@ class TChainPaymentSDK {
     );
   }
 
+  Future<TChainPaymentQRResult> generateDepositingQRCode({
+    required String orderID,
+    required double amount,
+    required double imageSize,
+  }) async {
+    if (amount <= 0) {
+      return TChainPaymentQRResult(
+        status: TChainPaymentStatus.error,
+        errorMessage: 'Invalid parameter',
+      );
+    }
+
+    final Uri uri = _generateDeeplink(
+      action: TChainPaymentAction.deposit,
+      orderID: orderID,
+      amount: amount,
+    );
+
+    final painter = QrPainter(
+      data: uri.toString(),
+      version: QrVersions.auto,
+    );
+
+    final qrImage = await painter.toImage(imageSize);
+    final qrData = await qrImage.toByteData(format: ImageByteFormat.png);
+
+    return TChainPaymentQRResult(
+      status: TChainPaymentStatus.waiting,
+      qrData: qrData,
+    );
+  }
+
   Future<TChainPaymentResult> _callPaymentAction({
     required TChainPaymentAction action,
     required String orderID,
@@ -80,19 +123,11 @@ class TChainPaymentSDK {
       );
     }
 
-    final Map<String, dynamic> params = {
-      'merchant_id': merchantID,
-      'order_id': orderID,
-      'amount': amount.toString(),
-      'bundle_id': bundleID,
-      'env': env.name,
-    };
-
-    final Uri uri = Uri(
-      scheme: env.scheme,
-      host: 'app',
-      path: action.path,
-      queryParameters: params,
+    final Uri uri = _generateDeeplink(
+      action: action,
+      orderID: orderID,
+      amount: amount,
+      bundleID: bundleID,
     );
 
     final result = await canLaunchUrl(uri);
@@ -126,6 +161,32 @@ class TChainPaymentSDK {
         debugPrint('Malformed Initial URI received: $err');
       }
     }
+  }
+
+  // use bundleID to callback after having transaction result
+  // in case generating QR code, let the bundleID be empty
+  Uri _generateDeeplink({
+    required TChainPaymentAction action,
+    required String orderID,
+    required double amount,
+    String bundleID = '',
+  }) {
+    final Map<String, dynamic> params = {
+      'merchant_id': merchantID,
+      'order_id': orderID,
+      'amount': amount.toString(),
+      'bundle_id': bundleID,
+      'env': env.name,
+    };
+
+    final Uri uri = Uri(
+      scheme: env.scheme,
+      host: 'app',
+      path: action.path,
+      queryParameters: params,
+    );
+
+    return uri;
   }
 
   /// Handle incoming links - the ones that the app will receive from the OS

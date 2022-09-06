@@ -37,6 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String merchantID =
       '0xc3f2f0deaf2a9e4d20aae37e8802b1efef589d1a9e45e89ce1a2e179516df071';
   String bundleID = 'com.example.example';
+  Image? _qrImage;
 
   final List<Product> products = [
     const Product(
@@ -86,52 +87,58 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('merchant ID: $merchantID'),
-              const SizedBox(height: 16),
-              const Text('status'),
-              Text(
-                status,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              const Text('txn'),
-              InkWell(
-                onTap: () => Clipboard.setData(
-                    ClipboardData(text: 'https://testnet.bscscan.com/tx/$txn')),
-                child: Text(
-                  txn,
+          child: Builder(builder: (context) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('merchant ID: $merchantID'),
+                const SizedBox(height: 16),
+                if (_qrImage != null) ...[
+                  Center(child: Image(image: _qrImage!.image)),
+                  const SizedBox(height: 16),
+                ],
+                const Text('status'),
+                Text(
+                  status,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-              ),
-              const SizedBox(height: 16),
-              const Divider(),
-              ...products.map(
-                (e) {
-                  return _buildItem(
-                    itemName: e.name,
-                    itemDesc: e.desc,
-                    itemId: e.id,
-                    onTap: () => _buyProduct(e),
-                  );
-                },
-              ),
-              ...withdrawalPackages.map(
-                (e) {
-                  return _buildItem(
-                    itemName: e.name,
-                    itemDesc: e.desc,
-                    itemId: e.id,
-                    onTap: () => _claim(e),
-                  );
-                },
-              ),
-            ],
-          ),
+                const SizedBox(height: 16),
+                const Text('txn'),
+                InkWell(
+                  onTap: () => Clipboard.setData(ClipboardData(
+                      text: 'https://testnet.bscscan.com/tx/$txn')),
+                  child: Text(
+                    txn,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Divider(),
+                ...products.map(
+                  (e) {
+                    return _buildItem(
+                      itemName: e.name,
+                      itemDesc: e.desc,
+                      itemId: e.id,
+                      onTap: () => _buyProduct(e),
+                    );
+                  },
+                ),
+                ...withdrawalPackages.map(
+                  (e) {
+                    return _buildItem(
+                      itemName: e.name,
+                      itemDesc: e.desc,
+                      itemId: e.id,
+                      onTap: () => _claim(e),
+                    );
+                  },
+                ),
+              ],
+            );
+          }),
         ),
       ),
     );
@@ -151,13 +158,61 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  _buyProduct(Product product) async {
-    final result = await TChainPaymentSDK.instance.deposit(
-      orderID: product.id,
-      amount: product.price,
-    );
+  _buyProduct(Product product) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          color: Colors.amber,
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
 
-    _showResult(result);
+                    final result = await TChainPaymentSDK.instance.deposit(
+                      orderID: product.id,
+                      amount: product.price,
+                    );
+
+                    _showResult(result);
+                  },
+                  child: const Text('Open My T-Wallet'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+
+                    final result = await TChainPaymentSDK.instance
+                        .generateDepositingQRCode(
+                      orderID: product.id,
+                      amount: product.price,
+                      imageSize: 300,
+                    );
+
+                    setState(() {
+                      _qrImage = result.qrImage;
+                    });
+
+                    _showResult(result);
+                  },
+                  child: const Text('Generate QR Code'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   _claim(Product product) async {
