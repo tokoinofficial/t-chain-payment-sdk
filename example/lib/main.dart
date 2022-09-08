@@ -163,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) {
         return Container(
-          color: Colors.amber,
+          color: Colors.white,
           child: SafeArea(
             child: Column(
               mainAxisSize: MainAxisSize.min,
