@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA7fKvAkCwPoa4wsyrl3vx8WqL0pY3ut1Q',
-    appId: '1:400212494729:android:35569b695df1fb01bab958',
+    appId: '1:400212494729:android:541ccd86b55ee44cbab958',
     messagingSenderId: '400212494729',
     projectId: 't-chain-payment-example',
     storageBucket: 't-chain-payment-example.appspot.com',

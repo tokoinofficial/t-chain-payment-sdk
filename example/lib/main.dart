@@ -1,8 +1,10 @@
+import 'package:example/cubit/fcm/fcm_bloc.dart';
 import 'package:example/data/product.dart';
 import 'package:example/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
 void main() async {
@@ -10,7 +12,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(BlocProvider<FcmCubit>(
+    create: (context) => FcmCubit(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -65,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    context.read<FcmCubit>().initialFcm();
 
     TChainPaymentSDK.instance.init(
       merchantID: merchantID,
@@ -101,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Text(
                 status,
                 style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               const Text('txn'),
@@ -117,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(height: 16),
               const Divider(),
               ...products.map(
-                (e) {
+                    (e) {
                   return _buildItem(
                     itemName: e.name,
                     itemDesc: e.desc,
@@ -127,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
               ...withdrawalPackages.map(
-                (e) {
+                    (e) {
                   return _buildItem(
                     itemName: e.name,
                     itemDesc: e.desc,
