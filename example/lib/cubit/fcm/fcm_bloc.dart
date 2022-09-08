@@ -59,15 +59,7 @@ class FcmCubit extends Cubit<FcmState> {
     if (!message.containsKey(FcmNotification.KEY_KEY)) return;
 
     FcmNotification fcmNotification = FcmNotification.fromMap(message);
-
-    switch (fcmNotification.action) {
-      case NotificationAction.ReloadBalance:
-        emit(FcmReloadBalance());
-        break;
-      case NotificationAction.ShowEvent:
-        emit(FcmShowEvent());
-        break;
-    }
+    emit(FcmMessageReceived(fcmNotification: fcmNotification));
     emit(
         FcmFinished()); // calling finish to make state change, otherwise recall emit `FcmReloadBalance` will not trigger event
   }

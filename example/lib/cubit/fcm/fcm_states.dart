@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:example/data/fcm_notification.dart';
 
 class FcmState extends Equatable {
   final List<Object?>? objProps;
@@ -13,14 +14,13 @@ class FcmUninitialized extends FcmState {
   String toString() => 'FcmUninitialized';
 }
 
-class FcmReloadBalance extends FcmState {
-  @override
-  String toString() => 'FcmReloadBalance';
-}
+class FcmMessageReceived extends FcmState {
+  final FcmNotification fcmNotification;
 
-class FcmShowEvent extends FcmState {
+  FcmMessageReceived({required this.fcmNotification}) : super([fcmNotification]);
+
   @override
-  String toString() => 'FcmShowEvent';
+  String toString() => 'FcmMessageReceived';
 }
 
 class FcmFinished extends FcmState {
