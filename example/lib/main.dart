@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const Product(
       id: 'ID_1',
       name: 'Package 1 (Buy 2 game coins)',
-      desc: '\$2',
+      description: '\$2',
       price: 2,
     ),
   ];
@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const Product(
       id: 'ID_3',
       name: 'Claim \$10',
-      desc: '',
+      description: '',
       price: 10,
     ),
   ];
@@ -114,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 (e) {
                   return _buildItem(
                     itemName: e.name,
-                    itemDesc: e.desc,
+                    itemDescription: e.description,
                     itemId: e.id,
                     onTap: () => _buyProduct(e),
                   );
@@ -124,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 (e) {
                   return _buildItem(
                     itemName: e.name,
-                    itemDesc: e.desc,
+                    itemDescription: e.description,
                     itemId: e.id,
                     onTap: () => _claim(e),
                   );
@@ -139,14 +139,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildItem({
     required String itemName,
-    required String itemDesc,
+    required String itemDescription,
     required String itemId,
     Function()? onTap,
   }) {
     return ListTile(
       title: Text(itemName),
       subtitle: Text(itemId),
-      trailing: Text(itemDesc),
+      trailing: Text(itemDescription),
       onTap: onTap,
     );
   }
