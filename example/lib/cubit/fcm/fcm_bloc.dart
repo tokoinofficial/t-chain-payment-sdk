@@ -12,7 +12,8 @@ class FcmCubit extends Cubit<FcmState> {
   }
 
   Future<void> addFcm() async {
-    NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -22,7 +23,9 @@ class FcmCubit extends Cubit<FcmState> {
       sound: true,
     );
     print('User granted permission: ${settings.authorizationStatus}');
-    FirebaseMessaging.instance.getToken().then((token) => _saveToken(token!)); // save token after login
+    FirebaseMessaging.instance
+        .getToken()
+        .then((token) => _saveToken(token!)); // save token after login
   }
 
   Future<void> removeFcm() async {
@@ -44,14 +47,16 @@ class FcmCubit extends Cubit<FcmState> {
 
     // Get any messages which caused the application to open from
     // a terminated state.
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? initialMessage) {
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? initialMessage) {
       if (initialMessage != null) {
         _handleMessage(initialMessage.data);
       }
     });
 
-    FirebaseMessaging.instance.onTokenRefresh
-        .listen((token) => _saveToken(token)); // save token when it was refreshed
+    FirebaseMessaging.instance.onTokenRefresh.listen(
+        (token) => _saveToken(token)); // save token when it was refreshed
   }
 
   _handleMessage(Map<String, dynamic> message) {

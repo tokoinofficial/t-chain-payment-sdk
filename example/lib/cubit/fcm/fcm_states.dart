@@ -17,7 +17,8 @@ class FcmUninitialized extends FcmState {
 class FcmMessageReceived extends FcmState {
   final FcmNotification fcmNotification;
 
-  FcmMessageReceived({required this.fcmNotification}) : super([fcmNotification]);
+  FcmMessageReceived({required this.fcmNotification})
+      : super([fcmNotification]);
 
   @override
   String toString() => 'FcmMessageReceived';

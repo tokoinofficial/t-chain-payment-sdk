@@ -59,11 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBOuuBR1-4xP6MYuW3bQUZfIaBfFTSeHG0',
-    appId: '1:400212494729:ios:7fff9326151ea459bab958',
+    appId: '1:400212494729:ios:33050dff2371d72bbab958',
     messagingSenderId: '400212494729',
     projectId: 't-chain-payment-example',
     storageBucket: 't-chain-payment-example.appspot.com',
-    iosClientId: '400212494729-f5fi1ciarelh8ocsqq1h9r82mihd3qq4.apps.googleusercontent.com',
-    iosBundleId: 'com.example.example',
+    iosClientId: '400212494729-9ib28nu6h6738vor0onrek7eg8554ql4.apps.googleusercontent.com',
+    iosBundleId: 'com.tokoin.tchainpayment.example',
   );
 }

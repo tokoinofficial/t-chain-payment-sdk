@@ -47,8 +47,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String status = '';
   String txn = '';
-  String merchantID = '0xc3f2f0deaf2a9e4d20aae37e8802b1efef589d1a9e45e89ce1a2e179516df071';
-  String bundleID = 'com.example.example';
+  String merchantID =
+      '0xc3f2f0deaf2a9e4d20aae37e8802b1efef589d1a9e45e89ce1a2e179516df071';
+  String bundleID = 'com.tokoin.tchainpayment.example';
 
   final List<Product> products = [
     const Product(
@@ -114,16 +115,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   const Text('status'),
                   Text(
                     status,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   const Text('txn'),
                   InkWell(
-                    onTap: () =>
-                        Clipboard.setData(ClipboardData(text: 'https://testnet.bscscan.com/tx/$txn')),
+                    onTap: () => Clipboard.setData(ClipboardData(
+                        text: 'https://testnet.bscscan.com/tx/$txn')),
                     child: Text(
                       txn,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(height: 16),

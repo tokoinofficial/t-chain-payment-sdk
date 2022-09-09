@@ -11,8 +11,10 @@ class FcmNotification {
   static const keyStatus = 'status';
 
   FcmNotification.fromMap(Map<String, dynamic> map) {
-    TChainPaymentStatus status =
-        map[keyStatus] == 2 ? TChainPaymentStatus.success : TChainPaymentStatus.proceeding;
-    result = TChainPaymentResult(status: status, transactionID: map[keyTransactionHash]);
+    TChainPaymentStatus status = map[keyStatus] == 2
+        ? TChainPaymentStatus.success
+        : TChainPaymentStatus.proceeding;
+    result = TChainPaymentResult(
+        status: status, transactionID: map[keyTransactionHash]);
   }
 }

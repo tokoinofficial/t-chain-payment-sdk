@@ -65,15 +65,15 @@ class MockUrlLauncher extends Fake
 
   @override
   Future<bool> launch(
-      String url, {
-        required bool useSafariVC,
-        required bool useWebView,
-        required bool enableJavaScript,
-        required bool enableDomStorage,
-        required bool universalLinksOnly,
-        required Map<String, String> headers,
-        String? webOnlyWindowName,
-      }) async {
+    String url, {
+    required bool useSafariVC,
+    required bool useWebView,
+    required bool enableJavaScript,
+    required bool enableDomStorage,
+    required bool universalLinksOnly,
+    required Map<String, String> headers,
+    String? webOnlyWindowName,
+  }) async {
     expect(url, this.url);
     expect(useSafariVC, this.useSafariVC);
     expect(useWebView, this.useWebView);
