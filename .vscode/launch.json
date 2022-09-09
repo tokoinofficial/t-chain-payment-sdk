@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "tk_payment_gateway",
+            "name": "t_chain_payment_sdk",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "tk_payment_gateway (profile mode)",
+            "name": "t_chain_payment_sdk (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "tk_payment_gateway (release mode)",
+            "name": "t_chain_payment_sdk (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

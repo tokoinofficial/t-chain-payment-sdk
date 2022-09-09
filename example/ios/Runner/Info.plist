@@ -29,7 +29,7 @@
 			<string>Payment Scheme Callback</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>mtwallet3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+				<string>merchant.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			</array>
 		</dict>
 	</array>
@@ -38,7 +38,6 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>mtwallet</string>
-        <string>mtwallet.dev</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

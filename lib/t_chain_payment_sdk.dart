@@ -1,30 +1,29 @@
-library tk_payment_gateway;
+library t_chain_payment_sdk;
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tk_payment_gateway/config/tw_env.dart';
-import 'package:tk_payment_gateway/config/tw_payment_action.dart';
-import 'package:tk_payment_gateway/data/tw_payment_result.dart';
+import 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
+import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
+import 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-export 'package:tk_payment_gateway/config/tw_env.dart';
-export 'package:tk_payment_gateway/config/tw_payment_action.dart';
-export 'package:tk_payment_gateway/data/tw_payment_result.dart';
-export 'package:tk_payment_gateway/components/tw_payment_button.dart';
+export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
+export 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
+export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 
-class TWPaymentSDK {
-  static final TWPaymentSDK instance = TWPaymentSDK._();
+class TChainPaymentSDK {
+  static final TChainPaymentSDK instance = TChainPaymentSDK._();
 
-  TWPaymentSDK._();
+  TChainPaymentSDK._();
 
   late String merchantID;
   late String bundleID;
-  late TWEnv env;
-  late Function(TWPaymentResult) delegate;
+  late TChainPaymentEnv env;
+  late Function(TChainPaymentResult) delegate;
 
   bool _initialURILinkHandled = false;
   StreamSubscription? _streamSubscription;
@@ -32,8 +31,8 @@ class TWPaymentSDK {
   init({
     required String merchantID,
     required String bundleID,
-    TWEnv env = TWEnv.dev,
-    required Function(TWPaymentResult) delegate,
+    TChainPaymentEnv env = TChainPaymentEnv.dev,
+    required Function(TChainPaymentResult) delegate,
   }) {
     this.merchantID = merchantID;
     this.bundleID = bundleID;
@@ -48,38 +47,45 @@ class TWPaymentSDK {
     _streamSubscription?.cancel();
   }
 
-  Future<TWPaymentResult> purchase({
+  Future<TChainPaymentResult> deposit({
     required String orderID,
     required double amount,
   }) async {
     return await _callPaymentAction(
-      action: TWPaymentAction.deposit,
+      action: TChainPaymentAction.deposit,
       orderID: orderID,
       amount: amount,
     );
   }
 
-  Future<TWPaymentResult> withdraw({
+  Future<TChainPaymentResult> withdraw({
     required String orderID,
     required double amount,
   }) async {
-    return await _callPaymentAction(
-      action: TWPaymentAction.withdraw,
-      orderID: orderID,
-      amount: amount,
+    return TChainPaymentResult(
+      status: TChainPaymentStatus.error,
+      errorMessage: 'Coming soon',
     );
   }
 
-  Future<TWPaymentResult> _callPaymentAction({
-    required TWPaymentAction action,
+  Future<TChainPaymentResult> _callPaymentAction({
+    required TChainPaymentAction action,
     required String orderID,
     required double amount,
   }) async {
+    if (amount <= 0) {
+      return TChainPaymentResult(
+        status: TChainPaymentStatus.error,
+        errorMessage: 'Invalid parameter',
+      );
+    }
+
     final Map<String, dynamic> params = {
       'merchant_id': merchantID,
       'order_id': orderID,
       'amount': amount.toString(),
       'bundle_id': bundleID,
+      'env': env.name,
     };
 
     final Uri uri = Uri(
@@ -94,12 +100,12 @@ class TWPaymentSDK {
     if (result == false) {
       launchUrlString(env.downloadUrl);
 
-      return TWPaymentResult(status: TWPaymentResultStatus.failed);
+      return TChainPaymentResult(status: TChainPaymentStatus.failed);
     }
 
     launchUrl(uri, mode: LaunchMode.externalApplication);
 
-    return TWPaymentResult(status: TWPaymentResultStatus.waiting);
+    return TChainPaymentResult(status: TChainPaymentStatus.waiting);
   }
 
   Future<void> _initURIHandler() async {
@@ -151,16 +157,32 @@ class TWPaymentSDK {
 
     switch (deepLink.path) {
       case '/success':
-        final result = TWPaymentResult(
-          status: TWPaymentResultStatus.success,
+        final result = TChainPaymentResult(
+          status: TChainPaymentStatus.success,
+          orderID: orderID,
+          transactionID: transactionID,
+        );
+        delegate.call(result);
+        break;
+      case '/fail':
+        final result = TChainPaymentResult(
+          status: TChainPaymentStatus.failed,
+          orderID: orderID,
+          transactionID: transactionID,
+        );
+        delegate.call(result);
+        break;
+      case '/proceeding':
+        final result = TChainPaymentResult(
+          status: TChainPaymentStatus.proceeding,
           orderID: orderID,
           transactionID: transactionID,
         );
         delegate.call(result);
         break;
       case '/cancelled':
-        final result = TWPaymentResult(
-          status: TWPaymentResultStatus.cancelled,
+        final result = TChainPaymentResult(
+          status: TChainPaymentStatus.cancelled,
           orderID: orderID,
         );
         delegate.call(result);

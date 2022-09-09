@@ -1,6 +1,7 @@
 import 'package:example/data/product.dart';
 import 'package:flutter/material.dart';
-import 'package:tk_payment_gateway/tk_payment_gateway.dart';
+import 'package:flutter/services.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,26 +32,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  num _amount = 0;
+  String status = '';
+  String txn = '';
+  String merchantID =
+      '0xc3f2f0deaf2a9e4d20aae37e8802b1efef589d1a9e45e89ce1a2e179516df071';
+  String bundleID = 'com.example.example';
 
   final List<Product> products = [
     const Product(
-      id: 'ID_ITEM_1',
-      name: 'Buy 1000 KNB (game currency)',
-      price: 100,
-    ),
-    const Product(
-      id: 'ID_ITEM_2',
-      name: 'Buy 5000 KNB (game currency)',
-      price: 450,
+      id: 'ID_1',
+      name: 'Package 1 (Buy 2 game coins)',
+      description: '\$2',
+      price: 2,
     ),
   ];
 
   final List<Product> withdrawalPackages = [
     const Product(
-      id: 'ID_1',
-      name: 'Claim \$100',
-      price: 100,
+      id: 'ID_3',
+      name: 'Claim \$10',
+      description: '',
+      price: 10,
     ),
   ];
 
@@ -58,26 +60,20 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    TWPaymentSDK.instance.init(
-      merchantID: 'merchantID',
-      bundleID: 'com.example.example',
+    TChainPaymentSDK.instance.init(
+      merchantID: merchantID,
+      bundleID: bundleID,
       delegate: _onHandlePaymentResult,
     );
   }
 
   @override
   void dispose() {
-    TWPaymentSDK.instance.close();
+    TChainPaymentSDK.instance.close();
     super.dispose();
   }
 
-  void _incrementCounter() {
-    setState(() {
-      _amount++;
-    });
-  }
-
-  _onHandlePaymentResult(TWPaymentResult result) {
+  _onHandlePaymentResult(TChainPaymentResult result) {
     _showResult(result);
   }
 
@@ -87,78 +83,76 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ...products.map(
-              (e) {
-                return _buildItem(
-                  itemName: e.name,
-                  itemId: e.id,
-                  itemPrice: e.price,
-                  onTap: () => _buyProduct(e),
-                );
-              },
-            ),
-            ...withdrawalPackages.map(
-              (e) {
-                return _buildItem(
-                  itemName: e.name,
-                  itemId: e.id,
-                  itemPrice: e.price,
-                  onTap: () => _claim(e),
-                );
-              },
-            ),
-            const Divider(),
-            const Text(
-              'Amount to send:',
-            ),
-            const SizedBox(height: 10),
-            Text(
-              '$_amount',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            const SizedBox(height: 10),
-            TWPaymentButton(
-              action: TWPaymentAction.deposit,
-              amount: _amount.toDouble(),
-              onResult: (result) => _showResult(result),
-            ),
-            const SizedBox(height: 10),
-            TWPaymentButton(
-              action: TWPaymentAction.withdraw,
-              amount: _amount.toDouble(),
-              onResult: (result) => _showResult(result),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('merchant ID: $merchantID'),
+              const SizedBox(height: 16),
+              const Text('status'),
+              Text(
+                status,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              const Text('txn'),
+              InkWell(
+                onTap: () => Clipboard.setData(
+                    ClipboardData(text: 'https://testnet.bscscan.com/tx/$txn')),
+                child: Text(
+                  txn,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Divider(),
+              ...products.map(
+                (e) {
+                  return _buildItem(
+                    itemName: e.name,
+                    itemDescription: e.description,
+                    itemId: e.id,
+                    onTap: () => _buyProduct(e),
+                  );
+                },
+              ),
+              ...withdrawalPackages.map(
+                (e) {
+                  return _buildItem(
+                    itemName: e.name,
+                    itemDescription: e.description,
+                    itemId: e.id,
+                    onTap: () => _claim(e),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
   Widget _buildItem({
     required String itemName,
+    required String itemDescription,
     required String itemId,
-    required double itemPrice,
     Function()? onTap,
   }) {
     return ListTile(
       title: Text(itemName),
       subtitle: Text(itemId),
-      trailing: Text('\$${itemPrice.toString()}'),
+      trailing: Text(itemDescription),
       onTap: onTap,
     );
   }
 
   _buyProduct(Product product) async {
-    final result = await TWPaymentSDK.instance.purchase(
+    final result = await TChainPaymentSDK.instance.deposit(
       orderID: product.id,
       amount: product.price,
     );
@@ -167,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _claim(Product product) async {
-    final result = await TWPaymentSDK.instance.withdraw(
+    final result = await TChainPaymentSDK.instance.withdraw(
       orderID: product.id,
       amount: product.price,
     );
@@ -175,35 +169,27 @@ class _MyHomePageState extends State<MyHomePage> {
     _showResult(result);
   }
 
-  _showResult(TWPaymentResult result) {
-    switch (result.status) {
-      case TWPaymentResultStatus.failed:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed')),
-        );
-        break;
+  _showResult(TChainPaymentResult result) {
+    setState(() {
+      status = result.status.name;
+      txn = result.transactionID ?? '';
+    });
 
-      case TWPaymentResultStatus.waiting:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('waiting')),
-        );
-        break;
-
-      case TWPaymentResultStatus.success:
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('success ${result.transactionID ?? ''}')),
-        );
-        break;
-      case TWPaymentResultStatus.operationInProgress:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('operationInProgress')),
-        );
-        break;
-      case TWPaymentResultStatus.cancelled:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('cancelled')),
-        );
-        break;
+    if (result.status == TChainPaymentStatus.error) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(result.errorMessage ?? 'Unknown'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 }

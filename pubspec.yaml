@@ -1,5 +1,5 @@
-name: tk_payment_gateway
-description: Tokoin Payment Gateway
+name: t_chain_payment_sdk
+description: T-Chain Payment SDK
 version: 0.0.1
 homepage: https://www.tokoin.io/
 
@@ -20,6 +20,6 @@ dev_dependencies:
   flutter_lints: ^1.0.0
 
 # The following section is specific to Flutter.
-flutter:
-  assets:
-    - assets/
+# flutter:
+#   assets:
+#     - assets/
