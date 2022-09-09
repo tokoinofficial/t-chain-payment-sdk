@@ -95,6 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return BlocListener<FcmCubit, FcmState>(
         listener: (context, state) {
           if (state is FcmMessageReceived) {
+            _showResult(state.fcmNotification.result!);
             Fluttertoast.showToast(msg: 'Received new notification!');
           }
         },

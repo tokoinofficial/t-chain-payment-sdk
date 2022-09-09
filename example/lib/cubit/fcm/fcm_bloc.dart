@@ -56,7 +56,7 @@ class FcmCubit extends Cubit<FcmState> {
 
   _handleMessage(Map<String, dynamic> message) {
     print('_handleMessage: $message');
-    if (!message.containsKey(FcmNotification.KEY_KEY)) return;
+    if (!message.containsKey(FcmNotification.keyTransactionHash)) return;
 
     FcmNotification fcmNotification = FcmNotification.fromMap(message);
     emit(FcmMessageReceived(fcmNotification: fcmNotification));
