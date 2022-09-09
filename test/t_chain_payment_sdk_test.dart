@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'mock_url_launcher_platform.dart';

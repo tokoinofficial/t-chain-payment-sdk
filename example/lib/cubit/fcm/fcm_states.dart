@@ -6,6 +6,7 @@ class FcmState extends Equatable {
 
   const FcmState([this.objProps]);
 
+  @override
   List<Object?> get props => objProps ?? [];
 }
 
