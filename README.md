@@ -73,7 +73,7 @@ and the Flutter guide for
 
 ### How To Use
 
-We have to initial `TChainPaymentSDK` before using it.
+Step 1: Initialize `TChainPaymentSDK`
 ```
 TChainPaymentSDK.instance.init(
       merchantID: merchantID,
@@ -84,9 +84,9 @@ TChainPaymentSDK.instance.init(
     );
 ```
 
-- To pay for your order, please use `TChainPaymentSDK.instance.purchase(...)`
+Step 2: To pay for an order:
 ```
-final TChainPaymentResult result = await TChainPaymentSDK.instance.purchase(
+final TChainPaymentResult result = await TChainPaymentSDK.instance.deposit(
       orderID: orderID,
       amount: product.price,
     );
@@ -118,5 +118,5 @@ enum TChainPaymentStatus {
 }
 ```
 
-Considering to do your next step based on the status
+Step 3: Depend on the status, show results to users based on the application design.
 
