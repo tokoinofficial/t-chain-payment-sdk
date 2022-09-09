@@ -1,10 +1,23 @@
+import 'package:example/cubit/fcm/fcm_bloc.dart';
+import 'package:example/cubit/fcm/fcm_states.dart';
 import 'package:example/data/product.dart';
+import 'package:example/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(BlocProvider<FcmCubit>(
+    create: (context) => FcmCubit(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -36,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String txn = '';
   String merchantID =
       '0xc3f2f0deaf2a9e4d20aae37e8802b1efef589d1a9e45e89ce1a2e179516df071';
-  String bundleID = 'com.example.example';
+  String bundleID = 'com.tokoin.tchainpayment.example';
 
   final List<Product> products = [
     const Product(
@@ -59,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    context.read<FcmCubit>().initialFcm();
 
     TChainPaymentSDK.instance.init(
       merchantID: merchantID,
@@ -79,62 +93,69 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('merchant ID: $merchantID'),
-              const SizedBox(height: 16),
-              const Text('status'),
-              Text(
-                status,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              const Text('txn'),
-              InkWell(
-                onTap: () => Clipboard.setData(
-                    ClipboardData(text: 'https://testnet.bscscan.com/tx/$txn')),
-                child: Text(
-                  txn,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Divider(),
-              ...products.map(
-                (e) {
-                  return _buildItem(
-                    itemName: e.name,
-                    itemDescription: e.description,
-                    itemId: e.id,
-                    onTap: () => _buyProduct(e),
-                  );
-                },
-              ),
-              ...withdrawalPackages.map(
-                (e) {
-                  return _buildItem(
-                    itemName: e.name,
-                    itemDescription: e.description,
-                    itemId: e.id,
-                    onTap: () => _claim(e),
-                  );
-                },
-              ),
-            ],
+    return BlocListener<FcmCubit, FcmState>(
+        listener: (context, state) {
+          if (state is FcmMessageReceived) {
+            _showResult(state.fcmNotification.result!);
+            Fluttertoast.showToast(msg: 'Received new notification!');
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(widget.title),
           ),
-        ),
-      ),
-    );
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('merchant ID: $merchantID'),
+                  const SizedBox(height: 16),
+                  const Text('status'),
+                  Text(
+                    status,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('txn'),
+                  InkWell(
+                    onTap: () => Clipboard.setData(ClipboardData(
+                        text: 'https://testnet.bscscan.com/tx/$txn')),
+                    child: Text(
+                      txn,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Divider(),
+                  ...products.map(
+                    (e) {
+                      return _buildItem(
+                        itemName: e.name,
+                        itemDescription: e.description,
+                        itemId: e.id,
+                        onTap: () => _buyProduct(e),
+                      );
+                    },
+                  ),
+                  ...withdrawalPackages.map(
+                    (e) {
+                      return _buildItem(
+                        itemName: e.name,
+                        itemDescription: e.description,
+                        itemId: e.id,
+                        onTap: () => _claim(e),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 
   Widget _buildItem({
