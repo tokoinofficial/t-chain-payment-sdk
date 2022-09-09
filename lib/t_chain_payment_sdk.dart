@@ -130,15 +130,18 @@ class TChainPaymentSDK {
       bundleID: bundleID,
     );
 
-    final result = await canLaunchUrl(uri);
+    bool result = false;
+    try {
+      result = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
 
     if (result == false) {
       launchUrlString(env.downloadUrl);
 
       return TChainPaymentResult(status: TChainPaymentStatus.failed);
     }
-
-    launchUrl(uri, mode: LaunchMode.externalApplication);
 
     return TChainPaymentResult(status: TChainPaymentStatus.waiting);
   }

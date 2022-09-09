@@ -2,12 +2,12 @@ class Product {
   const Product({
     required this.id,
     required this.name,
-    required this.desc,
+    required this.description,
     required this.price,
   });
 
   final String id;
   final String name;
-  final String desc;
+  final String description;
   final double price;
 }

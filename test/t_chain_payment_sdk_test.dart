@@ -16,37 +16,4 @@ void main() {
     mock = MockUrlLauncher();
     UrlLauncherPlatform.instance = mock;
   });
-
-  // testWidgets('test buttons', (WidgetTester tester) async {
-  //   await tester.runAsync(() async {
-  //     Widget testWidget = const MediaQuery(
-  //       data: MediaQueryData(),
-  //       child: MaterialApp(
-  //         home: Scaffold(
-  //           body: TWPaymentButton(
-  //             action: TWPaymentAction.deposit,
-  //             amount: 10,
-  //           ),
-  //         ),
-  //       ),
-  //     );
-  //     mock
-  //       ..setLaunchExpectations(
-  //         url:
-  //             'mtwallet://app/otc?merchant_id=merchantID&order_id=&amount=10&bundle_id=bundleID',
-  //         useSafariVC: true,
-  //         useWebView: false,
-  //         universalLinksOnly: false,
-  //         enableJavaScript: false,
-  //         enableDomStorage: false,
-  //         headers: <String, String>{},
-  //         webOnlyWindowName: null,
-  //       )
-  //       ..setResponse(true);
-  //     await tester.pumpWidget(testWidget);
-  //     expect(find.byType(TWPaymentButton), findsOneWidget);
-  //     await tester.tap(find.byType(TWPaymentButton));
-  //     await tester.pumpAndSettle();
-  //   });
-  // });
 }
