@@ -1,5 +1,6 @@
 import 'package:example/data/fcm_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'fcm_states.dart';
 
@@ -22,7 +23,7 @@ class FcmCubit extends Cubit<FcmState> {
       provisional: false,
       sound: true,
     );
-    print('User granted permission: ${settings.authorizationStatus}');
+    debugPrint('User granted permission: ${settings.authorizationStatus}');
     FirebaseMessaging.instance
         .getToken()
         .then((token) => _saveToken(token!)); // save token after login
@@ -35,7 +36,7 @@ class FcmCubit extends Cubit<FcmState> {
 
   _setupFcm() {
     FirebaseMessaging.onMessage.listen((message) async {
-      print("onMessage: ${message.data}");
+      debugPrint("onMessage: ${message.data}");
       _handleMessage(message.data);
     });
 
@@ -60,7 +61,7 @@ class FcmCubit extends Cubit<FcmState> {
   }
 
   _handleMessage(Map<String, dynamic> message) {
-    print('_handleMessage: $message');
+    debugPrint('_handleMessage: $message');
     if (!message.containsKey(FcmNotification.keyTransactionHash)) return;
 
     FcmNotification fcmNotification = FcmNotification.fromMap(message);
@@ -70,6 +71,6 @@ class FcmCubit extends Cubit<FcmState> {
   }
 
   _saveToken(String token) async {
-    print('add fcm token $token');
+    debugPrint('add fcm token $token');
   }
 }

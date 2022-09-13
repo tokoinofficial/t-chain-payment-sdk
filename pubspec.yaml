@@ -19,6 +19,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
+  url_launcher_platform_interface: ^2.1.0
+  plugin_platform_interface: ^2.1.2
+
+# ref: https://stackoverflow.com/a/37484053/1654338
+false_secrets:
+  - /example/android/app/google-services.json
+  - /example/ios/Runner/GoogleService-Info.plist
+  - /example/lib/firebase_options.dart
+
 
 # The following section is specific to Flutter.
 # flutter:

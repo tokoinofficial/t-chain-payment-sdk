@@ -143,7 +143,7 @@ packages:
     source: hosted
     version: "4.4.0"
   plugin_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
@@ -267,7 +267,7 @@ packages:
     source: hosted
     version: "2.0.2"
   url_launcher_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: url_launcher_platform_interface
       url: "https://pub.dartlang.org"
