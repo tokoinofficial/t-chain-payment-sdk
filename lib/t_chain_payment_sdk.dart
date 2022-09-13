@@ -47,13 +47,6 @@ class TChainPaymentSDK {
     _incomingLinkHandler();
   }
 
-  handleNotification(Map<String, dynamic> json) {
-    // 1. convert json to payment result
-
-    // 2. calling delegate to continue doing on your app
-    // delegate.call()
-  }
-
   close() {
     _streamSubscription?.cancel();
   }
