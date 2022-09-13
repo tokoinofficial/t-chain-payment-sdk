@@ -206,8 +206,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () async {
                     Navigator.of(context).pop();
 
-                    final result = await TChainPaymentSDK.instance
-                        .generateDepositingQRCode(
+                    final result =
+                        await TChainPaymentSDK.instance.generateQrCode(
                       orderID: product.id,
                       amount: product.price,
                       imageSize: 300,

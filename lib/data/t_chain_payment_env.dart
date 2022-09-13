@@ -18,7 +18,7 @@ extension TChainPaymentEnvExt on TChainPaymentEnv {
         }
 
         if (Platform.isAndroid) {
-          return 'market://details?id=com.tokoin.wallet';
+          return 'market://details?id=$packageName';
         }
 
         return '';
@@ -36,6 +36,12 @@ extension TChainPaymentEnvExt on TChainPaymentEnv {
   }
 
   String get scheme {
-    return 'mtwallet';
+    switch (this) {
+      case TChainPaymentEnv.dev:
+        return 'mtwallet.dev';
+
+      case TChainPaymentEnv.prod:
+        return 'mtwallet';
+    }
   }
 }

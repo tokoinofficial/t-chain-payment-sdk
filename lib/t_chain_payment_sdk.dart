@@ -79,7 +79,7 @@ class TChainPaymentSDK {
     );
   }
 
-  Future<TChainPaymentQRResult> generateDepositingQRCode({
+  Future<TChainPaymentQRResult> generateQrCode({
     required String orderID,
     required double amount,
     required double imageSize,
