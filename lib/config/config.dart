@@ -1,6 +1,19 @@
 import 'dart:io';
 
+import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
+
+extension TChainPaymentActionExtension on TChainPaymentAction {
+  /// Configure the path of the deep link
+  String get path {
+    switch (this) {
+      case TChainPaymentAction.deposit:
+        return 'payment_deposit';
+      case TChainPaymentAction.withdraw:
+        return 'payment_withdraw';
+    }
+  }
+}
 
 extension TChainPaymentEnvExt on TChainPaymentEnv {
   String get packageName {

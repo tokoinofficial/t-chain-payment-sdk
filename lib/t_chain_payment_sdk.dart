@@ -4,9 +4,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
-import 'package:t_chain_payment_sdk/data/t_chain_payment_env_ext.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,19 +15,36 @@ import 'package:url_launcher/url_launcher_string.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 
+/// TChainPaymnentSDK
+/// Helping you communicate with My T-Wallet easily.
+/// Features:
+/// - deposit
+/// - generate QR Code
+/// - withdraw
+///
 class TChainPaymentSDK {
-  static final TChainPaymentSDK instance = TChainPaymentSDK._();
+  static final TChainPaymentSDK _instance = TChainPaymentSDK._();
+  static TChainPaymentSDK get instance => _instance;
 
   TChainPaymentSDK._();
 
+  /// [merchantID] will be generated when you (create a project)[https://developer.tokoin.io/guides/creating-a-project]
   late String merchantID;
+
+  /// Bundle id of merchant app
+  /// It's used for My T-Wallet callback function
   late String bundleID;
+
+  /// Environment
   late TChainPaymentEnv env;
+
+  /// To handle payment result
   late Function(TChainPaymentResult) delegate;
 
   bool _initialURILinkHandled = false;
   StreamSubscription? _streamSubscription;
 
+  /// Initialize payment sdk
   init({
     required String merchantID,
     required String bundleID,
@@ -43,10 +60,29 @@ class TChainPaymentSDK {
     _incomingLinkHandler();
   }
 
+  /// Close payment sdk
   close() {
     _streamSubscription?.cancel();
   }
 
+  /// Use cases:
+  /// 1. App to App
+  /// Alex wants to add funds into his wallet in a game platform, the system
+  /// already provides several way to deposit such as redeem code, credit card...
+  /// But he wants a modern way - the crypto currency. After integrating with
+  /// T-Chain Payment, Alex now can click on a button on mobile or web application
+  /// to transfer his money to our smart contract, hence he will get the same
+  /// amount in the system after the transaction is completed.
+  ///
+  /// 2. POS - QR
+  /// Daisy owns a coffee shop, in order to follow the social distancing rules,
+  /// along with banking QR code, she now can introduce the similar way but using
+  /// crypto currency instead. Customers just need to scan the code, a
+  /// notification will be sent to Daisy's phone once the payment succeeds.
+  ///
+  ///
+  /// [orderID] unique id of each order. It is called offchain in blockchain terms.
+  /// [amount] a sum of money to make a depositary
   Future<TChainPaymentResult> deposit({
     required String orderID,
     required double amount,
@@ -58,6 +94,11 @@ class TChainPaymentSDK {
     );
   }
 
+  /// Use cases:
+  /// User want to take money out of their game wallet
+  ///
+  /// [orderID] unique id of each order. It is called offchain in blockchain terms
+  /// [amount] a sum of money to make a withdrawal
   Future<TChainPaymentResult> withdraw({
     required String orderID,
     required double amount,
@@ -119,6 +160,7 @@ class TChainPaymentSDK {
     );
   }
 
+  /// Handle deeplink when user open the app
   Future<void> _initURIHandler() async {
     if (!_initialURILinkHandled) {
       _initialURILinkHandled = true;
