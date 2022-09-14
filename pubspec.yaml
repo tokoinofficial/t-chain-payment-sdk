@@ -1,6 +1,6 @@
 name: t_chain_payment_sdk
-description: T-Chain Payment SDK
-version: 0.0.1
+description: T-Chain Payment is a B2B service helping SMEs add another channel to convert in-app point/money into crypto currency and vice versa using blockchain technology with minimum efforts
+version: 0.0.2
 homepage: https://www.tokoin.io/
 
 environment:
