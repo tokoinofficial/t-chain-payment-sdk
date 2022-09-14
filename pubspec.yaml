@@ -11,7 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
   url_launcher: ^6.1.5
-  flutter_svg: ^0.23.0+1
   uni_links: ^0.5.1
 
 dev_dependencies:
@@ -26,9 +25,3 @@ false_secrets:
   - /example/android/app/google-services.json
   - /example/ios/Runner/GoogleService-Info.plist
   - /example/lib/firebase_options.dart
-
-
-# The following section is specific to Flutter.
-# flutter:
-#   assets:
-#     - assets/
