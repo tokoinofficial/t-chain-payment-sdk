@@ -37,6 +37,7 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>mtwallet.dev</string>
 		<string>mtwallet</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>

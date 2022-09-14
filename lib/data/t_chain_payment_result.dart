@@ -1,34 +1,45 @@
+/// The status of payment
 enum TChainPaymentStatus {
-  // payment has been succeeded
+  /// Payment has been succeeded
   success,
 
-  // be cancelled by user
+  /// Be cancelled by user
   cancelled,
 
-  // payment has been failed
+  /// Payment has been failed
   failed,
 
-  // payment's proceeding but it takes a long time to get the final result.
-  // You should use tnx to continue checking the status
+  /// Payment's proceeding but it takes a long time to get the final result.
+  /// You should use tnx to continue checking the status
   proceeding,
 
-  // waiting for user interaction
+  /// Waiting for user interaction
   waiting,
 
-  // error: Invalid parameter ...
+  /// Error: Invalid parameter ...
   error,
 }
 
+/// The returning data when you perform [deposit], [generateQrCode], [withdraw]
 class TChainPaymentResult {
   TChainPaymentResult({
     required this.status,
+    required this.orderID,
     this.transactionID,
-    this.orderID,
     this.errorMessage,
   });
 
+  /// The status of payment
   final TChainPaymentStatus status;
-  final String? orderID;
+
+  /// Unique id of each order. It is called offchain in blockchain terms.
+  final String orderID;
+
+  /// Use to track your transaction on testnet or mainnet
+  /// It's null if the status is one of `cancelled`, `waiting`, or `error`
   final String? transactionID;
+
+  /// An error during perform t-chain payment function.
+  /// It's value only if the status's `error`
   final String? errorMessage;
 }

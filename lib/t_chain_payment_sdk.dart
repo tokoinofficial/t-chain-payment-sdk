@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
+import 'package:t_chain_payment_sdk/data/t_chain_payment_env_ext.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
-export 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 
 class TChainPaymentSDK {
@@ -64,6 +64,7 @@ class TChainPaymentSDK {
   }) async {
     return TChainPaymentResult(
       status: TChainPaymentStatus.error,
+      orderID: orderID,
       errorMessage: 'Coming soon',
     );
   }
@@ -76,6 +77,7 @@ class TChainPaymentSDK {
     if (amount <= 0) {
       return TChainPaymentResult(
         status: TChainPaymentStatus.error,
+        orderID: orderID,
         errorMessage: 'Invalid parameter',
       );
     }
@@ -105,10 +107,16 @@ class TChainPaymentSDK {
     if (result == false) {
       launchUrlString(env.downloadUrl);
 
-      return TChainPaymentResult(status: TChainPaymentStatus.failed);
+      return TChainPaymentResult(
+        status: TChainPaymentStatus.failed,
+        orderID: orderID,
+      );
     }
 
-    return TChainPaymentResult(status: TChainPaymentStatus.waiting);
+    return TChainPaymentResult(
+      status: TChainPaymentStatus.waiting,
+      orderID: orderID,
+    );
   }
 
   Future<void> _initURIHandler() async {
@@ -151,12 +159,8 @@ class TChainPaymentSDK {
   _handleDeepLink(Uri? deepLink) {
     if (deepLink == null) return;
 
-    final transactionID = deepLink.queryParameters.containsKey('txn')
-        ? deepLink.queryParameters['txn']
-        : null;
-    final orderID = deepLink.queryParameters.containsKey('order_id')
-        ? deepLink.queryParameters['order_id']
-        : null;
+    final transactionID = deepLink.queryParameters['txn'];
+    final String orderID = deepLink.queryParameters['order_id'] ?? '';
 
     switch (deepLink.path) {
       case '/success':
