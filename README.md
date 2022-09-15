@@ -20,7 +20,7 @@ and the Flutter guide for
 ## Flow
 
 <p align="center">
-  <img src="/resource/deposit_flow.png" alt="T-Chain Deposit Flow" />
+  <img src="https://raw.githubusercontent.com/tokoinofficial/t-chain-payment-sdk/master/resource/deposit_flow.png" alt="T-Chain Deposit Flow" />
 </p>
 
 
@@ -67,6 +67,7 @@ and the Flutter guide for
 </array>
 <key>LSApplicationQueriesSchemes</key>
 <array>
+  <string>mtwallet.dev</string>
   <string>mtwallet</string>
 </array>
 ```
@@ -97,23 +98,23 @@ final TChainPaymentResult result = await TChainPaymentSDK.instance.deposit(
 - Payment status of the result can be one of the values below
 ```
 enum TChainPaymentStatus {
-  // payment has been succeeded
+  /// Payment has been succeeded
   success,
 
-  // be cancelled by user
+  /// Be cancelled by user
   cancelled,
 
-  // payment has been failed
+  /// Payment has been failed
   failed,
 
-  // payment's proceeding but it takes a long time to get the final result.
-  // You should use tnx to continue checking the status
+  /// Payment's proceeding but it takes a long time to get the final result.
+  /// You should use tnx to continue checking the status
   proceeding,
 
-  // waiting for user interaction
+  /// Waiting for user interaction
   waiting,
 
-  // error: Invalid parameter ...
+  /// Error: Invalid parameter ...
   error,
 }
 ```
