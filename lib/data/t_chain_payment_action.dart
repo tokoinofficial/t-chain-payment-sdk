@@ -1,15 +1,10 @@
+/// Action is what user want to do when using payment SDK
 enum TChainPaymentAction {
+  /// Use case:
+  /// - deposit your money to in-game currency
+  /// - pay for an order
   deposit,
-  withdraw,
-}
 
-extension TChainPaymentActionExtension on TChainPaymentAction {
-  String get path {
-    switch (this) {
-      case TChainPaymentAction.deposit:
-        return 'payment_deposit';
-      case TChainPaymentAction.withdraw:
-        return 'payment_withdraw';
-    }
-  }
+  /// Use case: user want to take money out of their game wallet
+  withdraw,
 }

@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 class TChainPaymentQRResult extends TChainPaymentResult {
   TChainPaymentQRResult({
     required TChainPaymentStatus status,
-    String? orderID,
+    required String orderID,
     String? transactionID,
     String? errorMessage,
     this.qrData,

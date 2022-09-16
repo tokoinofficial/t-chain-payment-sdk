@@ -17,8 +17,8 @@ class FcmNotification {
         : TChainPaymentStatus.proceeding;
     result = TChainPaymentResult(
       status: status,
-      transactionID: map[keyTransactionHash] ?? '',
-      orderID: map[keyOrderID] ?? '',
+      orderID: map[keyOrderID] as String? ?? '',
+      transactionID: map[keyTransactionHash] as String?,
     );
   }
 }
