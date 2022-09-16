@@ -24,7 +24,8 @@ class PaymentCubit extends Cubit<PaymentState> {
     if (state is PaymentDepositState) {
       final currentState = state as PaymentDepositState;
 
-      // if (currentState.orderID != result.orderID) return;
+      // You should check the result before updating your UI. But in the demo, I didn't check it
+      // for example: `if (currentState.orderID != result.orderID) return;`
 
       emit(PaymentDepositState(
         orderID: currentState.orderID,
@@ -36,7 +37,8 @@ class PaymentCubit extends Cubit<PaymentState> {
     } else if (state is PaymentQrState) {
       final currentState = state as PaymentQrState;
 
-      // if (currentState.orderID != result.orderID) return;
+      // You should check the result before updating your UI. But in the demo, I didn't check it
+      // for example: `if (currentState.orderID != result.orderID) return;`
 
       emit(PaymentQrState(
         orderID: currentState.orderID,
