@@ -1,6 +1,6 @@
 name: t_chain_payment_sdk
 description: T-Chain Payment is a B2B service helping SMEs add another channel to convert in-app point/money into crypto currency and vice versa using blockchain technology with minimum efforts
-version: 0.0.2
+version: 0.1.0
 homepage: https://www.tokoin.io/
 repository: https://github.com/tokoinofficial/t-chain-payment-sdk
 issue_tracker: https://github.com/tokoinofficial/t-chain-payment-sdk/issues
@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
   url_launcher: ^6.1.5
   uni_links: ^0.5.1
+  qr_flutter: ^4.0.0
 
 dev_dependencies:
   flutter_test:

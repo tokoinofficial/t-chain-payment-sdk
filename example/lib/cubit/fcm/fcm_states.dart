@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:example/data/fcm_notification.dart';
+part of 'fcm_cubit.dart';
 
 class FcmState extends Equatable {
   final List<Object?>? objProps;

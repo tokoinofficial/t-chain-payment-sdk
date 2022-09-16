@@ -1,8 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:example/data/fcm_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'fcm_states.dart';
+
+part 'fcm_states.dart';
 
 class FcmCubit extends Cubit<FcmState> {
   FcmCubit() : super(FcmUninitialized());

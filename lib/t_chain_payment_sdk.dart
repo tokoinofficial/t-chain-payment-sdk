@@ -1,12 +1,15 @@
 library t_chain_payment_sdk;
 
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
+import 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,6 +17,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
+export 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 
 /// TChainPaymnentSDK
 /// Helping you communicate with My T-Wallet easily.
@@ -65,21 +69,13 @@ class TChainPaymentSDK {
     _streamSubscription?.cancel();
   }
 
-  /// Use cases:
-  /// 1. App to App
+  /// Use case: App to App
   /// Alex wants to add funds into his wallet in a game platform, the system
   /// already provides several way to deposit such as redeem code, credit card...
   /// But he wants a modern way - the crypto currency. After integrating with
   /// T-Chain Payment, Alex now can click on a button on mobile or web application
   /// to transfer his money to our smart contract, hence he will get the same
   /// amount in the system after the transaction is completed.
-  ///
-  /// 2. POS - QR
-  /// Daisy owns a coffee shop, in order to follow the social distancing rules,
-  /// along with banking QR code, she now can introduce the similar way but using
-  /// crypto currency instead. Customers just need to scan the code, a
-  /// notification will be sent to Daisy's phone once the payment succeeds.
-  ///
   ///
   /// [orderID] unique id of each order. It is called offchain in blockchain terms.
   /// [amount] a sum of money to make a depositary
@@ -94,8 +90,7 @@ class TChainPaymentSDK {
     );
   }
 
-  /// Use cases:
-  /// User want to take money out of their game wallet
+  /// Use case: User want to take money out of their game wallet
   ///
   /// [orderID] unique id of each order. It is called offchain in blockchain terms
   /// [amount] a sum of money to make a withdrawal
@@ -107,6 +102,49 @@ class TChainPaymentSDK {
       status: TChainPaymentStatus.error,
       orderID: orderID,
       errorMessage: 'Coming soon',
+    );
+  }
+
+  /// Use case: POS - QR
+  /// Daisy owns a coffee shop, in order to follow the social distancing rules,
+  /// along with banking QR code, she now can introduce the similar way but using
+  /// crypto currency instead. Customers just need to scan the code, a
+  /// notification will be sent to Daisy's phone once the payment succeeds.
+  ///
+  ///
+  /// [orderID] unique id of each order. It is called offchain in blockchain terms.
+  /// [amount] a sum of money to make a depositary
+  Future<TChainPaymentQRResult> generateQrCode({
+    required String orderID,
+    required double amount,
+    required double imageSize,
+  }) async {
+    if (amount <= 0) {
+      return TChainPaymentQRResult(
+        status: TChainPaymentStatus.error,
+        orderID: orderID,
+        errorMessage: 'Invalid parameter',
+      );
+    }
+
+    final Uri uri = _generateDeeplink(
+      action: TChainPaymentAction.deposit,
+      orderID: orderID,
+      amount: amount,
+    );
+
+    final painter = QrPainter(
+      data: uri.toString(),
+      version: QrVersions.auto,
+    );
+
+    final qrImage = await painter.toImage(imageSize);
+    final qrData = await qrImage.toByteData(format: ImageByteFormat.png);
+
+    return TChainPaymentQRResult(
+      status: TChainPaymentStatus.waiting,
+      orderID: orderID,
+      qrData: qrData,
     );
   }
 
@@ -123,19 +161,11 @@ class TChainPaymentSDK {
       );
     }
 
-    final Map<String, dynamic> params = {
-      'merchant_id': merchantID,
-      'order_id': orderID,
-      'amount': amount.toString(),
-      'bundle_id': bundleID,
-      'env': env.name,
-    };
-
-    final Uri uri = Uri(
-      scheme: env.scheme,
-      host: 'app',
-      path: action.path,
-      queryParameters: params,
+    final Uri uri = _generateDeeplink(
+      action: action,
+      orderID: orderID,
+      amount: amount,
+      bundleID: bundleID,
     );
 
     bool result = false;
@@ -179,6 +209,32 @@ class TChainPaymentSDK {
         debugPrint('Malformed Initial URI received: $err');
       }
     }
+  }
+
+  // use bundleID to callback after having transaction result
+  // in case generating QR code, let the bundleID be empty
+  Uri _generateDeeplink({
+    required TChainPaymentAction action,
+    required String orderID,
+    required double amount,
+    String bundleID = '',
+  }) {
+    final Map<String, dynamic> params = {
+      'merchant_id': merchantID,
+      'order_id': orderID,
+      'amount': amount.toString(),
+      'bundle_id': bundleID,
+      'env': env.name,
+    };
+
+    final Uri uri = Uri(
+      scheme: env.scheme,
+      host: 'app',
+      path: action.path,
+      queryParameters: params,
+    );
+
+    return uri;
   }
 
   /// Handle incoming links - the ones that the app will receive from the OS
