@@ -16,7 +16,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
-export 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 
