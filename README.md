@@ -67,7 +67,6 @@ and the Flutter guide for
 </array>
 <key>LSApplicationQueriesSchemes</key>
 <array>
-  <string>mtwallet.dev</string>
   <string>mtwallet</string>
   <string>mtwallet.dev</string>
 </array>
