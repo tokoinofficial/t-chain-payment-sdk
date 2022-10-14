@@ -17,7 +17,7 @@ class PaymentCubit extends Cubit<PaymentState> {
       apiKey: Constants.apiKey,
       bundleID: Constants.bundleID,
       delegate: _onHandlePaymentResult,
-      isTestnet: false,
+      isTestnet: true,
     );
   }
 
