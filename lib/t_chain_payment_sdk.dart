@@ -1,12 +1,15 @@
 library t_chain_payment_sdk;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/retry.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
+import 'package:t_chain_payment_sdk/data/t_chain_payment_currency.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
@@ -14,10 +17,12 @@ import 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:http/http.dart' as http;
 
 export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
+export 'package:t_chain_payment_sdk/data/t_chain_payment_currency.dart';
 
 /// TChainPaymnentSDK
 /// Helping you communicate with My T-Wallet easily.
@@ -32,8 +37,8 @@ class TChainPaymentSDK {
 
   TChainPaymentSDK._();
 
-  /// [merchantID] will be generated when you (create a project)[https://developer.tokoin.io/guides/creating-a-project]
-  late String merchantID;
+  /// [apiKey] will be generated when you (create a project)[https://developer.tokoin.io/guides/creating-a-project]
+  late String apiKey;
 
   /// Bundle id of merchant app
   /// It's used for My T-Wallet callback function
@@ -50,12 +55,12 @@ class TChainPaymentSDK {
 
   /// Initialize payment sdk
   init({
-    required String merchantID,
+    required String apiKey,
     required String bundleID,
     TChainPaymentEnv env = TChainPaymentEnv.dev,
     required Function(TChainPaymentResult) delegate,
   }) {
-    this.merchantID = merchantID;
+    this.apiKey = apiKey;
     this.bundleID = bundleID;
     this.env = env;
     this.delegate = delegate;
@@ -82,11 +87,13 @@ class TChainPaymentSDK {
   Future<TChainPaymentResult> deposit({
     required String orderID,
     required double amount,
+    required TChainPaymentCurrency currency,
   }) async {
     return await _callPaymentAction(
       action: TChainPaymentAction.deposit,
       orderID: orderID,
       amount: amount,
+      currency: currency,
     );
   }
 
@@ -117,8 +124,17 @@ class TChainPaymentSDK {
   Future<TChainPaymentQRResult> generateQrCode({
     required String orderID,
     required double amount,
+    required TChainPaymentCurrency currency,
     required double imageSize,
   }) async {
+    if (env == TChainPaymentEnv.prod) {
+      return TChainPaymentQRResult(
+        status: TChainPaymentStatus.error,
+        orderID: orderID,
+        errorMessage: 'Coming soon. We have not supported production env yet',
+      );
+    }
+
     if (amount <= 0) {
       return TChainPaymentQRResult(
         status: TChainPaymentStatus.error,
@@ -127,11 +143,20 @@ class TChainPaymentSDK {
       );
     }
 
-    final Uri uri = _generateDeeplink(
+    final Uri? uri = await _generateDeeplink(
       action: TChainPaymentAction.deposit,
       orderID: orderID,
       amount: amount,
+      currency: currency,
     );
+
+    if (uri == null) {
+      return TChainPaymentQRResult(
+        status: TChainPaymentStatus.error,
+        orderID: orderID,
+        errorMessage: 'Cannot generate deeplink',
+      );
+    }
 
     final painter = QrPainter(
       data: uri.toString(),
@@ -152,7 +177,16 @@ class TChainPaymentSDK {
     required TChainPaymentAction action,
     required String orderID,
     required double amount,
+    required TChainPaymentCurrency currency,
   }) async {
+    if (env == TChainPaymentEnv.prod) {
+      return TChainPaymentQRResult(
+        status: TChainPaymentStatus.error,
+        orderID: orderID,
+        errorMessage: 'Coming soon. We have not supported production env yet',
+      );
+    }
+
     if (amount <= 0) {
       return TChainPaymentResult(
         status: TChainPaymentStatus.error,
@@ -161,12 +195,21 @@ class TChainPaymentSDK {
       );
     }
 
-    final Uri uri = _generateDeeplink(
+    final Uri? uri = await _generateDeeplink(
       action: action,
       orderID: orderID,
       amount: amount,
+      currency: currency,
       bundleID: bundleID,
     );
+
+    if (uri == null) {
+      return TChainPaymentQRResult(
+        status: TChainPaymentStatus.error,
+        orderID: orderID,
+        errorMessage: 'Cannot generate deeplink',
+      );
+    }
 
     bool result = false;
     try {
@@ -213,28 +256,56 @@ class TChainPaymentSDK {
 
   // use bundleID to callback after having transaction result
   // in case generating QR code, let the bundleID be empty
-  Uri _generateDeeplink({
+  Future<Uri?> _generateDeeplink({
     required TChainPaymentAction action,
     required String orderID,
     required double amount,
-    String bundleID = '',
-  }) {
-    final Map<String, dynamic> params = {
-      'merchant_id': merchantID,
-      'order_id': orderID,
-      'amount': amount.toString(),
-      'bundle_id': bundleID,
-      'env': env.name,
-    };
+    required TChainPaymentCurrency currency,
+    String? bundleID,
+  }) async {
+    final client = RetryClient(http.Client());
 
-    final Uri uri = Uri(
-      scheme: env.scheme,
-      host: 'app',
-      path: action.path,
-      queryParameters: params,
-    );
+    try {
+      final url = env.generateQrCodeAPI;
+      Map<String, String> headers = {
+        "Content-type": "application/json",
+        "x-api-key": apiKey,
+      };
 
-    return uri;
+      String body =
+          '{"external_id": "$orderID", "amount": $amount, "currency": "${currency.shortName}", "chain_id": "${env.chainId}"}';
+
+      final response = await client.post(url, headers: headers, body: body);
+      if (response.statusCode != 200) return null;
+
+      final json = jsonDecode(response.body);
+      final result = json['result'] as Map<String, dynamic>?;
+      final data = result?['data'] as Map<String, dynamic>?;
+      final qrCode = data?['qr_code'] as String?;
+
+      if (qrCode == null) return null;
+
+      final Map<String, dynamic> params = {
+        'qr_code': qrCode,
+      };
+
+      if (bundleID != null) {
+        params['bundle_id'] = bundleID;
+      }
+
+      final Uri uri = Uri(
+        scheme: env.scheme,
+        host: 'app',
+        path: action.path,
+        queryParameters: params,
+      );
+
+      return uri;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
+    return null;
   }
 
   /// Handle incoming links - the ones that the app will receive from the OS

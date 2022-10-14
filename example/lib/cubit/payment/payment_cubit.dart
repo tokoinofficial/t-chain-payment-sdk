@@ -14,7 +14,7 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   initial() {
     TChainPaymentSDK.instance.init(
-      merchantID: Constants.merchantID,
+      apiKey: Constants.apiKey,
       bundleID: Constants.bundleID,
       delegate: _onHandlePaymentResult,
     );
@@ -63,8 +63,11 @@ class PaymentCubit extends Cubit<PaymentState> {
   }
 
   deposit({required String orderID, required double amount}) async {
-    final result = await TChainPaymentSDK.instance
-        .deposit(orderID: orderID, amount: amount);
+    final result = await TChainPaymentSDK.instance.deposit(
+      orderID: orderID,
+      amount: amount,
+      currency: TChainPaymentCurrency.idr,
+    );
 
     emit(PaymentDepositState(
       orderID: orderID,
@@ -82,6 +85,7 @@ class PaymentCubit extends Cubit<PaymentState> {
     final result = await TChainPaymentSDK.instance.generateQrCode(
       orderID: orderID,
       amount: amount,
+      currency: TChainPaymentCurrency.idr,
       imageSize: imageSize,
     );
 

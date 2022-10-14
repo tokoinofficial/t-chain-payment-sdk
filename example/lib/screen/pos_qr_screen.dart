@@ -3,6 +3,7 @@ import 'package:example/router/screen_router.dart';
 import 'package:example/utils/input_formatter.dart';
 import 'package:example/utils/utility.dart';
 import 'package:flutter/material.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
 class PosQrScreen extends StatefulWidget {
   const PosQrScreen({Key? key}) : super(key: key);
@@ -37,9 +38,9 @@ class _PosQrScreenState extends State<PosQrScreen> {
             children: [
               TextField(
                 controller: _amountController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Amount',
-                  prefixText: '\$',
+                  prefixText: TChainPaymentCurrency.idr.shortName,
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                 ),
                 keyboardType:
