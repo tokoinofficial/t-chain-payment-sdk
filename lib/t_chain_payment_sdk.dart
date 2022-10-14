@@ -47,22 +47,29 @@ class TChainPaymentSDK {
   /// Environment
   late TChainPaymentEnv env;
 
+  /// what chain id do you want to work with?
+  late bool isTestnet;
+
   /// To handle payment result
   late Function(TChainPaymentResult) delegate;
 
   bool _initialURILinkHandled = false;
   StreamSubscription? _streamSubscription;
 
+  int get chainID => isTestnet ? testnetChainID : mainnetChainID;
+
   /// Initialize payment sdk
   init({
     required String apiKey,
     required String bundleID,
     TChainPaymentEnv env = TChainPaymentEnv.dev,
+    bool isTestnet = true,
     required Function(TChainPaymentResult) delegate,
   }) {
     this.apiKey = apiKey;
     this.bundleID = bundleID;
     this.env = env;
+    this.isTestnet = isTestnet;
     this.delegate = delegate;
 
     _initURIHandler();
@@ -273,7 +280,7 @@ class TChainPaymentSDK {
       };
 
       String body =
-          '{"external_id": "$orderID", "amount": $amount, "currency": "${currency.shortName}", "chain_id": "${env.chainId}"}';
+          '{"external_id": "$orderID", "amount": $amount, "currency": "${currency.shortName}", "chain_id": "$chainID"}';
 
       final response = await client.post(url, headers: headers, body: body);
       if (response.statusCode != 200) return null;

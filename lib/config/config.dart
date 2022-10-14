@@ -66,13 +66,7 @@ extension TChainPaymentEnvExt on TChainPaymentEnv {
         return Uri.https("", "");
     }
   }
-
-  int get chainId {
-    switch (this) {
-      case TChainPaymentEnv.dev:
-        return 97;
-      case TChainPaymentEnv.prod:
-        return 56;
-    }
-  }
 }
+
+const int mainnetChainID = 56;
+const int testnetChainID = 97;
