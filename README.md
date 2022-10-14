@@ -82,6 +82,7 @@ TChainPaymentSDK.instance.init(
       delegate: (TChainPaymentResult result) {
           // handle result (success, cancelled, failed) which has been returned after performing payment method
       },
+      isTestnet: true,
     );
 ```
 
@@ -90,6 +91,7 @@ Step 2: To pay for an order:
 final TChainPaymentResult result = await TChainPaymentSDK.instance.deposit(
       orderID: orderID,
       amount: product.price,
+      currency: TChainPaymentCurrency.idr,
     );
     
 // handle result: waiting, error
