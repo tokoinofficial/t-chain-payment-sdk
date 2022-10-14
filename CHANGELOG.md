@@ -1,3 +1,9 @@
+## 0.2.0
+
+* Generate data from server side
+* Support 2 fiat currencies: IDR and VND
+
+
 ## 0.1.1
 
 * Update Documentation
