@@ -77,7 +77,7 @@ and the Flutter guide for
 Step 1: Initialize `TChainPaymentSDK`
 ```
 TChainPaymentSDK.instance.init(
-      merchantID: merchantID,
+      apiKey: Constants.apiKey,
       bundleID: bundleID,
       delegate: (TChainPaymentResult result) {
           // handle result (success, cancelled, failed) which has been returned after performing payment method
