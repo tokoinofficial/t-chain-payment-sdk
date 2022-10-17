@@ -20,7 +20,11 @@ and the Flutter guide for
 ## Flow
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tokoinofficial/t-chain-payment-sdk/master/resource/deposit_flow.png" alt="T-Chain Deposit Flow" />
+  <img src="https://raw.githubusercontent.com/tokoinofficial/t-chain-payment-sdk/master/resource/app_to_app_flow.png" alt="T-Chain App to App Flow" />
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tokoinofficial/t-chain-payment-sdk/master/resource/pos_qr_code_flow.png" alt="T-Chain POS QR Code Flow" />
 </p>
 
 
