@@ -2,9 +2,6 @@
 enum TChainPaymentCurrency {
   // Indonesian Rupiah
   idr,
-
-  /// Vietnamese Dong
-  vnd,
 }
 
 extension TChainPaymentCurrencyExtension on TChainPaymentCurrency {
@@ -12,8 +9,6 @@ extension TChainPaymentCurrencyExtension on TChainPaymentCurrency {
     switch (this) {
       case TChainPaymentCurrency.idr:
         return 'IDR';
-      case TChainPaymentCurrency.vnd:
-        return 'VND';
     }
   }
 }
