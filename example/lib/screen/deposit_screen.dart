@@ -35,7 +35,10 @@ class _DepositScreenState extends State<DepositScreen> {
                 controller: _amountController,
                 decoration: InputDecoration(
                   labelText: 'Deposit amount',
-                  prefixText: TChainPaymentCurrency.idr.shortName,
+                  prefix: Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Text(TChainPaymentCurrency.idr.shortName),
+                  ),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                 ),
                 keyboardType:

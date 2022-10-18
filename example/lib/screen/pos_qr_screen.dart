@@ -40,7 +40,10 @@ class _PosQrScreenState extends State<PosQrScreen> {
                 controller: _amountController,
                 decoration: InputDecoration(
                   labelText: 'Amount',
-                  prefixText: TChainPaymentCurrency.idr.shortName,
+                  prefix: Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Text(TChainPaymentCurrency.idr.shortName),
+                  ),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                 ),
                 keyboardType:
