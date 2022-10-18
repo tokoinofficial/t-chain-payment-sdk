@@ -20,7 +20,11 @@ and the Flutter guide for
 ## Flow
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tokoinofficial/t-chain-payment-sdk/master/resource/deposit_flow.png" alt="T-Chain Deposit Flow" />
+  <img src="https://raw.githubusercontent.com/tokoinofficial/t-chain-payment-sdk/master/resource/app_to_app_flow.png" alt="T-Chain App to App Flow" />
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tokoinofficial/t-chain-payment-sdk/master/resource/pos_qr_code_flow.png" alt="T-Chain POS QR Code Flow" />
 </p>
 
 
@@ -77,11 +81,12 @@ and the Flutter guide for
 Step 1: Initialize `TChainPaymentSDK`
 ```
 TChainPaymentSDK.instance.init(
-      merchantID: merchantID,
+      apiKey: Constants.apiKey,
       bundleID: bundleID,
       delegate: (TChainPaymentResult result) {
           // handle result (success, cancelled, failed) which has been returned after performing payment method
       },
+      isTestnet: true,
     );
 ```
 
@@ -90,6 +95,7 @@ Step 2: To pay for an order:
 final TChainPaymentResult result = await TChainPaymentSDK.instance.deposit(
       orderID: orderID,
       amount: product.price,
+      currency: TChainPaymentCurrency.idr,
     );
     
 // handle result: waiting, error
