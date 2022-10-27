@@ -9,7 +9,7 @@ class FcmNotification {
 
   static const keyTransactionHash = 'tnx_hash';
   static const keyStatus = 'status';
-  static const keyOrderID = 'order_id';
+  static const keyNotes = 'notes';
 
   FcmNotification.fromMap(Map<String, dynamic> map) {
     TChainPaymentStatus status = int.tryParse(map[keyStatus] ?? '') == 2
@@ -17,7 +17,7 @@ class FcmNotification {
         : TChainPaymentStatus.proceeding;
     result = TChainPaymentResult(
       status: status,
-      orderID: map[keyOrderID] as String? ?? '',
+      notes: map[keyNotes] as String? ?? '',
       transactionID: map[keyTransactionHash] as String?,
     );
   }

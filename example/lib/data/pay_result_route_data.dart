@@ -1,11 +1,11 @@
 class PayResultRouteData {
   const PayResultRouteData({
-    required this.orderID,
+    required this.notes,
     required this.amount,
     required this.useQRCode,
   });
 
-  final String orderID;
+  final String notes;
   final double amount;
   final bool useQRCode;
 }

@@ -8,13 +8,13 @@ import 'package:flutter/services.dart';
 class TChainPaymentQRResult extends TChainPaymentResult {
   TChainPaymentQRResult({
     required TChainPaymentStatus status,
-    required String orderID,
+    required String notes,
     String? transactionID,
     String? errorMessage,
     this.qrData,
   }) : super(
           status: status,
-          orderID: orderID,
+          notes: notes,
           transactionID: transactionID,
           errorMessage: errorMessage,
         );

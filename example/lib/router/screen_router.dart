@@ -34,7 +34,7 @@ class ScreenRouter {
           throw Exception('Invalid Data');
         }
         screen = PaymentResultScreen(
-          orderID: data.orderID,
+          notes: data.notes,
           amount: data.amount,
           useQRCode: data.useQRCode,
         );

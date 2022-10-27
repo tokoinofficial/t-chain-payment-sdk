@@ -26,10 +26,10 @@ class PaymentCubit extends Cubit<PaymentState> {
       final currentState = state as PaymentDepositState;
 
       // You should check the result before updating your UI. But in the demo, I didn't check it
-      // for example: `if (currentState.orderID != result.orderID) return;`
+      // for example: `if (currentState.notes != result.notes) return;`
 
       emit(PaymentDepositState(
-        orderID: currentState.orderID,
+        notes: currentState.notes,
         amount: currentState.amount,
         status: result.status,
         transactionID: result.transactionID,
@@ -39,10 +39,10 @@ class PaymentCubit extends Cubit<PaymentState> {
       final currentState = state as PaymentQrState;
 
       // You should check the result before updating your UI. But in the demo, I didn't check it
-      // for example: `if (currentState.orderID != result.orderID) return;`
+      // for example: `if (currentState.notes != result.notes) return;`
 
       emit(PaymentQrState(
-        orderID: currentState.orderID,
+        notes: currentState.notes,
         amount: currentState.amount,
         qrImage: currentState.qrImage,
         status: result.status,
@@ -63,15 +63,15 @@ class PaymentCubit extends Cubit<PaymentState> {
     emit(PaymentInitial());
   }
 
-  deposit({required String orderID, required double amount}) async {
+  deposit({required String notes, required double amount}) async {
     final result = await TChainPaymentSDK.instance.deposit(
-      orderID: orderID,
+      notes: notes,
       amount: amount,
       currency: TChainPaymentCurrency.idr,
     );
 
     emit(PaymentDepositState(
-      orderID: orderID,
+      notes: notes,
       amount: amount,
       status: result.status,
       errorMessage: result.errorMessage,
@@ -79,19 +79,19 @@ class PaymentCubit extends Cubit<PaymentState> {
   }
 
   generateQrCode({
-    required String orderID,
+    required String notes,
     required double amount,
     double imageSize = defaultQrImageSize,
   }) async {
     final result = await TChainPaymentSDK.instance.generateQrCode(
-      orderID: orderID,
+      notes: notes,
       amount: amount,
       currency: TChainPaymentCurrency.idr,
       imageSize: imageSize,
     );
 
     emit(PaymentQrState(
-      orderID: orderID,
+      notes: notes,
       amount: amount,
       qrImage: result.qrImage,
       status: result.status,

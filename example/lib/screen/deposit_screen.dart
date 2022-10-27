@@ -62,13 +62,13 @@ class _DepositScreenState extends State<DepositScreen> {
     final amount = double.tryParse(_amountController.text);
     if (amount == null) return;
 
-    // For simplicity, the order id is generated on the local, but you should create the order on your server-side
-    final orderID = Utility.generateID();
+    // For simplicity, the notes - unique id is generated on the local, but you should create the order on your server-side
+    final notes = Utility.generateID();
 
     Navigator.of(context).pushNamed(
       ScreenRouter.payResult,
       arguments: PayResultRouteData(
-        orderID: orderID,
+        notes: notes,
         amount: amount,
         useQRCode: false,
       ),

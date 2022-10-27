@@ -10,14 +10,14 @@ abstract class PaymentState extends Equatable {
 class PaymentInitial extends PaymentState {}
 
 class PaymentDepositState extends PaymentState {
-  final String orderID;
+  final String notes;
   final double amount;
   final TChainPaymentStatus status;
   final String? transactionID;
   final String? errorMessage;
 
   const PaymentDepositState({
-    required this.orderID,
+    required this.notes,
     required this.amount,
     required this.status,
     this.transactionID,
@@ -27,7 +27,7 @@ class PaymentDepositState extends PaymentState {
   @override
   List<Object?> get props => super.props
     ..addAll([
-      orderID,
+      notes,
       amount,
       status,
       transactionID,
@@ -36,7 +36,7 @@ class PaymentDepositState extends PaymentState {
 }
 
 class PaymentQrState extends PaymentState {
-  final String orderID;
+  final String notes;
   final double amount;
   final Image? qrImage;
   final TChainPaymentStatus status;
@@ -44,7 +44,7 @@ class PaymentQrState extends PaymentState {
   final String? errorMessage;
 
   const PaymentQrState({
-    required this.orderID,
+    required this.notes,
     required this.amount,
     required this.qrImage,
     required this.status,
@@ -55,7 +55,7 @@ class PaymentQrState extends PaymentState {
   @override
   List<Object?> get props => super.props
     ..addAll([
-      orderID,
+      notes,
       amount,
       qrImage,
       status,
