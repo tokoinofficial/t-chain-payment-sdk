@@ -93,7 +93,7 @@ TChainPaymentSDK.instance.init(
 Step 2: To pay for an order:
 ```
 final TChainPaymentResult result = await TChainPaymentSDK.instance.deposit(
-      orderID: orderID,
+      notes: notes,
       amount: product.price,
       currency: TChainPaymentCurrency.idr,
     );

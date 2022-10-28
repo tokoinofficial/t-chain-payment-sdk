@@ -89,16 +89,16 @@ class TChainPaymentSDK {
   /// to transfer his money to our smart contract, hence he will get the same
   /// amount in the system after the transaction is completed.
   ///
-  /// [orderID] unique id of each order. It is called offchain in blockchain terms.
+  /// [notes] unique id of each order. It is called offchain in blockchain terms.
   /// [amount] a sum of money to make a depositary
   Future<TChainPaymentResult> deposit({
-    required String orderID,
+    required String notes,
     required double amount,
     required TChainPaymentCurrency currency,
   }) async {
     return await _callPaymentAction(
       action: TChainPaymentAction.deposit,
-      orderID: orderID,
+      notes: notes,
       amount: amount,
       currency: currency,
     );
@@ -106,15 +106,15 @@ class TChainPaymentSDK {
 
   /// Use case: User want to take money out of their game wallet
   ///
-  /// [orderID] unique id of each order. It is called offchain in blockchain terms
+  /// [notes] unique id of each order. It is called offchain in blockchain terms
   /// [amount] a sum of money to make a withdrawal
   Future<TChainPaymentResult> withdraw({
-    required String orderID,
+    required String notes,
     required double amount,
   }) async {
     return TChainPaymentResult(
       status: TChainPaymentStatus.error,
-      orderID: orderID,
+      notes: notes,
       errorMessage: 'Coming soon',
     );
   }
@@ -126,10 +126,10 @@ class TChainPaymentSDK {
   /// notification will be sent to Daisy's phone once the payment succeeds.
   ///
   ///
-  /// [orderID] unique id of each order. It is called offchain in blockchain terms.
+  /// [notes] unique id of each order. It is called offchain in blockchain terms.
   /// [amount] a sum of money to make a depositary
   Future<TChainPaymentQRResult> generateQrCode({
-    required String orderID,
+    required String notes,
     required double amount,
     required TChainPaymentCurrency currency,
     required double imageSize,
@@ -137,7 +137,7 @@ class TChainPaymentSDK {
     if (env == TChainPaymentEnv.prod) {
       return TChainPaymentQRResult(
         status: TChainPaymentStatus.error,
-        orderID: orderID,
+        notes: notes,
         errorMessage: 'Coming soon. We have not supported production env yet',
       );
     }
@@ -145,14 +145,14 @@ class TChainPaymentSDK {
     if (amount <= 0) {
       return TChainPaymentQRResult(
         status: TChainPaymentStatus.error,
-        orderID: orderID,
+        notes: notes,
         errorMessage: 'Invalid parameter',
       );
     }
 
     final Uri? uri = await _generateDeeplink(
       action: TChainPaymentAction.deposit,
-      orderID: orderID,
+      notes: notes,
       amount: amount,
       currency: currency,
     );
@@ -160,7 +160,7 @@ class TChainPaymentSDK {
     if (uri == null) {
       return TChainPaymentQRResult(
         status: TChainPaymentStatus.error,
-        orderID: orderID,
+        notes: notes,
         errorMessage: 'Cannot generate deeplink',
       );
     }
@@ -175,21 +175,21 @@ class TChainPaymentSDK {
 
     return TChainPaymentQRResult(
       status: TChainPaymentStatus.waiting,
-      orderID: orderID,
+      notes: notes,
       qrData: qrData,
     );
   }
 
   Future<TChainPaymentResult> _callPaymentAction({
     required TChainPaymentAction action,
-    required String orderID,
+    required String notes,
     required double amount,
     required TChainPaymentCurrency currency,
   }) async {
     if (env == TChainPaymentEnv.prod) {
       return TChainPaymentQRResult(
         status: TChainPaymentStatus.error,
-        orderID: orderID,
+        notes: notes,
         errorMessage: 'Coming soon. We have not supported production env yet',
       );
     }
@@ -197,14 +197,14 @@ class TChainPaymentSDK {
     if (amount <= 0) {
       return TChainPaymentResult(
         status: TChainPaymentStatus.error,
-        orderID: orderID,
+        notes: notes,
         errorMessage: 'Invalid parameter',
       );
     }
 
     final Uri? uri = await _generateDeeplink(
       action: action,
-      orderID: orderID,
+      notes: notes,
       amount: amount,
       currency: currency,
       bundleID: bundleID,
@@ -213,7 +213,7 @@ class TChainPaymentSDK {
     if (uri == null) {
       return TChainPaymentQRResult(
         status: TChainPaymentStatus.error,
-        orderID: orderID,
+        notes: notes,
         errorMessage: 'Cannot generate deeplink',
       );
     }
@@ -230,13 +230,13 @@ class TChainPaymentSDK {
 
       return TChainPaymentResult(
         status: TChainPaymentStatus.failed,
-        orderID: orderID,
+        notes: notes,
       );
     }
 
     return TChainPaymentResult(
       status: TChainPaymentStatus.waiting,
-      orderID: orderID,
+      notes: notes,
     );
   }
 
@@ -265,7 +265,7 @@ class TChainPaymentSDK {
   // in case generating QR code, let the bundleID be empty
   Future<Uri?> _generateDeeplink({
     required TChainPaymentAction action,
-    required String orderID,
+    required String notes,
     required double amount,
     required TChainPaymentCurrency currency,
     String? bundleID,
@@ -280,7 +280,7 @@ class TChainPaymentSDK {
       };
 
       String body =
-          '{"external_id": "$orderID", "amount": $amount, "currency": "${currency.shortName}", "chain_id": "$chainID"}';
+          '{"notes": "$notes", "amount": $amount, "currency": "${currency.shortName}", "chain_id": "$chainID"}';
 
       final response = await client.post(url, headers: headers, body: body);
       if (response.statusCode != 200) return null;
@@ -336,13 +336,13 @@ class TChainPaymentSDK {
     if (deepLink == null) return;
 
     final transactionID = deepLink.queryParameters['txn'];
-    final String orderID = deepLink.queryParameters['order_id'] ?? '';
+    final String notes = deepLink.queryParameters['notes'] ?? '';
 
     switch (deepLink.path) {
       case '/success':
         final result = TChainPaymentResult(
           status: TChainPaymentStatus.success,
-          orderID: orderID,
+          notes: notes,
           transactionID: transactionID,
         );
         delegate.call(result);
@@ -350,7 +350,7 @@ class TChainPaymentSDK {
       case '/fail':
         final result = TChainPaymentResult(
           status: TChainPaymentStatus.failed,
-          orderID: orderID,
+          notes: notes,
           transactionID: transactionID,
         );
         delegate.call(result);
@@ -358,7 +358,7 @@ class TChainPaymentSDK {
       case '/proceeding':
         final result = TChainPaymentResult(
           status: TChainPaymentStatus.proceeding,
-          orderID: orderID,
+          notes: notes,
           transactionID: transactionID,
         );
         delegate.call(result);
@@ -366,7 +366,7 @@ class TChainPaymentSDK {
       case '/cancelled':
         final result = TChainPaymentResult(
           status: TChainPaymentStatus.cancelled,
-          orderID: orderID,
+          notes: notes,
         );
         delegate.call(result);
         break;

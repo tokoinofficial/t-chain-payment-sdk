@@ -24,7 +24,7 @@ enum TChainPaymentStatus {
 class TChainPaymentResult {
   TChainPaymentResult({
     required this.status,
-    required this.orderID,
+    required this.notes,
     this.transactionID,
     this.errorMessage,
   });
@@ -33,7 +33,7 @@ class TChainPaymentResult {
   final TChainPaymentStatus status;
 
   /// Unique id of each order. It is called offchain in blockchain terms.
-  final String orderID;
+  final String notes;
 
   /// Use to track your transaction on testnet or mainnet
   /// It's null if the status is one of `cancelled`, `waiting`, or `error`

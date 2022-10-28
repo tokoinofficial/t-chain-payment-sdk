@@ -7,12 +7,12 @@ import 'package:url_launcher/url_launcher_string.dart';
 class PaymentResultScreen extends StatefulWidget {
   const PaymentResultScreen({
     Key? key,
-    required this.orderID,
+    required this.notes,
     required this.amount,
     required this.useQRCode,
   }) : super(key: key);
 
-  final String orderID;
+  final String notes;
   final double amount;
   final bool useQRCode;
 
@@ -30,12 +30,12 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
     _paymentCubit = context.read<PaymentCubit>();
     if (widget.useQRCode) {
       _paymentCubit.generateQrCode(
-        orderID: widget.orderID,
+        notes: widget.notes,
         amount: widget.amount,
       );
     } else {
       _paymentCubit.deposit(
-        orderID: widget.orderID,
+        notes: widget.notes,
         amount: widget.amount,
       );
     }

@@ -1,3 +1,7 @@
+## 0.2.1
+* Support 2 fiat currencies: USD and IDR
+* Remove VND, we will support VND soon
+
 ## 0.2.0
 
 * Generate data from server side
