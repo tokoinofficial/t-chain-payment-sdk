@@ -276,7 +276,7 @@ class TChainPaymentSDK {
       final url = env.generateQrCodeAPI;
       Map<String, String> headers = {
         "Content-type": "application/json",
-        "public-api-key": apiKey,
+        "x-api-key": apiKey,
       };
 
       String body =
