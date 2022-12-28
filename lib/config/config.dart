@@ -63,7 +63,10 @@ extension TChainPaymentEnvExt on TChainPaymentEnv {
         );
 
       case TChainPaymentEnv.prod:
-        return Uri.https("", "");
+        return Uri.https(
+          "prod.tokoin.io",
+          "/api/t-chain-sdk/generate-qrcode",
+        );
     }
   }
 }

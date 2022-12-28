@@ -1,4 +1,5 @@
-## 0.2.3
+## 1.0.0
+* Can access and interact with a production environment
 * Authenticate using x-api-key 
 
 ## 0.2.2
