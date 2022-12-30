@@ -134,14 +134,6 @@ class TChainPaymentSDK {
     required TChainPaymentCurrency currency,
     required double imageSize,
   }) async {
-    if (env == TChainPaymentEnv.prod) {
-      return TChainPaymentQRResult(
-        status: TChainPaymentStatus.error,
-        notes: notes,
-        errorMessage: 'Coming soon. We have not supported production env yet',
-      );
-    }
-
     if (amount <= 0) {
       return TChainPaymentQRResult(
         status: TChainPaymentStatus.error,
@@ -186,14 +178,6 @@ class TChainPaymentSDK {
     required double amount,
     required TChainPaymentCurrency currency,
   }) async {
-    if (env == TChainPaymentEnv.prod) {
-      return TChainPaymentQRResult(
-        status: TChainPaymentStatus.error,
-        notes: notes,
-        errorMessage: 'Coming soon. We have not supported production env yet',
-      );
-    }
-
     if (amount <= 0) {
       return TChainPaymentResult(
         status: TChainPaymentStatus.error,
@@ -276,7 +260,7 @@ class TChainPaymentSDK {
       final url = env.generateQrCodeAPI;
       Map<String, String> headers = {
         "Content-type": "application/json",
-        "public-api-key": apiKey,
+        "x-api-key": apiKey,
       };
 
       String body =
