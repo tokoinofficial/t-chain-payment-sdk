@@ -14,7 +14,7 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   initial() {
     TChainPaymentSDK.instance.init(
-      apiKey: Constants.devApiKey,
+      apiKey: Constants.apiKey,
       bundleID: Constants.bundleID,
       delegate: _onHandlePaymentResult,
       env: TChainPaymentEnv.dev,
