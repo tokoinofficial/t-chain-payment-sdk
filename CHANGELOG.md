@@ -1,3 +1,6 @@
+## 1.0.1
+* Update endpoint
+
 ## 1.0.0
 * Can access and interact with a production environment
 * Authenticate using x-api-key 
