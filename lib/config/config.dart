@@ -58,13 +58,13 @@ extension TChainPaymentEnvExt on TChainPaymentEnv {
     switch (this) {
       case TChainPaymentEnv.dev:
         return Uri.https(
-          "staging.tokoin.io",
+          "staging-api.tokoin.io",
           "/api/t-chain-sdk/generate-qrcode",
         );
 
       case TChainPaymentEnv.prod:
         return Uri.https(
-          "prod.tokoin.io",
+          "api.tokoin.io",
           "/api/t-chain-sdk/generate-qrcode",
         );
     }
