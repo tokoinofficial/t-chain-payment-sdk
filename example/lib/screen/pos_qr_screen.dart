@@ -48,6 +48,7 @@ class _PosQrScreenState extends State<PosQrScreen> {
               ),
               const SizedBox(height: 12),
               ElevatedButton(
+                key: const Key('btnShowQr'),
                 onPressed: _onShowQrCode,
                 child: const Text('Show QR'),
               ),
