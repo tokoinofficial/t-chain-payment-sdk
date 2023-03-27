@@ -9,6 +9,8 @@ abstract class PaymentState extends Equatable {
 
 class PaymentInitial extends PaymentState {}
 
+class PaymentLoading extends PaymentState {}
+
 class PaymentDepositState extends PaymentState {
   final String notes;
   final double amount;
