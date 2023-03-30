@@ -64,11 +64,16 @@ class PaymentCubit extends Cubit<PaymentState> {
     emit(PaymentInitial());
   }
 
-  deposit({required String notes, required double amount}) async {
+  deposit({
+    required String notes,
+    required double amount,
+    required TChainPaymentCurrency currency,
+  }) async {
+    emit(PaymentLoading());
     final result = await TChainPaymentSDK.instance.deposit(
       notes: notes,
       amount: amount,
-      currency: TChainPaymentCurrency.idr,
+      currency: currency,
     );
 
     emit(PaymentDepositState(
@@ -82,12 +87,14 @@ class PaymentCubit extends Cubit<PaymentState> {
   generateQrCode({
     required String notes,
     required double amount,
+    required TChainPaymentCurrency currency,
     double imageSize = defaultQrImageSize,
   }) async {
+    emit(PaymentLoading());
     final result = await TChainPaymentSDK.instance.generateQrCode(
       notes: notes,
       amount: amount,
-      currency: TChainPaymentCurrency.idr,
+      currency: currency,
       imageSize: imageSize,
     );
 

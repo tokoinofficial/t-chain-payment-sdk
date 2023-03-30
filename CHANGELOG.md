@@ -1,3 +1,6 @@
+## 1.0.2
+* Update example for USD
+
 ## 1.0.1
 * Update endpoint
 

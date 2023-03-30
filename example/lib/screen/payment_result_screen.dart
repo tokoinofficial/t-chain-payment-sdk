@@ -9,11 +9,13 @@ class PaymentResultScreen extends StatefulWidget {
     Key? key,
     required this.notes,
     required this.amount,
+    required this.currency,
     required this.useQRCode,
   }) : super(key: key);
 
   final String notes;
   final double amount;
+  final TChainPaymentCurrency currency;
   final bool useQRCode;
 
   @override
@@ -32,11 +34,13 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
       _paymentCubit.generateQrCode(
         notes: widget.notes,
         amount: widget.amount,
+        currency: widget.currency,
       );
     } else {
       _paymentCubit.deposit(
         notes: widget.notes,
         amount: widget.amount,
+        currency: widget.currency,
       );
     }
   }
@@ -73,6 +77,12 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                 );
               }
 
+              if (state is PaymentLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
               return const Center(
                 child: Text('No Data'),
               );
@@ -91,6 +101,20 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            const Text('Deposit:'),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                '${widget.currency.shortName} ${widget.amount}',
+                textAlign: TextAlign.end,
+              ),
+            ),
+          ],
+        ),
+        const Divider(),
         const SizedBox(height: 16),
         if (qrImage != null) ...[
           Flexible(
