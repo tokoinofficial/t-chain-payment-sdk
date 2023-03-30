@@ -54,22 +54,20 @@ extension TChainPaymentEnvExt on TChainPaymentEnv {
     }
   }
 
-  Uri get generateQrCodeAPI {
+  String get apiUrl {
     switch (this) {
       case TChainPaymentEnv.dev:
-        return Uri.https(
-          "staging-api.tokoin.io",
-          "/api/t-chain-sdk/generate-qrcode",
-        );
+        return "https://staging-api.tokoin.io/api";
 
       case TChainPaymentEnv.prod:
-        return Uri.https(
-          "api.tokoin.io",
-          "/api/t-chain-sdk/generate-qrcode",
-        );
+        return "https://api.tokoin.io/api";
     }
+  }
+
+  Uri get generateQrCodeAPI {
+    return Uri.https('$apiUrl/t-chain-sdk/generate-qrcode');
   }
 }
 
-const int mainnetChainID = 56;
-const int testnetChainID = 97;
+const int kMainnetChainID = 56;
+const int kTestnetChainID = 97;

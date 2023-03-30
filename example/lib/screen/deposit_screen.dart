@@ -14,7 +14,7 @@ class DepositScreen extends StatefulWidget {
 
 class _DepositScreenState extends State<DepositScreen> {
   final TextEditingController _amountController = TextEditingController();
-  TChainPaymentCurrency _currency = TChainPaymentCurrency.usd;
+  Currency _currency = Currency.usd;
 
   @override
   void dispose() {

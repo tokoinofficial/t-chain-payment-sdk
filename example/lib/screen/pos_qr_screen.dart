@@ -14,7 +14,7 @@ class PosQrScreen extends StatefulWidget {
 
 class _PosQrScreenState extends State<PosQrScreen> {
   final TextEditingController _amountController = TextEditingController();
-  TChainPaymentCurrency _currency = TChainPaymentCurrency.usd;
+  Currency _currency = Currency.usd;
 
   @override
   void initState() {

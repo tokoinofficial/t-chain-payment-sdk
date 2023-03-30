@@ -67,7 +67,7 @@ class PaymentCubit extends Cubit<PaymentState> {
   deposit({
     required String notes,
     required double amount,
-    required TChainPaymentCurrency currency,
+    required Currency currency,
   }) async {
     emit(PaymentLoading());
     final result = await TChainPaymentSDK.instance.deposit(
@@ -87,7 +87,7 @@ class PaymentCubit extends Cubit<PaymentState> {
   generateQrCode({
     required String notes,
     required double amount,
-    required TChainPaymentCurrency currency,
+    required Currency currency,
     double imageSize = defaultQrImageSize,
   }) async {
     emit(PaymentLoading());

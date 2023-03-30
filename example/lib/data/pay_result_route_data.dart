@@ -10,6 +10,6 @@ class PayResultRouteData {
 
   final String notes;
   final double amount;
-  final TChainPaymentCurrency currency;
+  final Currency currency;
   final bool useQRCode;
 }
