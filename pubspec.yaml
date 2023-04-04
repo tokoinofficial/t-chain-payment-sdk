@@ -12,6 +12,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   url_launcher: ^6.1.5
   uni_links: ^0.5.1
   qr_flutter: ^4.0.0
@@ -20,6 +23,10 @@ dependencies:
   dio: ^5.1.0
   retrofit: ^4.0.1
   json_annotation: ^4.8.0
+  copy_with_extension: ^5.0.2
+  fluttertoast: ^8.2.1
+  flutter_svg: ^1.1.6
+  
 
 dev_dependencies:
   flutter_test:
@@ -31,6 +38,13 @@ dev_dependencies:
   copy_with_extension_gen: ^5.0.2
   url_launcher_platform_interface: ^2.1.0
   plugin_platform_interface: ^2.1.2
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/
 
 # ref: https://stackoverflow.com/a/37484053/1654338
 false_secrets:

@@ -3,6 +3,7 @@ import 'package:example/cubit/payment/payment_cubit.dart';
 import 'package:example/router/screen_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -52,6 +53,41 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.of(context).pushNamed(ScreenRouter.posQr);
                   },
                   child: const Text('POS QR'),
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  key: const Key('openWithQrCode'),
+                  onPressed: () {
+                    const qrCode =
+                        'TCHAIN.fa19615f226a28a82befd19644281f9a3dafe4cbefbfd7ab4ff5ed995cc7e7ca';
+                    TChainPaymentSDK.instance.openMerchantInputScreen(
+                      context,
+                      qrCode: qrCode,
+                    );
+                  },
+                  child: const Text('Open with QrCode'),
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  key: const Key('openWithMerchantInfo'),
+                  onPressed: () {
+                    final merchantInfo = MerchantInfo(
+                      merchantId: '7b6dd425-a8cf-448c-bf57-d13fc7aba584',
+                      currency: Currency.idr.shortName,
+                      fullname: 'T Chain',
+                      amount: 1,
+                      qrCode:
+                          'TCHAIN.29f5520f929c599412586be97e27b6c226c38365ebd727ac46fdc7a5ef854bf6',
+                      status: 1,
+                      chainId: '56',
+                    );
+
+                    TChainPaymentSDK.instance.openMerchantInputScreen(
+                      context,
+                      merchantInfo: merchantInfo,
+                    );
+                  },
+                  child: const Text('Open with MerchantInfo'),
                 ),
               ],
             ),

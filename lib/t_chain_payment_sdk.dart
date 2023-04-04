@@ -5,14 +5,17 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/currency.dart';
+import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
+import 'package:t_chain_payment_sdk/screens/merchant_input_screen.dart';
 import 'package:t_chain_payment_sdk/services/t_chain_api.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,6 +25,8 @@ export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 export 'package:t_chain_payment_sdk/data/currency.dart';
+export 'package:t_chain_payment_sdk/data/merchant_info.dart';
+export 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 
 /// TChainPaymnentSDK
 /// Helping you communicate with My T-Wallet easily.
@@ -55,7 +60,10 @@ class TChainPaymentSDK {
   bool _initialURILinkHandled = false;
   StreamSubscription? _streamSubscription;
 
+  String get sandboxTitle => isTestnet ? ' - SANDBOX' : '';
+
   int get chainID => isTestnet ? kTestnetChainID : kMainnetChainID;
+  String get chainIdString => '$chainID';
 
   late PaymentRepository _paymentRepository;
 
@@ -147,8 +155,6 @@ class TChainPaymentSDK {
     }
 
     final Uri? uri = await _paymentRepository.generateDeeplink(
-      apiKey: apiKey,
-      env: env,
       action: TChainPaymentAction.deposit,
       notes: notes,
       amount: amount,
@@ -194,8 +200,6 @@ class TChainPaymentSDK {
     }
 
     final Uri? uri = await _paymentRepository.generateDeeplink(
-      apiKey: apiKey,
-      env: env,
       action: action,
       notes: notes,
       amount: amount,
@@ -311,5 +315,28 @@ class TChainPaymentSDK {
         delegate.call(result);
         break;
     }
+  }
+}
+
+extension TChainPaymentSDKWallet on TChainPaymentSDK {
+  openMerchantInputScreen(
+    BuildContext context, {
+    MerchantInfo? merchantInfo,
+    String? qrCode,
+    String? bundleId,
+  }) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => RepositoryProvider.value(
+          value: _paymentRepository,
+          child: MerchantInputScreen(
+            merchantInfo: merchantInfo,
+            qrCode: qrCode,
+            bundleId: bundleId,
+          ),
+        ),
+        fullscreenDialog: true,
+      ),
+    );
   }
 }

@@ -2,13 +2,17 @@ import 'package:json_annotation/json_annotation.dart';
 
 /// Type of fiat currencies that are supported
 enum Currency {
+  /// Indonesian Rupiah
+  @JsonValue('IDR')
+  idr,
+
   /// US Dollar
   @JsonValue('USD')
   usd,
 
-  /// Indonesian Rupiah
-  @JsonValue('IDR')
-  idr,
+  /// Vietnamese Dong
+  @JsonValue('VND')
+  vnd,
 }
 
 extension CurrencyExt on Currency {
@@ -18,6 +22,8 @@ extension CurrencyExt on Currency {
         return 'USD';
       case Currency.idr:
         return 'IDR';
+      case Currency.vnd:
+        return 'VND';
     }
   }
 
@@ -27,16 +33,24 @@ extension CurrencyExt on Currency {
         return 'US Dollar';
       case Currency.idr:
         return 'Indonesian Rupiah';
+      case Currency.vnd:
+        return 'Vietnamese Dong';
     }
   }
 
   String get icon {
     switch (this) {
       case Currency.usd:
-        return 'currency_usd';
+        return 'assets/currency_usd.svg';
       case Currency.idr:
-        return 'currency_idr';
+        return 'assets/currency_idr.svg';
+      case Currency.vnd:
+        return 'assets/currency_vnd.svg';
     }
+  }
+
+  bool get available {
+    return this == Currency.usd || this == Currency.idr;
   }
 }
 

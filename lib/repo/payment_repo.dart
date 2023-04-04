@@ -1,29 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
+import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/data/request_body.dart/gen_qr_code_body.dart';
+import 'package:t_chain_payment_sdk/data/response/data_response.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
 import 'package:t_chain_payment_sdk/services/t_chain_api.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
-abstract class BasePaymentRepository {
-  // Future<MerchantInfo?> getMerchantInfo(String qrString, double amount);
-
-  // Future<Map<String, dynamic>?> getExchangeRate();
-
-  // Future<MerchantTransaction?> createMerchantTransaction(
-  //   String address,
-  //   double amount,
-  //   Currency currency,
-  //   String notes,
-  //   String tokenName,
-  //   String merchantID,
-  //   String chainID,
-  // );
-}
-
-class PaymentRepository extends BasePaymentRepository {
+class PaymentRepository {
   final TChainAPI api;
 
   PaymentRepository({
@@ -33,8 +17,6 @@ class PaymentRepository extends BasePaymentRepository {
   // use bundleID to callback after having transaction result
   // in case generating QR code, let the bundleID be empty
   Future<Uri?> generateDeeplink({
-    required String apiKey,
-    required TChainPaymentEnv env,
     required TChainPaymentAction action,
     required String notes,
     required double amount,
@@ -49,7 +31,10 @@ class PaymentRepository extends BasePaymentRepository {
       chainId: chainId,
     );
     try {
-      final response = await api.generateQrCode(apiKey: apiKey, body: body);
+      final response = await api.generateQrCode(
+        apiKey: TChainPaymentSDK.instance.apiKey,
+        body: body,
+      );
 
       final qrCode = response.result?.qrCode;
       if (qrCode == null) return null;
@@ -63,7 +48,7 @@ class PaymentRepository extends BasePaymentRepository {
       }
 
       final Uri uri = Uri(
-        scheme: env.scheme,
+        scheme: TChainPaymentSDK.instance.env.scheme,
         host: 'app',
         path: action.path,
         queryParameters: params,
@@ -77,25 +62,37 @@ class PaymentRepository extends BasePaymentRepository {
     return null;
   }
 
-  // @override
-  // Future<Map<String, dynamic>?> getExchangeRate() async {
-  //   ApiResponse response = await handleResponse(api.getExchangeRate());
-  //   if (!response.success) return null;
+  Future<DataResponse<MerchantInfo>?> getMerchantInfo({
+    required String qrCode,
+    double? amount,
+  }) async {
+    try {
+      final response = await api.getMerchantInfo(
+        apiKey: TChainPaymentSDK.instance.apiKey,
+        qrCode: qrCode,
+        amount: amount,
+      );
 
-  //   return response.data as Map<String, dynamic>?;
-  // }
+      return response;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
 
-  // @override
-  // Future<MerchantInfo?> getMerchantInfo(String qrString, double? amount) async {
-  //   ApiResponse response =
-  //       await handleResponse(api.getMerchantInfo(qrString, amount));
-  //   if (!response.success) return null;
+    return null;
+  }
 
-  //   final data = response.data as Map<String, dynamic>?;
-  //   if (data == null) return null;
+  Future<DataResponse<Map>?> getExchangeRate() async {
+    try {
+      final response = await api.getExchangeRate(
+        apiKey: TChainPaymentSDK.instance.apiKey,
+      );
+      return response;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
 
-  //   return MerchantInfo.fromMap(data);
-  // }
+    return null;
+  }
 
   // @override
   // Future<MerchantTransaction?> createMerchantTransaction(

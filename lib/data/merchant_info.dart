@@ -1,8 +1,10 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 
 part 'merchant_info.g.dart';
 
+@CopyWith(copyWithNull: true)
 @JsonSerializable()
 class MerchantInfo {
   MerchantInfo({
