@@ -1,5 +1,11 @@
 {
     "invalid_code": "Invalid code",
+    "something_went_wrong_please_try_later": "Something went wrong, please try later",
+    "you_are_not_enough_bnb": "You do not have enough BNB to perform this transaction",
+    "the_selected_wallet_supports_eth_network_please_select_another_one": "The selected wallet supports ETH network only, please select a wallet supporting BNB Smart Chain network to use the feature.",
+    "done": "Done",
+    "retry": "Retry",
+    "edit": "Edit",
     "days": "days",
     "hours": "hours",
     "minutes": "minutes",

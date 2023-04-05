@@ -79,7 +79,7 @@ class _TChainAPI implements TChainAPI {
   }
 
   @override
-  Future<DataResponse<Map<dynamic, dynamic>>> getExchangeRate(
+  Future<DataResponse<Map<String, dynamic>>> getExchangeRate(
       {required apiKey}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -87,7 +87,7 @@ class _TChainAPI implements TChainAPI {
     _headers.removeWhere((k, v) => v == null);
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<DataResponse<Map<dynamic, dynamic>>>(Options(
+        _setStreamType<DataResponse<Map<String, dynamic>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -99,12 +99,12 @@ class _TChainAPI implements TChainAPI {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = DataResponse<Map<dynamic, dynamic>>.fromJson(_result.data!);
+    final value = DataResponse<Map<String, dynamic>>.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<DataResponse<MerchantInfo>> createMerchantTransaction({
+  Future<DataResponse<MerchantTransaction>> createMerchantTransaction({
     required apiKey,
     required body,
   }) async {
@@ -115,7 +115,7 @@ class _TChainAPI implements TChainAPI {
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<DataResponse<MerchantInfo>>(Options(
+        _setStreamType<DataResponse<MerchantTransaction>>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -127,7 +127,7 @@ class _TChainAPI implements TChainAPI {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = DataResponse<MerchantInfo>.fromJson(_result.data!);
+    final value = DataResponse<MerchantTransaction>.fromJson(_result.data!);
     return value;
   }
 

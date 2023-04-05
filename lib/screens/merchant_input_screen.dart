@@ -4,14 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:t_chain_payment_sdk/bloc/payment_info_cubit.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
-import 'package:t_chain_payment_sdk/data/currency.dart';
-import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
 import 'package:t_chain_payment_sdk/helpers/deep_link_service.dart';
-import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:t_chain_payment_sdk/widgets/app_bar_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/button_widget.dart';
 import 'package:t_chain_payment_sdk/widgets/currency_selection_widget.dart';
 import 'package:t_chain_payment_sdk/widgets/gaps.dart';
 import 'package:t_chain_payment_sdk/widgets/ui_style.dart';
@@ -325,13 +322,11 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
       currency: _paymentInfo!.currency.toCurrency().shortName,
     );
 
-    // Navigator.of(context).pushNamed(
-    //   ScreenRouter.PAYMENT_DEPOSIT,
-    //   arguments: {
-    //     ScreenRouter.ARG_MERCHANT_INFO: _paymentInfo,
-    //     ScreenRouter.ARG_BUNDLE_ID: widget.bundleID,
-    //   },
-    // );
+    TChainPaymentSDK.instance.openDepositScreen(
+      context,
+      merchantInfo: _paymentInfo!,
+      bundleId: widget.bundleId,
+    );
   }
 
   Future<bool> _onWillPop() async {

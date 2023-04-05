@@ -8,6 +8,24 @@ class TChainPaymentLocalizationsEn extends TChainPaymentLocalizations {
   String get invalid_code => 'Invalid code';
 
   @override
+  String get something_went_wrong_please_try_later => 'Something went wrong, please try later';
+
+  @override
+  String get you_are_not_enough_bnb => 'You do not have enough BNB to perform this transaction';
+
+  @override
+  String get the_selected_wallet_supports_eth_network_please_select_another_one => 'The selected wallet supports ETH network only, please select a wallet supporting BNB Smart Chain network to use the feature.';
+
+  @override
+  String get done => 'Done';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
   String get days => 'days';
 
   @override

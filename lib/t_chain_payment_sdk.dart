@@ -1,6 +1,7 @@
 library t_chain_payment_sdk;
 
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,10 @@ import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
+import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/screens/merchant_input_screen.dart';
+import 'package:t_chain_payment_sdk/screens/payment_deposit_screen.dart';
+import 'package:t_chain_payment_sdk/services/blockchain_service.dart';
 import 'package:t_chain_payment_sdk/services/t_chain_api.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -66,6 +70,7 @@ class TChainPaymentSDK {
   String get chainIdString => '$chainID';
 
   late PaymentRepository _paymentRepository;
+  late WalletRepository _walletRepository;
 
   /// Initialize payment sdk
   init({
@@ -83,6 +88,9 @@ class TChainPaymentSDK {
 
     final api = TChainAPI.standard(env.apiUrl);
     _paymentRepository = PaymentRepository(api: api);
+    final blockchainService = BlockchainService();
+    _walletRepository = WalletRepository(blockchainService: blockchainService);
+    Config.setEnvironment(env);
 
     _initURIHandler();
     _incomingLinkHandler();
@@ -327,8 +335,11 @@ extension TChainPaymentSDKWallet on TChainPaymentSDK {
   }) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => RepositoryProvider.value(
-          value: _paymentRepository,
+        builder: (BuildContext context) => MultiRepositoryProvider(
+          providers: [
+            RepositoryProvider.value(value: _paymentRepository),
+            RepositoryProvider.value(value: _walletRepository),
+          ],
           child: MerchantInputScreen(
             merchantInfo: merchantInfo,
             qrCode: qrCode,
@@ -336,6 +347,27 @@ extension TChainPaymentSDKWallet on TChainPaymentSDK {
           ),
         ),
         fullscreenDialog: true,
+      ),
+    );
+  }
+
+  openDepositScreen(
+    BuildContext context, {
+    required MerchantInfo merchantInfo,
+    String? bundleId,
+  }) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => MultiRepositoryProvider(
+          providers: [
+            RepositoryProvider.value(value: _paymentRepository),
+            RepositoryProvider.value(value: _walletRepository),
+          ],
+          child: PaymentDepositScreen(
+            merchantInfo: merchantInfo,
+            bundleId: bundleId,
+          ),
+        ),
       ),
     );
   }

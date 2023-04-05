@@ -232,7 +232,6 @@ extension ThemeExt on ThemeData {
   }) {
     final useDarkMode = darkName != null && brightness == Brightness.dark;
     String path = (useDarkMode ? darkName : name) ?? name;
-    // path = 'packages/t_chain_payment_sdk/$path';
 
     if (path.endsWith('svg')) {
       return SvgPicture.asset(

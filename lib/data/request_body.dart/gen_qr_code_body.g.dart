@@ -23,6 +23,7 @@ Map<String, dynamic> _$GenQrCodeBodyToJson(GenQrCodeBody instance) =>
     };
 
 const _$CurrencyEnumMap = {
-  Currency.usd: 'USD',
   Currency.idr: 'IDR',
+  Currency.usd: 'USD',
+  Currency.vnd: 'VND',
 };

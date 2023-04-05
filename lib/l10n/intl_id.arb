@@ -1,5 +1,11 @@
 {
     "invalid_code": "Kode tidak valid",
+    "something_went_wrong_please_try_later": "Ada sesuatu yang tidak beres, silakan coba lagi nanti",
+    "you_are_not_enough_bnb": "BNB Anda tidak cukup untuk mengirim transaksi",
+    "the_selected_wallet_supports_eth_network_please_select_another_one": "Dompet yang dipilih hanya mendukung jaringan ETH, silakan pilih dompet yang mendukung jaringan BNB Smart Chain untuk menggunakan fitur ini.",
+    "done": "Selesai",
+    "retry": "Coba Kembali",
+    "edit": "Edit",
     "days": "days",
     "hours": "hours",
     "minutes": "minutes",
@@ -71,6 +77,5 @@
     "select_token": "Select Token",
     "insufficient_balance_to_use_token": "Insufficient balance to use this token for transfer",
     "invalid_exchange_rate": "Invalid exchange rate",
-    "coming_soon": "Segera Hadir"
-  
+    "coming_soon": "Segera Hadir" 
 }

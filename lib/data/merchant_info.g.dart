@@ -25,7 +25,7 @@ abstract class _$MerchantInfoCWProxy {
 
   MerchantInfo notes(String? notes);
 
-  MerchantInfo chainId(String chainId);
+  MerchantInfo chainId(String? chainId);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `MerchantInfo(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -82,7 +82,7 @@ class _$MerchantInfoCWProxyImpl implements _$MerchantInfoCWProxy {
   MerchantInfo notes(String? notes) => this(notes: notes);
 
   @override
-  MerchantInfo chainId(String chainId) => this(chainId: chainId);
+  MerchantInfo chainId(String? chainId) => this(chainId: chainId);
 
   @override
 
@@ -142,10 +142,10 @@ class _$MerchantInfoCWProxyImpl implements _$MerchantInfoCWProxy {
           ? _value.notes
           // ignore: cast_nullable_to_non_nullable
           : notes as String?,
-      chainId: chainId == const $CopyWithPlaceholder() || chainId == null
+      chainId: chainId == const $CopyWithPlaceholder()
           ? _value.chainId
           // ignore: cast_nullable_to_non_nullable
-          : chainId as String,
+          : chainId as String?,
     );
   }
 }
@@ -166,6 +166,7 @@ extension $MerchantInfoCopyWith on MerchantInfo {
     bool amount = false,
     bool expiredTime = false,
     bool notes = false,
+    bool chainId = false,
   }) {
     return MerchantInfo(
       id: id == true ? null : this.id,
@@ -177,7 +178,7 @@ extension $MerchantInfoCopyWith on MerchantInfo {
       qrCode: qrCode,
       status: status,
       notes: notes == true ? null : this.notes,
-      chainId: chainId,
+      chainId: chainId == true ? null : this.chainId,
     );
   }
 }
@@ -196,7 +197,7 @@ MerchantInfo _$MerchantInfoFromJson(Map<String, dynamic> json) => MerchantInfo(
       qrCode: json['qr_code'] as String,
       status: json['status'] as int,
       notes: json['notes'] as String?,
-      chainId: json['chain_id'] as String? ?? '$kTestnetChainID',
+      chainId: json['chain_id'] as String?,
     );
 
 Map<String, dynamic> _$MerchantInfoToJson(MerchantInfo instance) =>

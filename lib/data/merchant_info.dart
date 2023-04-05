@@ -1,6 +1,5 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:t_chain_payment_sdk/config/config.dart';
 
 part 'merchant_info.g.dart';
 
@@ -17,7 +16,7 @@ class MerchantInfo {
     required this.qrCode,
     required this.status,
     this.notes,
-    this.chainId = '$kTestnetChainID',
+    this.chainId,
   });
 
   final String? id;
@@ -41,7 +40,7 @@ class MerchantInfo {
   final String? notes;
 
   @JsonKey(name: 'chain_id')
-  final String chainId;
+  final String? chainId;
 
   bool get isDynamic => amount == null || amount! <= 0;
 

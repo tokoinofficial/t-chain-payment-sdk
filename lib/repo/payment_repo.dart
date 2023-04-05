@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/merchant_info.dart';
+import 'package:t_chain_payment_sdk/data/merchant_transaction.dart';
+import 'package:t_chain_payment_sdk/data/request_body.dart/create_transaction_body.dart';
 import 'package:t_chain_payment_sdk/data/request_body.dart/gen_qr_code_body.dart';
 import 'package:t_chain_payment_sdk/data/response/data_response.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
@@ -81,7 +83,7 @@ class PaymentRepository {
     return null;
   }
 
-  Future<DataResponse<Map>?> getExchangeRate() async {
+  Future<DataResponse<Map<String, dynamic>>?> getExchangeRate() async {
     try {
       final response = await api.getExchangeRate(
         apiKey: TChainPaymentSDK.instance.apiKey,
@@ -94,30 +96,35 @@ class PaymentRepository {
     return null;
   }
 
-  // @override
-  // Future<MerchantTransaction?> createMerchantTransaction(
-  //   String address,
-  //   double amount,
-  //   Currency currency,
-  //   String notes,
-  //   String tokenName,
-  //   String merchantID,
-  //   String chainID,
-  // ) async {
-  //   ApiResponse response = await handleResponse(api.createMerchantTransaction(
-  //     address,
-  //     amount,
-  //     currency,
-  //     notes,
-  //     tokenName.toLowerCase(),
-  //     merchantID,
-  //     chainID,
-  //   ));
-  //   if (!response.success) return null;
+  Future<MerchantTransaction?> createMerchantTransaction(
+    String address,
+    double amount,
+    Currency currency,
+    String notes,
+    String tokenName,
+    String merchantId,
+    String chainId,
+  ) async {
+    try {
+      final body = CreateTransactionBody(
+        walletAddress: address,
+        merchantId: merchantId,
+        amount: amount,
+        currency: currency.shortName,
+        tokenName: tokenName,
+        chainId: chainId,
+        notes: notes,
+      );
+      final response = await api.createMerchantTransaction(
+        apiKey: TChainPaymentSDK.instance.apiKey,
+        body: body,
+      );
 
-  //   final data = response.data as Map<String, dynamic>?;
-  //   if (data == null) return null;
+      return response.result;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
 
-  //   return MerchantTransaction.fromMap(data);
-  // }
+    return null;
+  }
 }

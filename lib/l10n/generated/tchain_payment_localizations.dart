@@ -99,6 +99,42 @@ abstract class TChainPaymentLocalizations {
   /// **'Invalid code'**
   String get invalid_code;
 
+  /// No description provided for @something_went_wrong_please_try_later.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong, please try later'**
+  String get something_went_wrong_please_try_later;
+
+  /// No description provided for @you_are_not_enough_bnb.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have enough BNB to perform this transaction'**
+  String get you_are_not_enough_bnb;
+
+  /// No description provided for @the_selected_wallet_supports_eth_network_please_select_another_one.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected wallet supports ETH network only, please select a wallet supporting BNB Smart Chain network to use the feature.'**
+  String get the_selected_wallet_supports_eth_network_please_select_another_one;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
   /// No description provided for @days.
   ///
   /// In en, this message translates to:

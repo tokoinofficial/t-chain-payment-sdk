@@ -8,6 +8,24 @@ class TChainPaymentLocalizationsId extends TChainPaymentLocalizations {
   String get invalid_code => 'Kode tidak valid';
 
   @override
+  String get something_went_wrong_please_try_later => 'Ada sesuatu yang tidak beres, silakan coba lagi nanti';
+
+  @override
+  String get you_are_not_enough_bnb => 'BNB Anda tidak cukup untuk mengirim transaksi';
+
+  @override
+  String get the_selected_wallet_supports_eth_network_please_select_another_one => 'Dompet yang dipilih hanya mendukung jaringan ETH, silakan pilih dompet yang mendukung jaringan BNB Smart Chain untuk menggunakan fitur ini.';
+
+  @override
+  String get done => 'Selesai';
+
+  @override
+  String get retry => 'Coba Kembali';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
   String get days => 'days';
 
   @override
