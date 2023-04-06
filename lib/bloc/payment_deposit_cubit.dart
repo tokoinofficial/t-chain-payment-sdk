@@ -376,31 +376,12 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
     return TChainPaymentSDK.instance.account.getAsset(
       name: CONST.kAssetNameTOKO,
     )!;
-    // TODO
-    // final tokoAsset = walletRepository.currentAsset(CONST.ASSET_ID_TOKO);
-
-    // if (tokoAsset == null) {
-    //   throw Exception(
-    //       LocaleKeys.error_something_went_wrong_please_try_later.tr());
-    // }
-
-    // return tokoAsset;
   }
 
   Asset _getSwappingAsset() {
     return TChainPaymentSDK.instance.account.getAsset(
       name: CONST.kAssetNameUSDT,
     )!;
-
-    // TODO
-    // final swappingAsset = walletRepository.currentAsset(CONST.ASSET_ID_USDT);
-
-    // if (swappingAsset == null) {
-    //   throw Exception(
-    //       LocaleKeys.error_something_went_wrong_please_try_later.tr());
-    // }
-
-    // return swappingAsset;
   }
 
   bool _isEnoughBnb() {

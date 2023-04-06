@@ -11,13 +11,14 @@ import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/gas_fee.dart';
 import 'package:t_chain_payment_sdk/data/payment_discount_fee.dart';
 import 'package:t_chain_payment_sdk/services/blockchain_service.dart';
+import 'package:t_chain_payment_sdk/services/gas_station_api.dart';
 import 'package:t_chain_payment_sdk/smc/bep_20_smc.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
-import 'package:uuid/uuid.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart' as web3dart;
 
 class WalletRepository {
+  final gasStationAPI = GasStationAPI();
   final BlockchainService blockchainService;
   web3dart.Web3Client? _web3Client;
   final Map<String, Bep20Smc> _bep20SmcMap = {};
@@ -114,29 +115,6 @@ class WalletRepository {
     // );
   }
 
-  /*
-    Get gas fees based on wallet type
-  */
-
-  static const k_BSC_GAS_STATION = 'k_BSC_GAS_STATION';
-  static const k_BSC_STORED_TIME = 'k_BSC_STORED_TIME';
-
-  _isNeedToCallBscGasStation() {
-    // TODO
-    // var timeInCache = Storage.instance.getInt(k_BSC_STORED_TIME);
-    // var dat = Storage.instance.getString(k_BSC_GAS_STATION);
-
-    // if (timeInCache > 0 &&
-    //     timeInCache + kFIFTEEN_SECONDS >
-    //         Utils.instance.currentTimeInSeconds()) {
-    //   if (!Utils.instance.isEmptyString(dat)) {
-    //     return false;
-    //   }
-    // }
-
-    // return true;
-  }
-
   Future<bool> isEnoughBnb(
     Asset asset,
     num amount,
@@ -176,34 +154,23 @@ class WalletRepository {
   }
 
   Future<List<GasFee>> getBSCGasFees() async {
-    return [GasFeeAverage(10, 100000)];
     /*
     The current minimum gas price is 15 Gwei.
     Since the latest adjustment of gas price, BNB price has doubled.
     The proposed minimum gas price is 10 Gwei.
      */
-    // TODO
-    // const MINIMUM_GAS_PRICE_IN_BSC = 10;
-    // var map;
-    // if (_isNeedToCallBscGasStation()) {
-    //   var response = await gasStationAPI.bscGas();
-    //   map = response.data;
+    const minimumGasPriceInBsc = 10;
 
-    //   await Storage.instance.saveString(k_BSC_GAS_STATION, json.encode(map));
-    //   await Storage.instance
-    //       .saveInt(k_BSC_STORED_TIME, Utils.instance.currentTimeInSeconds());
-    // } else {
-    //   var dat = Storage.instance.getString(k_BSC_GAS_STATION);
-    //   map = json.decode(dat);
-    // }
+    var response = await gasStationAPI.getBscGas();
+    var map = response.data;
 
-    // int gasPrice = GasFee.parseBscGasPrice(map['result'] ?? 0);
-    // if (gasPrice < MINIMUM_GAS_PRICE_IN_BSC) {
-    //   gasPrice = MINIMUM_GAS_PRICE_IN_BSC;
-    // }
-    // GasFee gasFee = GasFeeAverage(gasPrice, DEFAULT_BSC_WAIT_MINUTES);
+    int gasPrice = GasFee.parseBscGasPrice(map['result'] ?? 0);
+    if (gasPrice < minimumGasPriceInBsc) {
+      gasPrice = minimumGasPriceInBsc;
+    }
+    GasFee gasFee = GasFeeAverage(gasPrice, DEFAULT_BSC_WAIT_MINUTES);
 
-    // return [gasFee];
+    return [gasFee];
   }
 
   Future<web3dart.Transaction> buildTransferTransaction(

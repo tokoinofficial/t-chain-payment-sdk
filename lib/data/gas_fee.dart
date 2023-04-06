@@ -1,3 +1,5 @@
+import 'package:t_chain_payment_sdk/services/gas_station_api.dart';
+
 const GWEI_UNIT_PER_ETHER = 1000000000.0;
 const SATOSHI_UNIT_PER_BTC = 1000000000;
 const MAX_ETH_DECIMAL = 6;
@@ -51,40 +53,38 @@ abstract class GasFee {
   GasFee(this.fee, this.waitInMin);
 
   toGwei() {
-    return this.fee;
+    return fee;
   }
 
   toEthString(num estimatedGas) =>
       _removeDecimalZeroFormat(toEth(estimatedGas));
 
   toEth(num estimatedGas) =>
-      this.fee.toDouble() * estimatedGas / GWEI_UNIT_PER_ETHER;
+      fee.toDouble() * estimatedGas / GWEI_UNIT_PER_ETHER;
 
-  toBTC() => this.fee / SATOSHI_UNIT_PER_BTC;
+  toBTC() => fee / SATOSHI_UNIT_PER_BTC;
 
   getWaitInMin() => waitInMin.ceil();
 
-  // getFeeValue(Wallet wallet, {double multiplier = 1}) {
-  //   String fee = wallet.isBTC
-  //       ? (toBTC() * multiplier).toString()
-  //       : _removeDecimalZeroFormat(toEth(estimatedGas) * multiplier);
-  //   return '$fee ${wallet.feeUnit()}';
-  // }
+  getFeeValue({double multiplier = 1}) {
+    String fee = _removeDecimalZeroFormat(toEth(estimatedGas) * multiplier);
+    return fee;
+  }
 
-  // static int parseBscGasPrice(String hex) {
-  //   try {
-  //     return int.parse(hex.substring(2), radix: 16) ~/ GasStationAPI.GweiToWei;
-  //   } catch (e) {
-  //     Utils.instance.logError(exception: e);
-  //     return DEFAULT_BSC_GAS_PRICE_GWEI;
-  //   }
-  // }
+  static int parseBscGasPrice(String hex) {
+    try {
+      return int.parse(hex.substring(2), radix: 16) ~/ GasStationAPI.kGweiToWei;
+    } catch (e) {
+      return DEFAULT_BSC_GAS_PRICE_GWEI;
+    }
+  }
 
   static getGasFee(List<GasFee>? gasFees) {
-    if (gasFees != null && gasFees.isNotEmpty)
+    if (gasFees != null && gasFees.isNotEmpty) {
       return (gasFees.length > Wait.Average.index)
           ? gasFees[Wait.Average.index]
           : gasFees.first;
+    }
     return null;
   }
 }

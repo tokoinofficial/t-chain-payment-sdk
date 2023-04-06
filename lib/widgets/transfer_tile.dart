@@ -162,13 +162,10 @@ class TransferTile extends StatelessWidget {
       multiplier = 2; // once for swapping and once for payment
     }
 
-    const value = '1';
-    // TODO
-    // final value = transferData.gasFee?.getFeeValue(
-    //       transferData.asset.wallet!,
-    //       multiplier: multiplier,
-    //     ) ??
-    //     '';
+    final value = transferData.gasFee?.getFeeValue(
+          multiplier: multiplier,
+        ) ??
+        '';
     return _buildInfo(
         title: TChainPaymentLocalizations.of(context)!.transaction_fee,
         value: value,
