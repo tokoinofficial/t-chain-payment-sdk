@@ -73,7 +73,7 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
         appBar: AppBarWidget(
           title: TChainPaymentLocalizations.of(context)!.enter_transfer_amount,
         ),
-        backgroundColor: oldThemeColors.bg,
+        backgroundColor: themeColors.mainBgPrimary,
         resizeToAvoidBottomInset: true,
         body: BlocConsumer<PaymentInfoCubit, PaymentInfoState>(
           bloc: _paymentInfoCubit,

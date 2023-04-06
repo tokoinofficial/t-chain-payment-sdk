@@ -40,6 +40,7 @@ class $LibSmcAbisGen {
 class Assets {
   Assets._();
 
+  static const String amount = 'assets/amount.svg';
   static const String balanceWarning = 'assets/balance_warning.svg';
   static const String checkboxOff = 'assets/checkbox_off.svg';
   static const String checkboxOn = 'assets/checkbox_on.svg';
@@ -48,17 +49,10 @@ class Assets {
   static const String currencyUsd = 'assets/currency_usd.svg';
   static const String currencyVnd = 'assets/currency_vnd.svg';
   static const String merchant = 'assets/merchant.svg';
-  static const String paymentAmount = 'assets/payment_amount.svg';
-  static const String paymentAmountDark = 'assets/payment_amount_dark.svg';
+  static const String notes = 'assets/notes.svg';
   static const String paymentCompleted = 'assets/payment_completed.svg';
   static const String paymentFailed = 'assets/payment_failed.svg';
-  static const String paymentNotes = 'assets/payment_notes.svg';
-  static const String paymentNotesDark = 'assets/payment_notes_dark.svg';
   static const String paymentProceeding = 'assets/payment_proceeding.svg';
-  static const AssetGenImage paymentServiceFee =
-      AssetGenImage('assets/payment_service_fee.png');
-  static const String paymentStore = 'assets/payment_store.svg';
-  static const String paymentStoreDark = 'assets/payment_store_dark.svg';
   static const String refreshCircle = 'assets/refresh_circle.svg';
   static const String tokenBnb = 'assets/token_bnb.svg';
   static const String tokenBusd = 'assets/token_busd.svg';
@@ -68,7 +62,8 @@ class Assets {
   static const $LibGen lib = $LibGen();
 
   /// List of all assets
-  List<dynamic> get values => [
+  List<String> get values => [
+        amount,
         balanceWarning,
         checkboxOff,
         checkboxOn,
@@ -77,16 +72,10 @@ class Assets {
         currencyUsd,
         currencyVnd,
         merchant,
-        paymentAmount,
-        paymentAmountDark,
+        notes,
         paymentCompleted,
         paymentFailed,
-        paymentNotes,
-        paymentNotesDark,
         paymentProceeding,
-        paymentServiceFee,
-        paymentStore,
-        paymentStoreDark,
         refreshCircle,
         tokenBnb,
         tokenBusd,

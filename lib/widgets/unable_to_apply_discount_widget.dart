@@ -4,6 +4,7 @@ import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/data/transfer_data.dart';
 import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
+import 'package:t_chain_payment_sdk/widgets/gaps.dart';
 import 'package:t_chain_payment_sdk/widgets/ui_style.dart';
 
 class UnableToApplyDiscountWidget extends StatelessWidget with UIStyle {
@@ -16,7 +17,7 @@ class UnableToApplyDiscountWidget extends StatelessWidget with UIStyle {
           context: context,
           isScrollControlled: true,
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
           builder: (BuildContext popupContext) {
             return UnableToApplyDiscountWidget(
@@ -57,7 +58,7 @@ class UnableToApplyDiscountWidget extends StatelessWidget with UIStyle {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              Gaps.px16,
               Text(
                 TChainPaymentLocalizations.of(context)!
                     .unable_to_apply_discount_desc(
@@ -70,7 +71,7 @@ class UnableToApplyDiscountWidget extends StatelessWidget with UIStyle {
                   color: themeColors.textPrimary,
                 ),
               ),
-              const SizedBox(height: 16),
+              Gaps.px16,
               buildElevatedButton(
                 context,
                 title: TChainPaymentLocalizations.of(context)!.close,

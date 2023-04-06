@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/widgets/chain_tag_widget.dart';
+import 'package:t_chain_payment_sdk/widgets/gaps.dart';
 
 class CryptoWidget extends StatelessWidget {
   final Asset asset;
@@ -29,7 +31,7 @@ class CryptoWidget extends StatelessWidget {
         children: [
           Theme.of(context)
               .getPicture(asset.iconName, width: iconSize, fit: BoxFit.fill),
-          SizedBox(width: fullNameStyle ? 15 : 5),
+          Gaps.px8,
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,17 +39,17 @@ class CryptoWidget extends StatelessWidget {
               Text(
                 fullNameStyle ? '$fullName ($shortName)' : shortName,
                 style: nameTextStyle ??
-                    TextStyle(
-                      color: oldThemeColors.text1,
-                      fontSize: 16,
+                    TextStyles.headline.copyWith(
+                      color: themeColors.textPrimary,
                     ),
               ),
+              Gaps.px4,
               const ChainTagWidget(),
             ],
           ),
           hasArrow
               ? Icon(Icons.arrow_drop_down,
-                  color: oldThemeColors.text9, size: 30)
+                  color: themeColors.separator, size: 30)
               : Container()
         ],
       ),

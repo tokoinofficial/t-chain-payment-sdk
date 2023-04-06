@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
+import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/config/utils.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
@@ -10,6 +11,7 @@ import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
 import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/widgets/crypto_widget.dart';
+import 'package:t_chain_payment_sdk/widgets/gaps.dart';
 import 'package:t_chain_payment_sdk/widgets/unable_to_apply_discount_widget.dart';
 
 class TransferTile extends StatelessWidget {
@@ -72,14 +74,14 @@ class TransferTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
         color: enable && isSelected
-            ? oldThemeColors.primary1.withOpacity(0.2)
-            : oldThemeColors.bg1,
+            ? themeColors.infoMain08
+            : themeColors.fillBgWhite,
         border: Border.all(
           color: enable && isSelected
-              ? oldThemeColors.primary2
-              : oldThemeColors.bg4,
+              ? Colors.transparent
+              : themeColors.fillBgSecondary,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Material(
         color: Colors.transparent,
@@ -93,20 +95,20 @@ class TransferTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildAssetInfo(),
-              const SizedBox(height: 12),
+              Gaps.px12,
               _buildBnbTransactionFee(context),
-              const SizedBox(height: 12),
+              Gaps.px6,
               if (isSelected && useToko && transferData.asset.isNotToko) ...[
                 _buildPayWithTokoin(context),
-                const SizedBox(height: 12),
+                Gaps.px6,
               ],
               _buildServiceFee(context),
               if (isSelected && useToko && transferData.asset.isNotToko) ...[
                 _buildAppliedDiscount(context),
               ],
-              const SizedBox(height: 12),
+              Gaps.px6,
               _buildExchangeRate(context),
-              const SizedBox(height: 12),
+              Gaps.px12,
               if (isSelected) _buildDiscountSelection(context),
               _buildTransferAmount(context),
             ],
@@ -118,28 +120,31 @@ class TransferTile extends StatelessWidget {
 
   Widget _buildAssetInfo() {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+      padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
       child: Row(
         children: [
           Expanded(
             child: CryptoWidget(
               transferData.asset,
-              iconSize: 36,
-              nameTextStyle: TextStyle(
-                  color: oldThemeColors.primary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700),
+              iconSize: 56,
+              nameTextStyle: TextStyles.headline.copyWith(
+                color: themeColors.textPrimary,
+              ),
             ),
           ),
           Transform.scale(
-            scale: 1.5,
+            scale: 1.6,
             child: Radio(
               fillColor: MaterialStateProperty.resolveWith((states) {
                 if (states.contains(MaterialState.disabled)) {
-                  return oldThemeColors.primary.withOpacity(0.2);
+                  return themeColors.textQuarternary;
                 }
 
-                return oldThemeColors.primary;
+                if (states.contains(MaterialState.selected)) {
+                  return themeColors.primaryBlue;
+                }
+
+                return themeColors.textSecondary;
               }),
               value: transferData.asset,
               groupValue: selectedAsset,
@@ -168,9 +173,10 @@ class TransferTile extends StatelessWidget {
         ) ??
         '';
     return _buildInfo(
-        title: TChainPaymentLocalizations.of(context)!.transaction_fee,
-        value: value,
-        showLoading: value == '');
+      title: TChainPaymentLocalizations.of(context)!.transaction_fee,
+      value: value,
+      showLoading: value == '',
+    );
   }
 
   Widget _buildPayWithTokoin(BuildContext context) {
@@ -218,8 +224,9 @@ class TransferTile extends StatelessWidget {
   }
 
   Widget _buildTransferAmount(BuildContext context) {
-    final valueColor =
-        enable && isSelected ? Colors.white : oldThemeColors.statusSuccess4;
+    final valueColor = enable && isSelected
+        ? themeColors.textPrimary
+        : themeColors.successDark;
     final value = transferData.transferAmount == null
         ? ''
         : '${TokoinNumber.fromNumber(transferData.transferAmount!).getFormalizedString()} ';
@@ -228,15 +235,17 @@ class TransferTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: enable && isSelected
-            ? oldThemeColors.primary
-            : oldThemeColors.statusWarning2.withOpacity(0.4),
+        color: isTokenEnough != true
+            ? themeColors.errorMain08
+            : (enable && isSelected
+                ? themeColors.successMain88
+                : themeColors.successMain08),
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(16),
-          bottomRight: Radius.circular(16),
+          bottomLeft: Radius.circular(8),
+          bottomRight: Radius.circular(8),
         ),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.only(top: 16, bottom: 8),
       child: Column(
         children: [
           _buildInfo(
@@ -248,7 +257,7 @@ class TransferTile extends StatelessWidget {
                     value,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: themeTextStyles.body6.copyWith(
+                    style: TextStyles.headline.copyWith(
                       color: valueColor,
                     ),
                   ),
@@ -256,17 +265,17 @@ class TransferTile extends StatelessWidget {
                 Text(
                   unit,
                   maxLines: 1,
-                  style: themeTextStyles.body6.copyWith(
+                  style: TextStyles.subhead2.copyWith(
                     color: valueColor,
                   ),
                 ),
               ],
             ),
-            titleColor: enable && isSelected ? Colors.white : null,
+            titleColor: enable && isSelected ? themeColors.textPrimary : null,
             valueColor: valueColor,
             showLoading: value == '',
           ),
-          _buildWarning(context),
+          if (isTokenEnough != true) _buildWarning(context) else Gaps.px8,
         ],
       ),
     );
@@ -283,21 +292,22 @@ class TransferTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
+            flex: 4,
             child: Text(
               '$title:',
-              style: themeTextStyles.body1.copyWith(
-                color: titleColor ?? oldThemeColors.text10,
+              style: TextStyles.footnote.copyWith(
+                color: titleColor ?? themeColors.textSecondary,
               ),
             ),
           ),
           Expanded(
+            flex: 6,
             child: ColoredBox(
-              color: !showLoading
-                  ? Colors.transparent
-                  : oldThemeColors.bg5.withOpacity(0.3),
+              color:
+                  !showLoading ? Colors.transparent : themeColors.textTertiary,
               child: Shimmer(
                 enabled: showLoading,
                 child: valueWidget ??
@@ -308,8 +318,8 @@ class TransferTile extends StatelessWidget {
                             maxLines: 1,
                             minFontSize: 10,
                             overflow: TextOverflow.ellipsis,
-                            style: themeTextStyles.body6.copyWith(
-                              color: valueColor ?? oldThemeColors.text11,
+                            style: TextStyles.subhead2.copyWith(
+                              color: valueColor ?? themeColors.textPrimary,
                             ),
                           )),
               ),
@@ -336,28 +346,25 @@ class TransferTile extends StatelessWidget {
       child: Text(
         desc,
         textAlign: TextAlign.start,
-        style: themeTextStyles.body3.copyWith(
-          fontWeight: FontWeight.normal,
-          color: oldThemeColors.text10,
+        style: TextStyles.caption3.copyWith(
+          color: themeColors.textSecondary,
         ),
       ),
     );
   }
 
   Widget _buildWarning(BuildContext context) {
-    if (isTokenEnough != false) return const SizedBox();
-
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
       child: Row(
         children: [
           Theme.of(context).getPicture(Assets.balanceWarning),
-          const SizedBox(width: 8),
+          Gaps.px8,
           Expanded(
             child: Text(
               TChainPaymentLocalizations.of(context)!
                   .insufficient_balance_to_use_token,
-              style: TextStyle(color: oldThemeColors.statusError),
+              style: TextStyles.subhead1.copyWith(color: themeColors.errorMain),
             ),
           )
         ],
@@ -373,10 +380,10 @@ class TransferTile extends StatelessWidget {
       return const SizedBox();
     }
 
-    final normalStyle = themeTextStyles.body3.copyWith(
-        fontWeight: FontWeight.normal, color: Colors.white, height: 16.8 / 12);
-    final boldStyle = themeTextStyles.body2.copyWith(
-        fontWeight: FontWeight.bold, color: Colors.white, height: 19.6 / 14);
+    final normalStyle =
+        TextStyles.subhead1.copyWith(color: themeColors.textPrimary);
+    final boldStyle =
+        TextStyles.subhead2.copyWith(color: themeColors.textPrimary);
 
     final amountToko =
         '${TokoinNumber.fromNumber(transferData.discountInfo!.deductAmount).getFormalizedString()} ${transferData.tokoAsset!.shortName}';
@@ -398,28 +405,16 @@ class TransferTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         margin: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
         decoration: BoxDecoration(
-          image: DecorationImage(
-            image: Image.asset(Assets.paymentServiceFee.path,
-                    package: 't_chain_payment_sdk')
-                .image,
-            fit: BoxFit.fill,
-          ),
+          color: themeColors.warningLight,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 15,
-              height: 15,
-              child: Transform.scale(
-                scale: 0.8,
-                child: Theme.of(context).getPicture(
-                  useToko ? Assets.checkboxOn : Assets.checkboxOff,
-                  color: Colors.white,
-                ),
-              ),
+            Theme.of(context).getPicture(
+              useToko ? Assets.checkboxOn : Assets.checkboxOff,
             ),
+            Gaps.px12,
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 5),

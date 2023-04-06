@@ -1,24 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
-import 'package:t_chain_payment_sdk/widgets/button_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/input_widget.dart';
+import 'package:t_chain_payment_sdk/widgets/gaps.dart';
+import 'package:t_chain_payment_sdk/widgets/ui_style.dart';
 
 class AddNotePopupWidget extends StatefulWidget {
+  static Future<String?> showBottomSheet(BuildContext context,
+      {required String notes}) async {
+    return await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (BuildContext popupContext) {
+        return AddNotePopupWidget(
+          notes: notes,
+        );
+      },
+    );
+  }
+
   final String notes;
-  final Function(String)? onEdited;
 
   const AddNotePopupWidget({
     Key? key,
     required this.notes,
-    this.onEdited,
   }) : super(key: key);
 
   @override
   _AddNotePopupWidgetState createState() => _AddNotePopupWidgetState();
 }
 
-class _AddNotePopupWidgetState extends State<AddNotePopupWidget> {
+class _AddNotePopupWidgetState extends State<AddNotePopupWidget> with UIStyle {
   late TextEditingController _noteController;
 
   final double inputHeight = 140;
@@ -41,54 +56,42 @@ class _AddNotePopupWidgetState extends State<AddNotePopupWidget> {
     return SingleChildScrollView(
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 TChainPaymentLocalizations.of(context)!.add_a_note,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: oldThemeColors.text11,
+                style: TextStyles.body2.copyWith(
+                  color: themeColors.textPrimary,
                 ),
               ),
               Divider(
-                color: oldThemeColors.bg4.withOpacity(0.5),
+                color: themeColors.textTertiary,
                 height: 32,
               ),
-              const SizedBox(height: 8),
-              InputWidget(
-                controller: _noteController,
-                title: TChainPaymentLocalizations.of(context)!.note,
-                textStyle: themeTextStyles.title5.copyWith(
-                  color: oldThemeColors.text11,
-                ),
-                autoFocus: true,
-                maxLines: 5,
-                minLines: 5,
-                height: inputHeight,
-              ),
-              const SizedBox(height: 8),
+              Gaps.px8,
+              _buildInput(context),
+              Gaps.px16,
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: ButtonWidget(
-                      margin: const EdgeInsets.only(right: 20),
+                    child: buildOutlinedButton(
+                      context,
+                      onPressed: () => Navigator.of(context).pop(),
                       title: TChainPaymentLocalizations.of(context)!.cancel,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
                     ),
                   ),
+                  Gaps.px16,
                   Expanded(
-                    child: ButtonWidget(
-                      title: TChainPaymentLocalizations.of(context)!.done,
+                    child: buildElevatedButton(
+                      context,
                       onPressed: () {
-                        widget.onEdited?.call(_noteController.text);
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(_noteController.text);
                       },
+                      title: TChainPaymentLocalizations.of(context)!.done,
                     ),
                   )
                 ],
@@ -99,6 +102,51 @@ class _AddNotePopupWidgetState extends State<AddNotePopupWidget> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInput(BuildContext context) {
+    final borderRadius = BorderRadius.circular(8);
+    final border = OutlineInputBorder(
+      borderSide: BorderSide(color: themeColors.primaryBlue),
+      borderRadius: borderRadius,
+    );
+
+    return TextFormField(
+      controller: _noteController,
+      autofocus: true,
+      style: TextStyles.subhead1.copyWith(
+        color: themeColors.textPrimary,
+      ),
+      minLines: 3,
+      maxLines: 3,
+      decoration: InputDecoration(
+        labelText: TChainPaymentLocalizations.of(context)!.note,
+        hintText: TChainPaymentLocalizations.of(context)!.write_your_note,
+        border: border,
+        focusedBorder: border,
+        errorBorder: border,
+        focusedErrorBorder: border,
+        enabledBorder: border,
+        disabledBorder: border,
+        isCollapsed: true,
+        isDense: true,
+        fillColor: themeColors.mainBgPrimary,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 16,
+        ),
+        hintStyle: TextStyles.subhead1.copyWith(
+          color: themeColors.textTertiary,
+        ),
+        helperStyle: TextStyles.footnote.copyWith(
+          color: themeColors.errorMain,
+        ),
+        errorStyle: TextStyles.footnote.copyWith(
+          color: themeColors.errorMain,
+        ),
+        filled: true,
       ),
     );
   }

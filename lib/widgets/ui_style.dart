@@ -166,4 +166,40 @@ mixin UIStyle {
       ),
     );
   }
+
+  Widget buildOutlinedButton(
+    BuildContext context, {
+    String? title,
+    Widget? child,
+    Color? backgroundColor,
+    Color? foregroundColor,
+    Color? borderColor,
+    Function()? onPressed,
+    bool isWarning = false,
+    BorderRadius? borderRadius,
+  }) {
+    assert(title != null || child != null);
+
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        elevation: 0,
+        side: BorderSide(
+          width: 1,
+          color: borderColor ?? themeColors.primaryBlue,
+        ),
+        minimumSize: const Size.fromHeight(42),
+        shape: RoundedRectangleBorder(
+          borderRadius: borderRadius ?? BorderRadius.circular(8),
+        ),
+        backgroundColor: backgroundColor ?? Colors.white,
+        foregroundColor: foregroundColor ?? themeColors.primaryBlue,
+      ),
+      child: child ??
+          Text(
+            title!,
+            style: TextStyles.subhead2,
+          ),
+    );
+  }
 }

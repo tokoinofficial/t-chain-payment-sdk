@@ -94,9 +94,9 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
                     children: [
                       const SizedBox(height: 105),
                       _buildIcon(context),
-                      const SizedBox(height: 24),
+                      Gaps.px24,
                       _buildTitle(context),
-                      const SizedBox(height: 12),
+                      Gaps.px12,
                       _buildDesc(context),
                     ],
                   ),

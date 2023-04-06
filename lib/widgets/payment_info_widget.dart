@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:t_chain_payment_sdk/bloc/payment_deposit_cubit.dart';
+import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
 import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/widgets/add_note_popup_widget.dart';
+import 'package:t_chain_payment_sdk/widgets/gaps.dart';
 
 class PaymentInfoWidget extends StatefulWidget {
   final MerchantInfo merchantInfo;
@@ -38,24 +40,30 @@ class _PaymentInfoWidgetState extends State<PaymentInfoWidget> {
       bottom: false,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-            color: oldThemeColors.statusWarning2.withOpacity(0.2),
+            color: themeColors.warningMain08,
             borderRadius: BorderRadius.circular(12)),
         child: BlocBuilder<PaymentDepositCubit, PaymentDepositState>(
           builder: (context, state) {
             return Column(
               children: [
                 _buildInfo(
-                  icon: Theme.of(context).getPicture(Assets.paymentStore,
-                      darkName: Assets.paymentStoreDark),
+                  icon: Theme.of(context).getPicture(Assets.merchant),
                   title:
                       TChainPaymentLocalizations.of(context)!.merchant_client,
                   value: widget.merchantInfo.fullname,
                 ),
-                const SizedBox(height: 16),
-                _buildAmount(),
-                const SizedBox(height: 16),
+                Gaps.px16,
+                _buildInfo(
+                  icon: Theme.of(context).getPicture(Assets.amount),
+                  title: TChainPaymentLocalizations.of(context)!.payment_amount,
+                  value: widget.merchantInfo.currency +
+                      ' ' +
+                      TokoinNumber.fromNumber(widget.merchantInfo.amount ?? 0)
+                          .getFormalizedString(),
+                ),
+                Gaps.px16,
                 _buildNotes(),
               ],
             );
@@ -65,44 +73,14 @@ class _PaymentInfoWidgetState extends State<PaymentInfoWidget> {
     );
   }
 
-  Widget _buildAmount() {
-    final numberStyle = themeTextStyles.title4.copyWith(
-      fontWeight: FontWeight.bold,
-      color: oldThemeColors.text11,
-    );
-    final unitStyle =
-        numberStyle.copyWith(fontSize: (numberStyle.fontSize ?? 16) - 4);
-
-    return _buildInfo(
-      icon: Theme.of(context)
-          .getPicture(Assets.paymentAmount, darkName: Assets.paymentAmountDark),
-      title: TChainPaymentLocalizations.of(context)!.payment_amount,
-      child: RichText(
-        textScaleFactor: 1,
-        text: TextSpan(
-          text: widget.merchantInfo.currency + ' ',
-          style: unitStyle,
-          children: <TextSpan>[
-            TextSpan(
-              text: TokoinNumber.fromNumber(widget.merchantInfo.amount ?? 0)
-                  .getFormalizedString(),
-              style: numberStyle,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildNotes() {
-    final buttonStyle = themeTextStyles.body1.copyWith(
+    final buttonStyle = TextStyles.body1.copyWith(
       fontWeight: FontWeight.w600,
-      color: oldThemeColors.primary,
+      color: themeColors.primaryBlue,
     );
 
     return _buildInfo(
-      icon: Theme.of(context)
-          .getPicture(Assets.paymentNotes, darkName: Assets.paymentNotesDark),
+      icon: Theme.of(context).getPicture(Assets.notes),
       title: TChainPaymentLocalizations.of(context)!.note_optional,
       child: _notes.isEmpty
           ? GestureDetector(
@@ -119,15 +97,15 @@ class _PaymentInfoWidgetState extends State<PaymentInfoWidget> {
                     _notes,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: themeTextStyles.body1.copyWith(
+                    style: TextStyles.body1.copyWith(
                       fontWeight: FontWeight.normal,
-                      color: oldThemeColors.text11,
+                      color: themeColors.textPrimary,
                     ),
                   ),
                 ),
                 if (widget.merchantInfo.notes == null ||
                     widget.merchantInfo.notes!.isEmpty) ...[
-                  const SizedBox(width: 8),
+                  Gaps.px8,
                   GestureDetector(
                     onTap: _showNotes,
                     child: Text(
@@ -144,31 +122,31 @@ class _PaymentInfoWidgetState extends State<PaymentInfoWidget> {
   Widget _buildInfo({
     required Widget icon,
     required String title,
-    String? value = '',
+    String value = '',
     Widget? child,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         icon,
-        const SizedBox(width: 16),
+        Gaps.px8,
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '$title:',
-                style: themeTextStyles.body2.copyWith(
-                  color: oldThemeColors.text10,
+                title,
+                style: TextStyles.caption1.copyWith(
+                  color: themeColors.textSecondary,
                 ),
               ),
-              const SizedBox(height: 4),
+              Gaps.px2,
               child ??
                   Text(
-                    '$value',
-                    style: themeTextStyles.title4.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: oldThemeColors.text11,
+                    value,
+                    style: TextStyles.headline.copyWith(
+                      color: themeColors.textPrimary,
                     ),
                   ),
             ],
@@ -179,23 +157,16 @@ class _PaymentInfoWidgetState extends State<PaymentInfoWidget> {
   }
 
   _showNotes() async {
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (BuildContext popupContext) {
-        return AddNotePopupWidget(
-          notes: _notes,
-          onEdited: (value) {
-            setState(() {
-              _notes = value;
-              widget.onEditNote?.call(value);
-            });
-          },
-        );
-      },
+    final text = await AddNotePopupWidget.showBottomSheet(
+      context,
+      notes: _notes,
     );
+
+    if (text != null) {
+      setState(() {
+        _notes = text;
+        widget.onEditNote?.call(text);
+      });
+    }
   }
 }

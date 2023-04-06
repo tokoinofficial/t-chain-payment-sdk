@@ -5,24 +5,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:t_chain_payment_sdk/bloc/payment_deposit_cubit.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
+import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/config/utils.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
-import 'package:t_chain_payment_sdk/data/currency.dart';
 import 'package:t_chain_payment_sdk/data/gas_fee.dart';
-import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/data/transfer_data.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
 import 'package:t_chain_payment_sdk/helpers/deep_link_service.dart';
-import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/screens/payment_status_screen.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:t_chain_payment_sdk/widgets/app_bar_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/button_widget.dart';
+import 'package:t_chain_payment_sdk/widgets/gaps.dart';
 import 'package:t_chain_payment_sdk/widgets/payment_info_widget.dart';
 import 'package:t_chain_payment_sdk/widgets/transfer_tile.dart';
+import 'package:t_chain_payment_sdk/widgets/ui_style.dart';
 
 class PaymentDepositScreen extends StatefulWidget {
   const PaymentDepositScreen({
@@ -38,7 +37,8 @@ class PaymentDepositScreen extends StatefulWidget {
   State<PaymentDepositScreen> createState() => _PaymentDepositScreenState();
 }
 
-class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
+class _PaymentDepositScreenState extends State<PaymentDepositScreen>
+    with UIStyle {
   late PaymentDepositCubit _paymentDepositCubit;
   // late SwapCubit _swapCubit;
   Timer? _timer;
@@ -49,7 +49,6 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
   static const int maxExchangeRateDuration = 60 * 5;
   final ValueNotifier<int> _exchangeRateCountdown = ValueNotifier(0);
 
-  // Wallet? _wallet;
   GasFee? _gasFee;
   Asset? _currentAsset;
   Asset? _swappingAsset;
@@ -298,7 +297,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
             return WillPopScope(
               onWillPop: _onWillPop,
               child: Scaffold(
-                backgroundColor: oldThemeColors.bg,
+                backgroundColor: themeColors.mainBgPrimary,
                 resizeToAvoidBottomInset: false,
                 appBar: _buildAppBar(),
                 body: ModalProgressHUD(
@@ -314,15 +313,15 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.stretch,
                                     children: [
-                                      const SizedBox(height: 16),
+                                      Gaps.px8,
                                       _buildMerchantInfo(),
-                                      const SizedBox(height: 16),
+                                      Gaps.px16,
                                       _buildSelectToken(),
-                                      const SizedBox(height: 16),
+                                      Gaps.px16,
                                       _buildExchangeRateRefreshArea(
                                         showLoading: showLoading,
                                       ),
-                                      const SizedBox(height: 10),
+                                      Gaps.px12,
                                       ..._buildAssets(
                                         transferDataList: transferDataList,
                                         isLoaded: isLoaded,
@@ -440,8 +439,8 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
             : TChainPaymentLocalizations.of(context)!
                 .please_select_token_to_transfer,
         textAlign: TextAlign.center,
-        style: themeTextStyles.subTitle1.copyWith(
-          color: oldThemeColors.text10,
+        style: TextStyles.subhead1.copyWith(
+          color: themeColors.textPrimary,
           height: 1.5,
         ),
       ),
@@ -463,8 +462,8 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
               const EdgeInsets.only(left: 16, right: 10, top: 12, bottom: 12),
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: oldThemeColors.bg2.withOpacity(0.9),
-            borderRadius: BorderRadius.circular(12),
+            color: themeColors.fillBgQuarternary,
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             children: [
@@ -474,15 +473,14 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
                   text: TextSpan(
                     text:
                         '${TChainPaymentLocalizations.of(context)!.exchange_rate_will_be_refreshed_after} ',
-                    style: themeTextStyles.body2.copyWith(
-                      color: oldThemeColors.text10,
+                    style: TextStyles.subhead1.copyWith(
+                      color: themeColors.textPrimary,
                     ),
                     children: <TextSpan>[
                       TextSpan(
                         text: time,
-                        style: themeTextStyles.body1.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: oldThemeColors.text11,
+                        style: TextStyles.headline.copyWith(
+                          color: themeColors.textPrimary,
                         ),
                       ),
                     ],
@@ -493,7 +491,11 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
                 onTap: () {
                   _onRefreshExchangeRate();
                 },
-                child: Theme.of(context).getPicture(Assets.refreshCircle),
+                child: Theme.of(context).getPicture(
+                  Assets.refreshCircle,
+                  width: 20,
+                  height: 20,
+                ),
               )
             ],
           ),
@@ -523,11 +525,11 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
     if (tiles.isEmpty && isLoaded) {
       // Show error message `Invalid exchange rate`
       return [
-        const SizedBox(height: 20),
+        Gaps.px20,
         Center(
           child: Text(
             TChainPaymentLocalizations.of(context)!.invalid_exchange_rate,
-            style: TextStyle(color: oldThemeColors.statusError),
+            style: TextStyle(color: themeColors.errorMain),
           ),
         ),
       ];
@@ -570,11 +572,10 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
   Widget _buildConfirmButton(bool? isEnoughBnb) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 62, vertical: 12),
-        child: ButtonWidget(
-          margin: const EdgeInsets.symmetric(vertical: 0),
-          onPressed: () => _onPay(),
-          enabled: true,
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+        child: buildElevatedButton(
+          context,
+          onPressed: _currentAsset == null ? null : () => _onPay(),
           title: TChainPaymentLocalizations.of(context)!.confirm,
         ),
       ),
