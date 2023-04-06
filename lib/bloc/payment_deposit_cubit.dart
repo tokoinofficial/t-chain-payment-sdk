@@ -47,6 +47,17 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
       return;
     }
 
+    if (!walletRepository.isReady) {
+      final isReady = await walletRepository.setup();
+
+      if (!isReady) {
+        emit(PaymentDepositError(
+          error: localizations.something_went_wrong_please_try_later,
+        ));
+        return;
+      }
+    }
+
     await walletRepository.setupPaymentContract();
 
     emit(PaymentDepositSetUpCompleted());

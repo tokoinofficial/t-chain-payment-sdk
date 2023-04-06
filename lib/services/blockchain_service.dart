@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:t_chain_payment_sdk/helpers/transaction_waiter.dart';
 import 'package:t_chain_payment_sdk/smc/bep_20_smc.dart';
+import 'package:t_chain_payment_sdk/smc/pancake_swap_smc.dart';
 import 'package:t_chain_payment_sdk/smc/payment_smc.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -44,10 +45,10 @@ class BlockchainService {
     final abiString = await rootBundle
         .loadString("packages/t_chain_payment_sdk/lib/smc/abis/bep20.abi.json");
 
-    final bep20Api = ContractAbi.fromJson(abiString, 'bep20');
+    final contractApi = ContractAbi.fromJson(abiString, 'bep20');
 
     return Bep20Smc(
-      contractAbi: bep20Api,
+      contractAbi: contractApi,
       address: address,
       client: client,
       chainId: chainId,
@@ -62,10 +63,28 @@ class BlockchainService {
     final abiString = await rootBundle.loadString(
         "packages/t_chain_payment_sdk/lib/smc/abis/payment.abi.json");
 
-    final bep20Api = ContractAbi.fromJson(abiString, 'payment');
+    final contractApi = ContractAbi.fromJson(abiString, 'payment');
 
     return PaymentSmc(
-      contractAbi: bep20Api,
+      contractAbi: contractApi,
+      address: address,
+      client: client,
+      chainId: chainId,
+    );
+  }
+
+  Future<PancakeSwapSmc> createPancakeSwapSmc({
+    required EthereumAddress address,
+    required Web3Client client,
+    required int? chainId,
+  }) async {
+    final abiString = await rootBundle
+        .loadString("packages/t_chain_payment_sdk/lib/smc/abis/swap.abi.json");
+
+    final contractApi = ContractAbi.fromJson(abiString, 'swap');
+
+    return PancakeSwapSmc(
+      contractAbi: contractApi,
       address: address,
       client: client,
       chainId: chainId,

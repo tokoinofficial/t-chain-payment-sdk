@@ -68,6 +68,18 @@ class Asset extends Equatable {
     );
   }
 
+  factory Asset.wbnb() {
+    const shortName = CONST.kAssetNameBNB;
+    final fullName = CONST.kAssetFullnameMap[shortName] ?? shortName;
+    final iconName = CONST.kAssetIconMap[shortName] ?? '';
+    return Asset(
+      contractAddress: Config.wbnbContractAddress,
+      fullName: fullName,
+      shortName: shortName,
+      iconName: iconName,
+    );
+  }
+
   final String contractAddress;
   final String shortName;
   final String fullName;
@@ -92,4 +104,6 @@ class Asset extends Equatable {
   bool get isBnb => contractAddress == Config.bnbContractAddress;
   bool get isToko => contractAddress == Config.bscTokoinContractAddress;
   bool get isNotToko => contractAddress != Config.bscTokoinContractAddress;
+  bool get isUsdt => contractAddress == Config.bscUsdtContractAddress;
+  bool get isTko => contractAddress == Config.bscTkoContractAddress;
 }

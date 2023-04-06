@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:t_chain_payment_sdk/bloc/payment_deposit_cubit.dart';
+import 'package:t_chain_payment_sdk/bloc/swap/swap_cubit.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/config/utils.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/gas_fee.dart';
+import 'package:t_chain_payment_sdk/data/pancake_swap.dart';
 import 'package:t_chain_payment_sdk/data/transfer_data.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
 import 'package:t_chain_payment_sdk/helpers/deep_link_service.dart';
@@ -40,7 +42,7 @@ class PaymentDepositScreen extends StatefulWidget {
 class _PaymentDepositScreenState extends State<PaymentDepositScreen>
     with UIStyle {
   late PaymentDepositCubit _paymentDepositCubit;
-  // late SwapCubit _swapCubit;
+  late SwapCubit _swapCubit;
   Timer? _timer;
   static const int maxProceedingDurationInSeconds = 10;
   int _countdown = 0;
@@ -67,10 +69,9 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
         ? PaymentType.deposit
         : PaymentType.payment;
 
-    // _swapCubit = context.read<SwapCubit>();
-
     final walletRepos = context.read<WalletRepository>();
     final paymentRepos = context.read<PaymentRepository>();
+
     _paymentDepositCubit = PaymentDepositCubit(
       walletRepository: walletRepos,
       paymentRepository: paymentRepos,
@@ -79,10 +80,13 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
       privateKeyHex: TChainPaymentSDK.instance.account.privateKeyHex,
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _paymentDepositCubit.setup();
-      _paymentDepositCubit.getAllInfo();
-      // _swapCubit.setupSwapContractSupportBNB();
+    _swapCubit = SwapCubit(
+      walletRepository: walletRepos,
+      privateKeyHex: TChainPaymentSDK.instance.account.privateKeyHex,
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      await _paymentDepositCubit.setup();
     });
   }
 
@@ -101,6 +105,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
     super.didChangeDependencies();
     _paymentDepositCubit.localizations =
         TChainPaymentLocalizations.of(context)!;
+    _swapCubit.localizations = TChainPaymentLocalizations.of(context)!;
   }
 
   _startExchangeRateTimer() {
@@ -142,29 +147,18 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
       value: _paymentDepositCubit,
       child: MultiBlocListener(
         listeners: [
-          // BlocListener<SwapCubit, SwapState>(
-          //   bloc: _swapCubit,
-          //   listener: (context, state) {
-          //     if (state is SwapSuccess)
-          //       _handleSuccessSwap(state.pancakeSwap);
-          //     else if (state is SwapRequiresApproval) {
-          //       _handleSwapApproveDeposit();
-          //     } else if (state is SwapFailed) {
-          //       Utils.instance.errorToast(state.errorMsg);
-          //     }
-          //   },
-          // ),
-          // BlocListener<WalletCubit, WalletState>(listener: (context, state) {
-          //   if (state is WalletSuccess) {
-          //     _wallet = state.wallet;
-          //     _walletCubit.walletLoadBalance(wallet: _wallet!);
-          //   }
-
-          //   if (state is WalletLoadBalanceSuccess) {
-          //     _wallet = state.wallet;
-          //     _paymentDepositCubit.getAllInfo();
-          //   }
-          // }),
+          BlocListener<SwapCubit, SwapState>(
+            bloc: _swapCubit,
+            listener: (context, state) {
+              if (state is SwapSuccess) {
+                _handleSuccessSwap(state.pancakeSwap);
+              } else if (state is SwapRequiresApproval) {
+                _handleSwapApproveDeposit();
+              } else if (state is SwapFailed) {
+                Utils.errorToast(state.errorMsg);
+              }
+            },
+          ),
           BlocListener<PaymentDepositCubit, PaymentDepositState>(
             bloc: _paymentDepositCubit,
             listener: (context, state) {
@@ -174,6 +168,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
                 _gasFee = state.gasFee;
                 _swap(swappingAsset: _swappingAsset!, amount: _swappingAmount!);
               } else if (state is PaymentDepositSetUpCompleted) {
+                _paymentDepositCubit.getAllInfo();
               } else if (state is PaymentDepositError) {
                 Utils.errorToast(state.error);
               } else if (state is PaymentDepositApproveRequest) {
@@ -231,127 +226,122 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
             },
           ),
         ],
-        child:
-            // TODO
-            // BlocBuilder<SwapCubit, SwapState>(
-            //   bloc: _swapCubit,
-            //   builder: (context, swapState) {
-            //     final isSwapNotReady = swapState is InitialSwapState;
-            //     final isSwapSending = swapState is SwapSending;
+        child: BlocBuilder<SwapCubit, SwapState>(
+          bloc: _swapCubit,
+          builder: (context, swapState) {
+            final isSwapSending = swapState is SwapSending;
 
-            //     return
-            BlocBuilder<PaymentDepositCubit, PaymentDepositState>(
-          bloc: _paymentDepositCubit,
-          builder: (context, state) {
-            if (state is PaymentDepositCompleted) {
-              return PaymentStatusScreen.completed(
-                type: _paymentType,
-                second: _countdown,
-                txn: state.txn,
-              );
-            }
+            return BlocBuilder<PaymentDepositCubit, PaymentDepositState>(
+              bloc: _paymentDepositCubit,
+              builder: (context, state) {
+                if (state is PaymentDepositCompleted) {
+                  return PaymentStatusScreen.completed(
+                    type: _paymentType,
+                    second: _countdown,
+                    txn: state.txn,
+                  );
+                }
 
-            if (state is PaymentDepositFailed) {
-              return PaymentStatusScreen.failed(
-                type: _paymentType,
-                second: _countdown,
-                onRetry: _onRetry,
-              );
-            }
+                if (state is PaymentDepositFailed) {
+                  return PaymentStatusScreen.failed(
+                    type: _paymentType,
+                    second: _countdown,
+                    onRetry: _onRetry,
+                  );
+                }
 
-            if (state is PaymentDepositProceeding) {
-              return PaymentStatusScreen.proceeding(
-                type: _paymentType,
-                second: _countdown,
-              );
-            }
+                if (state is PaymentDepositProceeding) {
+                  return PaymentStatusScreen.proceeding(
+                    type: _paymentType,
+                    second: _countdown,
+                  );
+                }
 
-            bool? isEnoughBnb;
-            if (state is PaymentDepositShowInfo) {
-              isEnoughBnb = state.isEnoughBnb;
-            }
+                bool? isEnoughBnb;
+                if (state is PaymentDepositShowInfo) {
+                  isEnoughBnb = state.isEnoughBnb;
+                }
 
-            final paymentInProcess = state is PaymentDepositShowInfo &&
-                state.status == PaymentDepositStatus.depositing;
+                final paymentInProcess = state is PaymentDepositShowInfo &&
+                    state.status == PaymentDepositStatus.depositing;
 
-            final showLoading = paymentInProcess; // TODO
-            // final showLoading =
-            // paymentInProcess || isSwapSending || isSwapNotReady;
+                final showLoading = paymentInProcess || isSwapSending;
 
-            List<TransferData> transferDataList = [];
-            bool isLoaded = false;
+                List<TransferData> transferDataList = [];
+                bool isLoaded = false;
 
-            if (state is PaymentDepositShowInfo) {
-              transferDataList = state.transferDataList;
-              isLoaded = state.status != PaymentDepositStatus.loading;
-            } else if (state is PaymentDepositSwapRequest) {
-              transferDataList = state.transferDataList;
-              isLoaded = true;
-            } else if (state is PaymentDepositSetUpCompleted) {
-              isLoaded = false;
-            } else if (state is PaymentDepositApproveRequest) {
-              transferDataList = state.transferDataList;
-              isLoaded = true;
-            }
+                if (state is PaymentDepositShowInfo) {
+                  transferDataList = state.transferDataList;
+                  isLoaded = state.status != PaymentDepositStatus.loading;
+                } else if (state is PaymentDepositSwapRequest) {
+                  transferDataList = state.transferDataList;
+                  isLoaded = true;
+                } else if (state is PaymentDepositSetUpCompleted) {
+                  isLoaded = false;
+                } else if (state is PaymentDepositApproveRequest) {
+                  transferDataList = state.transferDataList;
+                  isLoaded = true;
+                }
 
-            return WillPopScope(
-              onWillPop: _onWillPop,
-              child: Scaffold(
-                backgroundColor: themeColors.mainBgPrimary,
-                resizeToAvoidBottomInset: false,
-                appBar: _buildAppBar(),
-                body: ModalProgressHUD(
-                  inAsyncCall: showLoading,
-                  child: state is PaymentDepositUnsupportedWallet
-                      ? _buildWalletError()
-                      : Column(
-                          children: [
-                            Expanded(
-                              child: SingleChildScrollView(
-                                child: SafeArea(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Gaps.px8,
-                                      _buildMerchantInfo(),
-                                      Gaps.px16,
-                                      _buildSelectToken(),
-                                      Gaps.px16,
-                                      _buildExchangeRateRefreshArea(
-                                        showLoading: showLoading,
+                return WillPopScope(
+                  onWillPop: _onWillPop,
+                  child: Scaffold(
+                    backgroundColor: themeColors.mainBgPrimary,
+                    resizeToAvoidBottomInset: false,
+                    appBar: _buildAppBar(),
+                    body: ModalProgressHUD(
+                      inAsyncCall: showLoading,
+                      child: state is PaymentDepositUnsupportedWallet
+                          ? _buildWalletError()
+                          : Column(
+                              children: [
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    child: SafeArea(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Gaps.px8,
+                                          _buildMerchantInfo(),
+                                          Gaps.px16,
+                                          _buildSelectToken(),
+                                          Gaps.px16,
+                                          _buildExchangeRateRefreshArea(
+                                            showLoading: showLoading,
+                                          ),
+                                          Gaps.px12,
+                                          ..._buildAssets(
+                                            transferDataList: transferDataList,
+                                            isLoaded: isLoaded,
+                                          ),
+                                        ],
                                       ),
-                                      Gaps.px12,
-                                      ..._buildAssets(
-                                        transferDataList: transferDataList,
-                                        isLoaded: isLoaded,
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _buildConfirmDesc(),
-                                _buildConfirmButton(isEnoughBnb),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _buildConfirmDesc(),
+                                    _buildConfirmButton(isEnoughBnb),
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
-                        ),
-                ),
-              ),
+                    ),
+                  ),
+                );
+              },
             );
           },
-          // );
-          // },
         ),
       ),
     );
   }
 
   _handleSwapApproveDeposit() async {
+    // TODO
     // var result =
     //     await Navigator.pushNamed(context, ScreenRouter.APPROVAL, arguments: {
     //   ScreenRouter.ARG_ASSET: _currentAsset,
@@ -371,26 +361,24 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
     required Asset swappingAsset,
     required double amount,
   }) {
-    // TODO
-    // if (_currentAsset == null && _gasFee != null) return;
+    if (_currentAsset == null && _gasFee != null) return;
 
-    // _swapCubit.confirmSwap(
-    //   pancakeSwap: PancakeSwap(
-    //     assetIn: _currentAsset!,
-    //     assetOut: swappingAsset,
-    //     amountIn: amount,
-    //   ),
-    //   gasPrice: _gasFee!.fee,
-    //   externalGasPrice: _gasFee!.fee,
-    // );
+    _swapCubit.confirmSwap(
+      pancakeSwap: PancakeSwap(
+        assetIn: _currentAsset!,
+        assetOut: swappingAsset,
+        amountIn: amount,
+      ),
+      gasPrice: _gasFee!.fee,
+      externalGasPrice: _gasFee!.fee,
+    );
   }
 
-// TODO
-  // _handleSuccessSwap(PancakeSwap pancakeSwap) {
-  //   _onPay(alternativeCoin: _swappingAsset);
-  //   _swappingAsset = null;
-  //   _swappingAmount = null;
-  // }
+  _handleSuccessSwap(PancakeSwap pancakeSwap) {
+    _onPay(alternativeCoin: _swappingAsset);
+    _swappingAsset = null;
+    _swappingAmount = null;
+  }
 
   Future<bool> _onWillPop() async {
     _onCancel();

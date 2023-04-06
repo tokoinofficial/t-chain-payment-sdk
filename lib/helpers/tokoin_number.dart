@@ -4,10 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
 
-const BTC_POW_EXPONENT = 8;
-const ETH_POW_EXPONENT = 18;
-const DOGE_POW_EXPONENT = 8;
-const TETHER_ETH_POW_EXPONENT = 6;
+const kBtcPowExponent = 8;
+const kEthPowExponent = 18;
+const kDogePowExponent = 8;
+const kTetherEthPowExponent = 6;
 final currencyNumberFormat = NumberFormat("#,##0", "en_US");
 
 /// TokoinNumber class is created to
@@ -16,7 +16,7 @@ final currencyNumberFormat = NumberFormat("#,##0", "en_US");
 ///
 /// Usage
 /// To Create:
-/// - [TokoinNumber.fromNumber]: requires a num and an exponent if it has been multiplying exponents, the default value of the exponent is [ETH_POW_EXPONENT]
+/// - [TokoinNumber.fromNumber]: requires a num and an exponent if it has been multiplying exponents, the default value of the exponent is [kEthPowExponent]
 /// - [TokoinNumber.fromBigInt]: required a BigInt and its exponent
 ///
 /// To calculate:
@@ -39,7 +39,7 @@ class TokoinNumber {
 
   TokoinNumber.fromNumber(
     num? value, {
-    this.exponent = ETH_POW_EXPONENT,
+    this.exponent = kEthPowExponent,
   }) {
     bigIntValue = (value ?? 0).toBigIntBasedOnDecimal(decimals: exponent);
   }
@@ -52,7 +52,7 @@ class TokoinNumber {
 // Examples: doubleValue is 4321.12345678
 // (4321.12345678).toStringAsFixed(3);  // 4321.123
 // (4321.12345678).toStringAsFixed(5);  // 4321.12346
-  double getClosestDoubleValue({int decimals = BTC_POW_EXPONENT}) {
+  double getClosestDoubleValue({int decimals = kBtcPowExponent}) {
     return double.parse(doubleValue.toStringAsFixed(decimals));
   }
 
@@ -86,7 +86,7 @@ class TokoinNumber {
 // Examples: doubleValue is 4321.12345678
 // (4321.12345678).toStringAsFixed(3);  // 4321.123
 // (4321.12345678).toStringAsFixed(5);  // 4321.12346
-  String getClosestStringValue({int decimals = BTC_POW_EXPONENT}) {
+  String getClosestStringValue({int decimals = kBtcPowExponent}) {
     final txt = bigIntValue.toString();
 
     if (txt.length > exponent) {
@@ -122,7 +122,7 @@ class TokoinNumber {
 // Examples: doubleValue is 4321.12345678
 // (4321.12345678).toStringAsFixed(3);  // 4,321.123
 // (4321.12345678).toStringAsFixed(5);  // 4,321.12346
-  String getFormalizedString({int decimals = BTC_POW_EXPONENT}) {
+  String getFormalizedString({int decimals = kBtcPowExponent}) {
     String string = stringValue;
     if (string.contains('e')) {
       string = doubleValue.toStringAsFixed(
@@ -149,13 +149,13 @@ class TokoinNumber {
 
   num toBTC() {
     // 100000000 satoshi = 1 BTC
-    return double.parse((doubleValue / pow(10, BTC_POW_EXPONENT))
-        .toStringAsFixed(BTC_POW_EXPONENT));
+    return double.parse((doubleValue / pow(10, kBtcPowExponent))
+        .toStringAsFixed(kBtcPowExponent));
   }
 
   num toSatoshi() {
     // 100000000 satoshi = 1 BTC
-    return toTokoinNumberWithExponent(BTC_POW_EXPONENT).doubleValue;
+    return toTokoinNumberWithExponent(kBtcPowExponent).doubleValue;
   }
 
   TokoinNumber toTokoinNumberWithAsset(Asset asset) {
@@ -244,25 +244,22 @@ class TokoinNumber {
   }
 
   static int getExponentWithAsset(Asset? asset) {
-    int exponent = ETH_POW_EXPONENT;
-    if (asset?.contractAddress == Config.bscUsdtContractAddress) {
-      exponent = TETHER_ETH_POW_EXPONENT;
-    } else if (asset?.contractAddress == Config.bscDogeContractAddress) {
-      exponent = DOGE_POW_EXPONENT;
+    if (asset?.contractAddress == Config.bscDogeContractAddress) {
+      return kDogePowExponent;
     }
 
-    return exponent;
+    return kEthPowExponent;
   }
 
   @override
-  int get hashCode => super.hashCode;
+  int get hashCode => bigIntValue.hashCode + exponent.hashCode;
 }
 
 extension DoubleExt on num {
   // 0.06527841242900972
   // expected: 65278412429009720
   // if you use `toBigInt`, the result will be 65278412429009728
-  BigInt toBigIntBasedOnDecimal({decimals = ETH_POW_EXPONENT}) {
+  BigInt toBigIntBasedOnDecimal({decimals = kEthPowExponent}) {
     if (this > 10e21) {
       return BigInt.from(this);
     }

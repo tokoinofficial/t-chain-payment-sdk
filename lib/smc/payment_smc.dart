@@ -16,17 +16,6 @@ class PaymentSmc extends GeneratedContract {
     required int? chainId,
   }) : super(DeployedContract(contractAbi, address), client, chainId);
 
-  Future<BigInt> getBalance(
-    EthereumAddress walletAddress, {
-    BlockNum? atBlock,
-  }) async {
-    final function = self.abi.functions[0];
-
-    final params = [walletAddress];
-    final response = await read(function, params, atBlock);
-    return (response[0] as BigInt);
-  }
-
   Future<num> getDepositFee() async {
     final function = self.abi.functions[1];
     final params = [];
@@ -51,7 +40,7 @@ class PaymentSmc extends GeneratedContract {
 
     BigInt discountFee = response[0];
     final deductAmount =
-        TokoinNumber.fromBigInt(response[1], exponent: ETH_POW_EXPONENT)
+        TokoinNumber.fromBigInt(response[1], exponent: kEthPowExponent)
             .doubleValue;
 
     return PaymentDiscountInfo(
