@@ -10,6 +10,7 @@ import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
 import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/widgets/crypto_widget.dart';
+import 'package:t_chain_payment_sdk/widgets/unable_to_apply_discount_widget.dart';
 
 class TransferTile extends StatelessWidget {
   const TransferTile({
@@ -461,62 +462,20 @@ class TransferTile extends StatelessWidget {
     );
   }
 
-  _showUnableToApplyDiscount(BuildContext context) async {
-    // TODO
-    // if (transferData.discountInfo == null || transferData.tokoAsset == null) {
-    //   return;
-    // }
+  _showUnableToApplyDiscount(BuildContext context) {
+    if (transferData.discountInfo == null || transferData.tokoAsset == null) {
+      return;
+    }
 
-    // final discountPercent = (transferData.discountInfo!.discountFeePercent /
-    //         transferData.serviceFeePercent! *
-    //         100)
-    //     .removeTrailingZeros();
+    final discountPercent = (transferData.discountInfo!.discountFeePercent /
+            transferData.serviceFeePercent! *
+            100)
+        .removeTrailingZeros();
 
-    // await showModalBottomSheet(
-    //   context: context,
-    //   isScrollControlled: true,
-    //   shape: const RoundedRectangleBorder(
-    //     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    //   ),
-    //   builder: (BuildContext popupContext) {
-    //     return PopupWidget(
-    //       title:
-    //           TChainPaymentLocalizations.of(context)!.unable_to_apply_discount,
-    //       content: Text(
-    //         TChainPaymentLocalizations.of(context)!
-    //             .unable_to_apply_discount_desc(
-    //           TokoinNumber.fromNumber(transferData.tokoAsset!.balance)
-    //               .getFormalizedString(),
-    //           discountPercent,
-    //         ),
-    //         textAlign: TextAlign.center,
-    //         style: themeTextStyles.body1.copyWith(color: oldThemeColors.text1),
-    //       ),
-    //       actions: <Widget>[
-    //         ButtonWidget(
-    //           margin: const EdgeInsets.only(right: 20),
-    //           title: TChainPaymentLocalizations.of(context)!.cancel,
-    //           onPressed: () {
-    //             Navigator.pop(popupContext);
-    //           },
-    //         ),
-    //         ButtonWidget(
-    //           title: TChainPaymentLocalizations.of(context)!.deposit,
-    //           onPressed: () {
-    //             Navigator.pop(popupContext);
-    //             // TODO
-    //             // Navigator.pushNamed(
-    //             //   context,
-    //             //   ScreenRouter.ASSET_DETAIL,
-    //             //   arguments: {
-    //             //     ScreenRouter.ARG_ASSET: transferData.tokoAsset!,
-    //             //   },
-    //             // );
-    //           },
-    //         )
-    //       ],
-    //     );
-    //   },
-    // );
+    UnableToApplyDiscountWidget.showBottomSheet(
+      context,
+      transferData: transferData,
+      discountPercent: discountPercent,
+    );
   }
 }
