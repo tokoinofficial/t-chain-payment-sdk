@@ -398,7 +398,9 @@ class TransferTile extends StatelessWidget {
         margin: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: Image.asset('assets/v1/payment_service_fee.png').image,
+            image: Image.asset(Assets.paymentServiceFee.path,
+                    package: 't_chain_payment_sdk')
+                .image,
             fit: BoxFit.fill,
           ),
           borderRadius: BorderRadius.circular(8),

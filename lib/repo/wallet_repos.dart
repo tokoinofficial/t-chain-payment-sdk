@@ -13,6 +13,7 @@ import 'package:t_chain_payment_sdk/data/payment_discount_fee.dart';
 import 'package:t_chain_payment_sdk/services/blockchain_service.dart';
 import 'package:t_chain_payment_sdk/services/gas_station_api.dart';
 import 'package:t_chain_payment_sdk/smc/bep_20_smc.dart';
+import 'package:t_chain_payment_sdk/smc/payment_smc.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart' as web3dart;
@@ -22,12 +23,13 @@ class WalletRepository {
   final BlockchainService blockchainService;
   web3dart.Web3Client? _web3Client;
   final Map<String, Bep20Smc> _bep20SmcMap = {};
+  PaymentSmc? _paymentSmc;
 
   WalletRepository({required this.blockchainService}) {
-    setup();
+    _setup();
   }
 
-  setup() async {
+  _setup() async {
     _web3Client ??=
         await blockchainService.createWeb3Client(Config.binanceDataSeed);
   }
@@ -46,6 +48,21 @@ class WalletRepository {
 
     _bep20SmcMap[addressHex] = newSmc;
 
+    return newSmc;
+  }
+
+  Future<PaymentSmc> getPaymentSmc() async {
+    if (_paymentSmc != null) return _paymentSmc!;
+
+    EthereumAddress address =
+        EthereumAddress.fromHex(Config.paymentContractAddress);
+    final newSmc = await blockchainService.createPaymentSmc(
+      address: address,
+      client: _web3Client!,
+      chainId: TChainPaymentSDK.instance.chainID,
+    );
+
+    _paymentSmc = newSmc;
     return newSmc;
   }
 
@@ -194,11 +211,7 @@ class WalletRepository {
   }
 
   Future setupPaymentContract() async {
-    // TODO
-    // await TChainPayment.instance.initiatePaymentContract(
-    //   Config.binanceDataSeed,
-    //   Config.paymentContractAddress,
-    // );
+    getPaymentSmc();
   }
 
   Future<web3dart.Transaction> buildPaymentContractTransaction({
@@ -219,21 +232,19 @@ class WalletRepository {
   }
 
   Future<num> getPaymentDepositFee() async {
-    return 0;
-    // TODO
-    // return await TChainPayment.instance.getDepositFee();
+    final smc = await getPaymentSmc();
+    return await smc.getDepositFee();
   }
 
   Future<PaymentDiscountInfo?> getPaymentDiscountFee({
     required String contractAddress,
     required num amount,
   }) async {
-    return const PaymentDiscountInfo(discountFeePercent: 0, deductAmount: 0);
-    // TODO
-    // return await TChainPayment.instance.getDiscountFee(
-    //   tokenAddress: contractAddress,
-    //   amount: amount,
-    // );
+    final smc = await getPaymentSmc();
+    return await smc.getDiscountFee(
+      tokenAddress: contractAddress,
+      amount: amount,
+    );
   }
 
   Future<BigInt> debugPaymentDepositFee({

@@ -131,7 +131,7 @@ class TokoinNumber {
 
     final strings = string.split('.');
     var mainNumber = strings.first;
-    var formattedNumber = currencyNumberFormat.format(int.parse(mainNumber));
+    var formattedNumber = currencyNumberFormat.format(double.parse(mainNumber));
 
     // decimal number
     if (strings.length > 1) {
@@ -263,10 +263,13 @@ extension DoubleExt on num {
   // expected: 65278412429009720
   // if you use `toBigInt`, the result will be 65278412429009728
   BigInt toBigIntBasedOnDecimal({decimals = ETH_POW_EXPONENT}) {
+    if (this > 10e21) {
+      return BigInt.from(this);
+    }
+
     String string = toString();
     if (string.contains('e')) {
-      string = toStringAsFixed(
-          decimals); // + 1: to make sure the number is not rounded
+      string = toStringAsFixed(decimals);
     }
 
     final strings = string.split('.');
