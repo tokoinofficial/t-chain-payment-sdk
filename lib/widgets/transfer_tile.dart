@@ -306,8 +306,9 @@ class TransferTile extends StatelessWidget {
           Expanded(
             flex: 6,
             child: ColoredBox(
-              color:
-                  !showLoading ? Colors.transparent : themeColors.textTertiary,
+              color: !showLoading
+                  ? Colors.transparent
+                  : themeColors.fillBgQuarternary,
               child: Shimmer(
                 enabled: showLoading,
                 child: valueWidget ??
