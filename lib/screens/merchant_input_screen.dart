@@ -236,8 +236,7 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
           ),
         ),
         GestureDetector(
-          onTap: _showCurrencyListBottomSheet,
-          // onTap: _canEditAmount ? _showCurrencyListBottomSheet : null,
+          onTap: _canEditAmount ? _showCurrencyListBottomSheet : null,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(

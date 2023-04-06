@@ -17,71 +17,50 @@ class CONST {
     "$NETWORK_TYPE_BTC": 'BTC'
   };
 
-  // Asset id
-  static const ASSET_ID_BTC = 1;
-  static const ASSET_ID_BNB = 1839;
-  static const ASSET_ID_ETH = 1027;
-  static const ASSET_ID_TOKO = 4299;
-  static const ASSET_ID_USDT = 825;
-  static const ASSET_ID_CAKE = 7186;
-  static const ASSET_ID_BUSD = 4687;
-  static const ASSET_ID_TKO = 9020;
-  static const ASSET_ID_LP = 0;
-  static const ASSET_ID_SZO = 99999;
-  static const ASSET_ID_DEP = 5429;
-  static const ASSET_ID_DOT = 6636;
-  static const ASSET_ID_DOGE = 74;
-  static const ASSET_ID_C98 = 10903;
+  static const kAssetNameBTC = 'BTC';
+  static const kAssetNameBNB = 'BNB';
+  static const kAssetNameETH = 'ETH';
+  static const kAssetNameTOKO = 'TOKO';
+  static const kAssetNameUSDT = 'USDT';
+  static const kAssetNameCAKE = 'CAKE';
+  static const kAssetNameBUSD = 'BUSD';
+  static const kAssetNameTKO = 'TKO';
+  static const kAssetNameSZO = 'SZO';
+  static const kAssetNameDEP = 'DEP';
+  static const kAssetNameDOT = 'DOT';
+  static const kAssetNameDOGE = 'DOGE';
+  static const kAssetNameC98 = 'C98';
 
-  static const ASSET_FULLNAME = {
-    "$ASSET_ID_BTC": 'Bitcoin',
-    "$ASSET_ID_BNB": 'Binance',
-    "$ASSET_ID_ETH": 'Ethereum',
-    "$ASSET_ID_TOKO": 'Tokoin',
-    "$ASSET_ID_USDT": 'Tether',
-    "$ASSET_ID_CAKE": 'PancakeSwap',
-    "$ASSET_ID_BUSD": 'Binance USD',
-    "$ASSET_ID_TKO": 'Tokocrypto Token',
-    "$ASSET_ID_LP": 'TOKO/WBNB',
-    "$ASSET_ID_SZO": 'ShuttleOne',
-    "$ASSET_ID_DEP": 'DEAPcoin',
-    "$ASSET_ID_DOT": 'Polkadot',
-    "$ASSET_ID_DOGE": 'Dogecoin',
-    "$ASSET_ID_C98": 'Coin98',
+  static const kAssetFullnameMap = {
+    kAssetNameBTC: 'Bitcoin',
+    kAssetNameBNB: 'Binance',
+    kAssetNameETH: 'Ethereum',
+    kAssetNameTOKO: 'Tokoin',
+    kAssetNameUSDT: 'Tether',
+    kAssetNameCAKE: 'PancakeSwap',
+    kAssetNameBUSD: 'Binance USD',
+    kAssetNameTKO: 'Tokocrypto Token',
+    kAssetNameSZO: 'ShuttleOne',
+    kAssetNameDEP: 'DEAPcoin',
+    kAssetNameDOT: 'Polkadot',
+    kAssetNameDOGE: 'Dogecoin',
+    kAssetNameC98: 'Coin98',
   };
 
-  static const ASSET_SHORTNAME = {
-    "$ASSET_ID_BTC": 'BTC',
-    "$ASSET_ID_BNB": 'BNB',
-    "$ASSET_ID_ETH": 'ETH',
-    "$ASSET_ID_TOKO": 'TOKO',
-    "$ASSET_ID_USDT": 'USDT',
-    "$ASSET_ID_CAKE": 'CAKE',
-    "$ASSET_ID_BUSD": 'BUSD',
-    "$ASSET_ID_TKO": 'TKO',
-    "$ASSET_ID_LP": 'TOKO/WBNB',
-    "$ASSET_ID_SZO": 'SZO',
-    "$ASSET_ID_DEP": 'DEP',
-    "$ASSET_ID_DOT": 'DOT',
-    "$ASSET_ID_DOGE": 'DOGE',
-    "$ASSET_ID_C98": 'C98',
-  };
-
-  static const ASSET_ICON_NAME = {
-    "$ASSET_ID_BTC": 'assets/token_btc.svg',
-    "$ASSET_ID_BNB": 'assets/token_bnb.svg',
-    "$ASSET_ID_ETH": 'assets/token_eth.svg',
-    "$ASSET_ID_TOKO": 'assets/token_toko.svg',
-    "$ASSET_ID_USDT": 'assets/token_usdt.svg',
-    "$ASSET_ID_CAKE": 'assets/token_cake.svg',
-    "$ASSET_ID_BUSD": 'assets/token_busd.svg',
-    "$ASSET_ID_TKO": 'assets/tko.svg',
-    "$ASSET_ID_LP": 'assets/toko.svg',
-    "$ASSET_ID_SZO": 'assets/szo.svg',
-    "$ASSET_ID_DEP": 'farming_dep',
-    "$ASSET_ID_DOT": 'farming_dot',
-    "$ASSET_ID_DOGE": 'farming_doge',
-    "$ASSET_ID_C98": 'farming_c98',
+  static const kAssetIconMap = {
+    kAssetNameBTC: 'assets/token_btc.svg',
+    kAssetNameBNB: 'assets/token_bnb.svg',
+    kAssetNameETH: 'assets/token_eth.svg',
+    kAssetNameTOKO: 'assets/token_toko.svg',
+    kAssetNameUSDT: 'assets/token_usdt.svg',
+    kAssetNameCAKE: 'assets/token_cake.svg',
+    kAssetNameBUSD: 'assets/token_busd.svg',
+    kAssetNameTKO: 'assets/tko.svg',
+    kAssetNameSZO: 'assets/szo.svg',
+    kAssetNameDEP: 'farming_dep',
+    kAssetNameDOT: 'farming_dot',
+    kAssetNameDOGE: 'farming_doge',
+    kAssetNameC98: 'farming_c98',
   };
 }
 

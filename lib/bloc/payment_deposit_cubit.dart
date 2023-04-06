@@ -23,14 +23,13 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
     required this.paymentRepository,
     required this.amount,
     required this.currency,
-  }) : super(PaymentDepositInitial()) {
-    _shortName2IdMap =
-        CONST.ASSET_SHORTNAME.map((key, value) => MapEntry(value, key));
-  }
+    required this.privateKeyHex,
+  }) : super(PaymentDepositInitial());
 
   final WalletRepository walletRepository;
   final PaymentRepository paymentRepository;
   late TChainPaymentLocalizations localizations;
+  final String privateKeyHex;
 
   final double amount;
   final Currency currency;
@@ -40,7 +39,6 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   GasFee? _gasFee;
   final Map<String, PaymentDiscountInfo?> _discountInfoMap = {};
   ExchangeRate _exchangeRate = ExchangeRate({});
-  Map<String, String> _shortName2IdMap = {};
 
   Future setup() async {
     // TODO
@@ -64,7 +62,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
     required String chainID,
   }) async {
     try {
-      final discountInfo = _discountInfoMap[asset.shortName()];
+      final discountInfo = _discountInfoMap[asset.shortName];
       final assetAmount = _exchangeRate.calculateAssetAmount(
         amountCurrency: amount,
         currency: currency,
@@ -157,7 +155,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         amount.toDouble(),
         currency,
         notes,
-        asset.shortName(),
+        asset.shortName,
         merchantID,
         chainID,
       );
@@ -277,7 +275,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
                   contractAddress: contractAddress,
                   amount: amount,
                 )
-                .then((value) => _discountInfoMap[asset.shortName()] = value)
+                .then((value) => _discountInfoMap[asset.shortName] = value)
                 .catchError((e) {
               debugPrint(e.toString());
 
@@ -285,6 +283,25 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
             });
           },
         ),
+        ..._supportedAssets.toList().asMap().entries.map(
+          (entry) {
+            return walletRepository
+                .balanceOf(
+              smcAddressHex: entry.value.contractAddress,
+              privateKeyHex: privateKeyHex,
+            )
+                .then(
+              (value) {
+                final asset = entry.value.copyWith(balance: value);
+                TChainPaymentSDK.instance.account.updateAsset(asset);
+              },
+            ).catchError((e) {
+              debugPrint(e.toString());
+
+              return null;
+            });
+          },
+        )
       ]);
 
       emit(PaymentDepositShowInfo(
@@ -335,7 +352,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
     required num amount,
     required bool useToko,
   }) {
-    final discountInfo = _discountInfoMap[asset.shortName()];
+    final discountInfo = _discountInfoMap[asset.shortName];
     final safeServiceFee = _serviceFeePercent ?? 0;
 
     num total = amount + amount * safeServiceFee / 100;
@@ -356,7 +373,9 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   }
 
   Asset _getTokoinAsset() {
-    return Asset.createAssetFrom(assetId: CONST.ASSET_ID_TOKO)!;
+    return TChainPaymentSDK.instance.account.getAsset(
+      name: CONST.kAssetNameTOKO,
+    )!;
     // TODO
     // final tokoAsset = walletRepository.currentAsset(CONST.ASSET_ID_TOKO);
 
@@ -369,7 +388,10 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   }
 
   Asset _getSwappingAsset() {
-    return Asset.createAssetFrom(assetId: CONST.ASSET_ID_USDT)!;
+    return TChainPaymentSDK.instance.account.getAsset(
+      name: CONST.kAssetNameUSDT,
+    )!;
+
     // TODO
     // final swappingAsset = walletRepository.currentAsset(CONST.ASSET_ID_USDT);
 
@@ -408,13 +430,8 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
     final usdPerFiat = _exchangeRate.getUsdPerFiatCurrency(currency);
 
     _supportedAssets = _exchangeRate.map.keys
-        .map((e) => _shortName2IdMap[e] ?? '')
         .map((e) {
-          final id = int.tryParse(e);
-
-          if (id == null) return null;
-
-          return Asset.createAssetFrom(assetId: id);
+          return TChainPaymentSDK.instance.account.getAsset(name: e);
         })
         .where((element) => element != null)
         .cast<Asset>()
@@ -426,7 +443,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
           !_exchangeRate.hasData || (usdPerFiat != null && assetPerUsd != null);
       return isAbleToLoadExchangeRate;
     }).map((asset) {
-      final discountInfo = _discountInfoMap[asset.shortName()];
+      final discountInfo = _discountInfoMap[asset.shortName];
       double? serviceFeePercent = _serviceFeePercent;
 
       if (asset.isToko) {

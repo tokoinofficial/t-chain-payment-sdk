@@ -11,31 +11,53 @@ import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/gas_fee.dart';
 import 'package:t_chain_payment_sdk/data/payment_discount_fee.dart';
 import 'package:t_chain_payment_sdk/services/blockchain_service.dart';
+import 'package:t_chain_payment_sdk/smc/bep_20_smc.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:uuid/uuid.dart';
+import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart' as web3dart;
 
 class WalletRepository {
   final BlockchainService blockchainService;
-  late web3dart.Web3Client? web3Client;
+  web3dart.Web3Client? _web3Client;
+  final Map<String, Bep20Smc> _bep20SmcMap = {};
 
   WalletRepository({required this.blockchainService}) {
     setup();
   }
 
   setup() async {
-    web3Client ??=
+    _web3Client ??=
         await blockchainService.createWeb3Client(Config.binanceDataSeed);
   }
 
-  Future<num> balanceOf(Asset asset) async {
-    return 10;
-    // TODO
-    // final wallet = asset.wallet;
-    // if (wallet == null) return 0;
-    // return await web3Client?.getBalance(address).balanceOf(
-    //       privateKey: asset.wallet!.privateKey!,
-    //       address: asset.wallet!.address,
-    //     );
+  Future<Bep20Smc> getBep20Smc(String addressHex) async {
+    final smc = _bep20SmcMap[addressHex];
+
+    if (smc != null) return smc;
+
+    EthereumAddress address = EthereumAddress.fromHex(addressHex);
+    final newSmc = await blockchainService.createBep20Smc(
+      address: address,
+      client: _web3Client!,
+      chainId: TChainPaymentSDK.instance.chainID,
+    );
+
+    _bep20SmcMap[addressHex] = newSmc;
+
+    return newSmc;
+  }
+
+  Future<num> balanceOf({
+    required String smcAddressHex,
+    required String privateKeyHex,
+  }) async {
+    final privateKey = EthPrivateKey.fromHex(privateKeyHex);
+
+    final smc = await getBep20Smc(smcAddressHex);
+
+    final value = await smc.getBalance(privateKey.address);
+    return value.toDouble();
   }
 
   Future<String> sendTransaction(

@@ -18,6 +18,7 @@ import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/screens/payment_status_screen.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:t_chain_payment_sdk/widgets/app_bar_widget.dart';
 import 'package:t_chain_payment_sdk/widgets/button_widget.dart';
 import 'package:t_chain_payment_sdk/widgets/payment_info_widget.dart';
@@ -78,6 +79,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
       paymentRepository: paymentRepos,
       amount: safeOriginalAmount,
       currency: widget.merchantInfo.currency.toCurrency(),
+      privateKeyHex: TChainPaymentSDK.instance.account.privateKeyHex,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

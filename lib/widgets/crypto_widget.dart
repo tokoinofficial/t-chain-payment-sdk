@@ -21,14 +21,14 @@ class CryptoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String fullName = asset.fullName();
-    String shortName = asset.shortName();
+    String fullName = asset.fullName;
+    String shortName = asset.shortName;
     return SafeArea(
       bottom: false,
       child: Row(
         children: [
           Theme.of(context)
-              .getPicture(asset.iconName(), width: iconSize, fit: BoxFit.fill),
+              .getPicture(asset.iconName, width: iconSize, fit: BoxFit.fill),
           SizedBox(width: fullNameStyle ? 15 : 5),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,

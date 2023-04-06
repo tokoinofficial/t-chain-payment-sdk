@@ -1,7 +1,6 @@
 library t_chain_payment_sdk;
 
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
+import 'package:t_chain_payment_sdk/data/account.dart';
 import 'package:t_chain_payment_sdk/data/currency.dart';
 import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
@@ -58,6 +58,9 @@ class TChainPaymentSDK {
   /// what chain id do you want to work with?
   late bool isTestnet;
 
+  /// user data
+  late Account account;
+
   /// To handle payment result
   late Function(TChainPaymentResult) delegate;
 
@@ -76,6 +79,7 @@ class TChainPaymentSDK {
   init({
     required String apiKey,
     required String bundleID,
+    required String privateKeyHex,
     TChainPaymentEnv env = TChainPaymentEnv.dev,
     bool isTestnet = true,
     required Function(TChainPaymentResult) delegate,
@@ -85,12 +89,15 @@ class TChainPaymentSDK {
     this.env = env;
     this.isTestnet = isTestnet;
     this.delegate = delegate;
+    Config.setEnvironment(env);
 
     final api = TChainAPI.standard(env.apiUrl);
     _paymentRepository = PaymentRepository(api: api);
     final blockchainService = BlockchainService();
-    _walletRepository = WalletRepository(blockchainService: blockchainService);
-    Config.setEnvironment(env);
+    account = Account(privateKeyHex: privateKeyHex);
+    _walletRepository = WalletRepository(
+      blockchainService: blockchainService,
+    );
 
     _initURIHandler();
     _incomingLinkHandler();

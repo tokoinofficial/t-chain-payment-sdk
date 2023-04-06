@@ -6,8 +6,8 @@ class TransactionWaiter {
   // Based on etherscan at the time of writting,
   // https://etherscan.io/chart/blocktime
   //
-  static const WAIT_DURATION = Duration(milliseconds: 29400);
-  static const WAIT_EVERY_SECS = 5;
+  static const kWaitDuration = Duration(milliseconds: 29400);
+  static const kWaitEverySecs = 5;
 
   var _lastTransactionExecutedTime = DateTime.now();
 
@@ -20,15 +20,15 @@ class TransactionWaiter {
   }
 
   reset() {
-    _lastTransactionExecutedTime = DateTime.now().subtract(WAIT_DURATION);
+    _lastTransactionExecutedTime = DateTime.now().subtract(kWaitDuration);
   }
 
   Future<dynamic> ready(Function func) async {
     var timeDiff = DateTime.now().difference(_lastTransactionExecutedTime);
-    var timePassed = timeDiff.inMilliseconds >= WAIT_DURATION.inMilliseconds;
+    var timePassed = timeDiff.inMilliseconds >= kWaitDuration.inMilliseconds;
 
     if (!timePassed) {
-      var waitDuration = WAIT_DURATION - timeDiff;
+      var waitDuration = kWaitDuration - timeDiff;
       await Future.delayed(waitDuration);
     }
 
@@ -40,11 +40,11 @@ class TransactionWaiter {
   }
 
   Future<bool> waitUntil(Function func) async {
-    var timeDiff = WAIT_DURATION;
+    var timeDiff = kWaitDuration;
     var timeDiffInSeconds = timeDiff.inSeconds;
     while (timeDiffInSeconds > 0) {
-      timeDiffInSeconds = timeDiffInSeconds - WAIT_EVERY_SECS;
-      await Future.delayed(const Duration(seconds: WAIT_EVERY_SECS));
+      timeDiffInSeconds = timeDiffInSeconds - kWaitEverySecs;
+      await Future.delayed(const Duration(seconds: kWaitEverySecs));
       var passed = await func();
       if (passed) return true;
     }

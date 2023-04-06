@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 

@@ -231,7 +231,7 @@ extension ThemeExt on ThemeData {
     BoxFit fit = BoxFit.contain,
   }) {
     final useDarkMode = darkName != null && brightness == Brightness.dark;
-    String path = (useDarkMode ? darkName : name) ?? name;
+    final path = useDarkMode ? darkName : name;
 
     if (path.endsWith('svg')) {
       return SvgPicture.asset(

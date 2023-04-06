@@ -181,7 +181,7 @@ class TransferTile extends StatelessWidget {
     }
 
     final amountToko =
-        '${TokoinNumber.fromNumber(transferData.discountInfo!.deductAmount).getFormalizedString()} ${transferData.tokoAsset!.shortName()}';
+        '${TokoinNumber.fromNumber(transferData.discountInfo!.deductAmount).getFormalizedString()} ${transferData.tokoAsset!.shortName}';
     return _buildInfo(
       title: TChainPaymentLocalizations.of(context)!.pay_toko_amount,
       value: amountToko,
@@ -194,7 +194,7 @@ class TransferTile extends StatelessWidget {
     double? value = serviceFee;
     if (value != null) {
       total =
-          '${value.removeTrailingZeros(fractionDigits: 8)} ${transferData.asset.shortName()}';
+          '${value.removeTrailingZeros(fractionDigits: 8)} ${transferData.asset.shortName}';
     }
 
     return _buildInfo(
@@ -210,7 +210,7 @@ class TransferTile extends StatelessWidget {
       final roundedExchangeRate =
           ((transferData.exchangeRate! * 10000).toInt() / 10000).toDouble();
       value =
-          '1 ${transferData.asset.shortName()} = ~${transferData.currency.shortName} ${TokoinNumber.fromNumber(roundedExchangeRate).getFormalizedString()}';
+          '1 ${transferData.asset.shortName} = ~${transferData.currency.shortName} ${TokoinNumber.fromNumber(roundedExchangeRate).getFormalizedString()}';
     }
 
     return _buildInfo(
@@ -226,7 +226,7 @@ class TransferTile extends StatelessWidget {
         ? ''
         : '${TokoinNumber.fromNumber(transferData.transferAmount!).getFormalizedString()} ';
     final unit =
-        transferData.exchangeRate == null ? '' : transferData.asset.shortName();
+        transferData.exchangeRate == null ? '' : transferData.asset.shortName;
 
     return Container(
       decoration: BoxDecoration(
@@ -381,11 +381,11 @@ class TransferTile extends StatelessWidget {
         fontWeight: FontWeight.bold, color: Colors.white, height: 19.6 / 14);
 
     final amountToko =
-        '${TokoinNumber.fromNumber(transferData.discountInfo!.deductAmount).getFormalizedString()} ${transferData.tokoAsset!.shortName()}';
+        '${TokoinNumber.fromNumber(transferData.discountInfo!.deductAmount).getFormalizedString()} ${transferData.tokoAsset!.shortName}';
     final discount =
         '${(transferData.discountInfo!.discountFeePercent / transferData.serviceFeePercent! * 100).removeTrailingZeros()}% ${TChainPaymentLocalizations.of(context)!.discount}';
     final balance =
-        '${TokoinNumber.fromNumber(transferData.tokoAsset!.balance).getFormalizedString()} ${transferData.tokoAsset!.shortName()}';
+        '${TokoinNumber.fromNumber(transferData.tokoAsset!.balance).getFormalizedString()} ${transferData.tokoAsset!.shortName}';
 
     return GestureDetector(
       onTap: () {

@@ -11,12 +11,12 @@ class ExchangeRate {
   }
 
   double? getUsdPerAsset(Asset asset) {
-    final value = double.tryParse(map[asset.shortName()].toString());
+    final value = double.tryParse(map[asset.shortName].toString());
     return value;
   }
 
   double? getAssetPerUsd(Asset asset) {
-    final value = double.tryParse(map[asset.shortName()].toString());
+    final value = double.tryParse(map[asset.shortName].toString());
     return value != null && value != 0 ? 1 / value : null;
   }
 

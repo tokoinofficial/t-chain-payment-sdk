@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
-import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/data/merchant_transaction.dart';
 import 'package:t_chain_payment_sdk/data/request_body.dart/create_transaction_body.dart';
 import 'package:t_chain_payment_sdk/data/request_body.dart/gen_qr_code_body.dart';
