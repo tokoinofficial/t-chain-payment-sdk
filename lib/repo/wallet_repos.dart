@@ -18,6 +18,7 @@ import 'package:t_chain_payment_sdk/smc/payment_smc.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart' as web3dart;
+import 'package:web3dart/web3dart.dart';
 
 const kWaitForReceiptTimeoutInSecond = 300;
 
@@ -75,6 +76,10 @@ class WalletRepository {
   }) async {
     final privateKey = EthPrivateKey.fromHex(privateKeyHex);
 
+    if (smcAddressHex == Config.bnbContractAddress) {
+      EtherAmount balance = await _web3Client!.getBalance(privateKey.address);
+      return balance.getValueInUnit(EtherUnit.ether);
+    }
     final smc = await getBep20Smc(smcAddressHex);
 
     final value = await smc.getBalance(privateKey.address);
@@ -134,42 +139,39 @@ class WalletRepository {
     // );
   }
 
-  Future<bool> isEnoughBnb(
-    Asset asset,
-    num amount,
-    num gasPrice,
-    num estimatedGas,
-  ) async {
-    return true;
-    // TODO
-    // var isEnoughBnb = true;
-    // Wallet wallet = asset.wallet!;
-    // if (wallet.isBSC) {
-    //   if (estimatedGas > Config.maxGas) {
-    //     estimatedGas = Config.maxGas;
-    //   }
-    //   var bscClient = BnbBsc.instance;
-    //   var balanceOfBnb = await bscClient.balanceOf(
-    //       privateKey: wallet.privateKey!, address: wallet.address);
-    //   if (asset is BnbAsset) {
-    //     if (balanceOfBnb == 0 ||
-    //         balanceOfBnb <
-    //             amount +
-    //                 num.parse(
-    //                     GasFeeAverage(gasPrice, 0).toEthString(estimatedGas))) {
-    //       isEnoughBnb = false;
-    //     }
-    //   } else {
-    //     if (balanceOfBnb == 0 ||
-    //         balanceOfBnb <
-    //             num.parse(
-    //                 GasFeeAverage(gasPrice, 0).toEthString(estimatedGas))) {
-    //       isEnoughBnb = false;
-    //     }
-    //   }
-    // }
+  Future<bool> isEnoughBnb({
+    required String privateKeyHex,
+    required Asset asset,
+    required num amount,
+    required num gasPrice,
+    required num estimatedGas,
+  }) async {
+    var isEnoughBnb = true;
 
-    // return isEnoughBnb;
+    if (estimatedGas > Config.maxGas) {
+      estimatedGas = Config.maxGas;
+    }
+
+    final privateKey = EthPrivateKey.fromHex(privateKeyHex);
+    final balance = await _web3Client!.getBalance(privateKey.address);
+    var balanceOfBnb = balance.getValueInUnit(EtherUnit.ether);
+    if (asset.isBnb) {
+      if (balanceOfBnb == 0 ||
+          balanceOfBnb <
+              amount +
+                  num.parse(
+                      GasFeeAverage(gasPrice, 0).toEthString(estimatedGas))) {
+        isEnoughBnb = false;
+      }
+    } else {
+      if (balanceOfBnb == 0 ||
+          balanceOfBnb <
+              num.parse(GasFeeAverage(gasPrice, 0).toEthString(estimatedGas))) {
+        isEnoughBnb = false;
+      }
+    }
+
+    return isEnoughBnb;
   }
 
   Future<List<GasFee>> getBSCGasFees() async {

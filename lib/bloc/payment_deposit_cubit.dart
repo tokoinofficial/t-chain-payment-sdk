@@ -41,12 +41,11 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   ExchangeRate _exchangeRate = ExchangeRate({});
 
   Future setup() async {
-    // TODO
-    // final wallet = walletRepository.currentWallet();
-    // if (wallet == null || (!wallet.isBSC && !wallet.isMaster)) {
-    //   emit(PaymentDepositUnsupportedWallet());
-    //   return;
-    // }
+    final address = TChainPaymentSDK.instance.account.privateKey.address.hex;
+    if (!Utils.isValidEthereumAddress(address)) {
+      emit(PaymentDepositUnsupportedWallet());
+      return;
+    }
 
     await walletRepository.setupPaymentContract();
 
@@ -178,7 +177,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
       ];
 
       web3dart.Transaction tnx = await walletRepository.buildDepositTransaction(
-        privateKeyHex: TChainPaymentSDK.instance.account.privateKeyHex,
+        privateKeyHex: privateKeyHex,
         parameters: [params],
         gasPrice: _gasFee!.toGwei(),
       );
@@ -190,7 +189,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         gasFee: _gasFee!.fee,
       )) {
         String hash = await walletRepository.sendPaymentTransaction(
-          privateKeyHex: TChainPaymentSDK.instance.account.privateKeyHex,
+          privateKeyHex: privateKeyHex,
           tx: tnx,
         );
         emit(PaymentDepositProceeding(txn: hash));
@@ -227,10 +226,30 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
     required num amount,
     required num gasFee,
   }) async {
-    // TODO: check TOKO, USDT, BUSD
+    if (!asset.isBnb) {
+      final balance = await walletRepository.balanceOf(
+        smcAddressHex: asset.contractAddress,
+        privateKeyHex: privateKeyHex,
+      );
+
+      TChainPaymentSDK.instance.account.updateAsset(
+        asset.copyWith(balance: balance),
+      );
+
+      if (balance < amount) {
+        return false;
+      }
+    }
+
     num estimatedGas = await walletRepository.estimateGas(asset, tnx);
-    bool isEnoughBalance =
-        await walletRepository.isEnoughBnb(asset, amount, gasFee, estimatedGas);
+    bool isEnoughBalance = await walletRepository.isEnoughBnb(
+      privateKeyHex: privateKeyHex,
+      asset: asset,
+      amount: amount,
+      gasPrice: gasFee,
+      estimatedGas: estimatedGas,
+    );
+
     return isEnoughBalance;
   }
 
@@ -386,14 +405,13 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   }
 
   bool _isEnoughBnb() {
-    // TODO
-    return true;
-    // Asset? asset = walletRepository.currentAsset(CONST.ASSET_ID_BNB);
-    // if (asset == null || _gasFee == null) return false;
+    Asset? asset =
+        TChainPaymentSDK.instance.account.getAsset(name: CONST.kAssetNameBNB);
+    if (asset == null || _gasFee == null) return false;
 
-    // return asset.balance >=
-    //     num.parse(
-    //         GasFeeAverage(_gasFee!.fee, 0).toEthString(_gasFee!.estimatedGas));
+    return asset.balance >=
+        num.parse(
+            GasFeeAverage(_gasFee!.fee, 0).toEthString(_gasFee!.estimatedGas));
   }
 
   Future<bool> _hasEnoughAllowance(

@@ -7,6 +7,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:web3dart/crypto.dart';
 
 class Utils {
+  /// ethereum address: contains 0x and 42 characters long
+  ///
+  static bool isValidEthereumAddress(String address) {
+    RegExp exp = RegExp(r"^(0x)?([0-9a-fA-F]){40}$");
+    return exp.hasMatch(address);
+  }
+
   static bool isEmptyString(String? amountStr) {
     return amountStr == null || amountStr.isEmpty;
   }
