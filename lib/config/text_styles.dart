@@ -27,7 +27,8 @@ abstract class TextStyles {
     letterSpacing: -0.24,
     fontSize: 15,
     fontWeight: FontWeight.w400,
-    height: 1.5,
+    height: 22.5 / 15,
+    fontFamily: 'SF Pro Text',
   );
 
   static const TextStyle subhead2 = TextStyle(

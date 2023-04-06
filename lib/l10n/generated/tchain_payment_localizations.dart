@@ -453,11 +453,11 @@ abstract class TChainPaymentLocalizations {
   /// **'You are about to deposit amount of'**
   String get you_are_about_to_deposit;
 
-  /// No description provided for @go_to_home.
+  /// No description provided for @go_home.
   ///
   /// In en, this message translates to:
-  /// **'Go to Home'**
-  String get go_to_home;
+  /// **'Go Home'**
+  String get go_home;
 
   /// No description provided for @enter_transfer_amount.
   ///
@@ -566,6 +566,12 @@ abstract class TChainPaymentLocalizations {
   /// In en, this message translates to:
   /// **'Coming Soon'**
   String get coming_soon;
+
+  /// No description provided for @view_transaction_detail.
+  ///
+  /// In en, this message translates to:
+  /// **'View Transaction Detail'**
+  String get view_transaction_detail;
 }
 
 class _TChainPaymentLocalizationsDelegate extends LocalizationsDelegate<TChainPaymentLocalizations> {

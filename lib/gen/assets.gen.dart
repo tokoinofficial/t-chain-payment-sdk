@@ -9,6 +9,34 @@
 
 import 'package:flutter/widgets.dart';
 
+class $LibGen {
+  const $LibGen();
+
+  $LibSmcGen get smc => const $LibSmcGen();
+}
+
+class $LibSmcGen {
+  const $LibSmcGen();
+
+  $LibSmcAbisGen get abis => const $LibSmcAbisGen();
+}
+
+class $LibSmcAbisGen {
+  const $LibSmcAbisGen();
+
+  /// File path: lib/smc/abis/bep20.abi.json
+  String get bep20Abi => 'lib/smc/abis/bep20.abi.json';
+
+  /// File path: lib/smc/abis/payment.abi.json
+  String get paymentAbi => 'lib/smc/abis/payment.abi.json';
+
+  /// File path: lib/smc/abis/swap.abi.json
+  String get swapAbi => 'lib/smc/abis/swap.abi.json';
+
+  /// List of all assets
+  List<String> get values => [bep20Abi, paymentAbi, swapAbi];
+}
+
 class Assets {
   Assets._();
 
@@ -23,15 +51,10 @@ class Assets {
   static const String paymentAmount = 'assets/payment_amount.svg';
   static const String paymentAmountDark = 'assets/payment_amount_dark.svg';
   static const String paymentCompleted = 'assets/payment_completed.svg';
-  static const String paymentCompletedDark =
-      'assets/payment_completed_dark.svg';
   static const String paymentFailed = 'assets/payment_failed.svg';
-  static const String paymentFailedDark = 'assets/payment_failed_dark.svg';
   static const String paymentNotes = 'assets/payment_notes.svg';
   static const String paymentNotesDark = 'assets/payment_notes_dark.svg';
   static const String paymentProceeding = 'assets/payment_proceeding.svg';
-  static const String paymentProceedingDark =
-      'assets/payment_proceeding_dark.svg';
   static const AssetGenImage paymentServiceFee =
       AssetGenImage('assets/payment_service_fee.png');
   static const String paymentStore = 'assets/payment_store.svg';
@@ -42,6 +65,7 @@ class Assets {
   static const String tokenEth = 'assets/token_eth.svg';
   static const String tokenToko = 'assets/token_toko.svg';
   static const String tokenUsdt = 'assets/token_usdt.svg';
+  static const $LibGen lib = $LibGen();
 
   /// List of all assets
   List<dynamic> get values => [
@@ -56,13 +80,10 @@ class Assets {
         paymentAmount,
         paymentAmountDark,
         paymentCompleted,
-        paymentCompletedDark,
         paymentFailed,
-        paymentFailedDark,
         paymentNotes,
         paymentNotesDark,
         paymentProceeding,
-        paymentProceedingDark,
         paymentServiceFee,
         paymentStore,
         paymentStoreDark,

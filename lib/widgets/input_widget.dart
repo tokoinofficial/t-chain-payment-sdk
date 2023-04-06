@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 
-const DEFAULT_HEIGHT = 70.0;
-const DEFAULT_KEYBOARD_TYPE = TextInputType.emailAddress;
+const kDefaultHeight = 70.0;
 
 class InputWidget extends StatefulWidget {
   final double? height;
@@ -26,12 +25,12 @@ class InputWidget extends StatefulWidget {
   final int? maxLength;
   final List<TextInputFormatter>? inputFormatters;
   final bool enabled;
-  final autoFocus;
+  final bool autoFocus;
   final String? initialValue;
   final double contentPaddingRight;
   final double contentPaddingTop;
   final double contentPaddingBottom;
-  final textInputAction;
+  final TextInputAction textInputAction;
   final FocusNode? focusNode;
   final Widget? suffixIcon;
   final Widget Function(BuildContext, Widget)? widgetBuilder;
@@ -40,7 +39,7 @@ class InputWidget extends StatefulWidget {
       {Key? key,
       required this.title,
       this.textInputAction = TextInputAction.done,
-      this.height = DEFAULT_HEIGHT,
+      this.height = kDefaultHeight,
       this.initialValue,
       this.prefixWidget,
       this.autoFocus = false,
@@ -54,7 +53,7 @@ class InputWidget extends StatefulWidget {
       this.titleStyle,
       this.textStyle,
       this.errorStyle,
-      this.keyboardType = DEFAULT_KEYBOARD_TYPE,
+      this.keyboardType = TextInputType.emailAddress,
       this.validator,
       this.appendChild,
       this.onSaved,
@@ -74,7 +73,7 @@ class InputWidget extends StatefulWidget {
 
 class _InputWidgetState extends State<InputWidget> {
   late bool _isShowPwd;
-  var _textController = TextEditingController();
+  final _textController = TextEditingController();
 
   @override
   void initState() {
@@ -90,7 +89,7 @@ class _InputWidgetState extends State<InputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: widget.height,
       child: widget.appendChild == null && !widget.isPwd
           ? _buildTextField()
@@ -100,8 +99,8 @@ class _InputWidgetState extends State<InputWidget> {
                 widget.appendChild ??
                     Container(
                       alignment: Alignment.topRight,
-                      margin:
-                          EdgeInsets.only(top: DEFAULT_HEIGHT / 4, right: 15),
+                      margin: const EdgeInsets.only(
+                          top: kDefaultHeight / 4, right: 15),
                       child: _showPwd(),
                     ),
               ],

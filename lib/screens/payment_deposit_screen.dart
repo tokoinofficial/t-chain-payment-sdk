@@ -39,7 +39,6 @@ class PaymentDepositScreen extends StatefulWidget {
 }
 
 class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
-  // late WalletCubit _walletCubit;
   late PaymentDepositCubit _paymentDepositCubit;
   // late SwapCubit _swapCubit;
   Timer? _timer;
@@ -69,7 +68,6 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
         ? PaymentType.deposit
         : PaymentType.payment;
 
-    // _walletCubit = context.read<WalletCubit>();
     // _swapCubit = context.read<SwapCubit>();
 
     final walletRepos = context.read<WalletRepository>();
@@ -177,7 +175,6 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
                 _gasFee = state.gasFee;
                 _swap(swappingAsset: _swappingAsset!, amount: _swappingAmount!);
               } else if (state is PaymentDepositSetUpCompleted) {
-                // _walletCubit.walletStarted();
               } else if (state is PaymentDepositError) {
                 Utils.errorToast(state.error);
               } else if (state is PaymentDepositApproveRequest) {
@@ -251,6 +248,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
               return PaymentStatusScreen.completed(
                 type: _paymentType,
                 second: _countdown,
+                txn: state.txn,
               );
             }
 
@@ -620,7 +618,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
             : widget.merchantInfo.notes!;
 
     _paymentDepositCubit.deposit(
-      walletAddress: '', // TODO
+      walletAddress: TChainPaymentSDK.instance.account.privateKey.address.hex,
       asset: asset,
       useToko: asset.contractAddress == Config.bscTokoinContractAddress
           ? true
@@ -645,6 +643,5 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen> {
 
   _onRetry() {
     _paymentDepositCubit.getAllInfo();
-    // _walletCubit.walletStarted();
   }
 }

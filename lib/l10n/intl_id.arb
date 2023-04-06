@@ -59,7 +59,7 @@
     "payment_failed_brought_back_3rdapp": "Pembayaran Anda gagal, Anda akan dibawa kembali ke [nama aplikasi pihak ketiga] dalam {x} detik",
     "unfortunately_payment_failed": "Sayangnya, pembayaran Anda gagal.",
     "you_are_about_to_deposit": "Anda akan mendepostikan sejumlah",
-    "go_to_home": "Pergi ke Beranda",
+    "go_home": "Akses Beranda",
     "enter_transfer_amount": "Enter Transfer Amount",
     "merchant_client": "Merchant Client",
     "transfer_amount": "Transfer amount",
@@ -77,5 +77,6 @@
     "select_token": "Select Token",
     "insufficient_balance_to_use_token": "Insufficient balance to use this token for transfer",
     "invalid_exchange_rate": "Invalid exchange rate",
-    "coming_soon": "Segera Hadir" 
+    "coming_soon": "Segera Hadir",
+    "view_transaction_detail": "View Transaction Detail"
 }

@@ -177,10 +177,8 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         BigInt.from(transactionSignedHash.expiredTime),
       ];
 
-      web3dart.Transaction tnx =
-          await walletRepository.buildPaymentContractTransaction(
-        asset: asset,
-        functionName: 'deposit',
+      web3dart.Transaction tnx = await walletRepository.buildDepositTransaction(
+        privateKeyHex: TChainPaymentSDK.instance.account.privateKeyHex,
         parameters: [params],
         gasPrice: _gasFee!.toGwei(),
       );
@@ -191,7 +189,10 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         amount: assetAmount,
         gasFee: _gasFee!.fee,
       )) {
-        String hash = await walletRepository.sendPaymentTransaction(asset, tnx);
+        String hash = await walletRepository.sendPaymentTransaction(
+          privateKeyHex: TChainPaymentSDK.instance.account.privateKeyHex,
+          tx: tnx,
+        );
         emit(PaymentDepositProceeding(txn: hash));
 
         bool isSuccess =

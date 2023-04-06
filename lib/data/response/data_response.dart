@@ -1,4 +1,5 @@
 import 'package:t_chain_payment_sdk/data/merchant_info.dart';
+import 'package:t_chain_payment_sdk/data/merchant_transaction.dart';
 import 'package:t_chain_payment_sdk/data/response/t_chain_error.dart';
 
 class DataResponse<T> {
@@ -34,6 +35,10 @@ class DataResponse<T> {
           switch (T) {
             case MerchantInfo:
               result = MerchantInfo.fromJson(resultJson) as T;
+              break;
+
+            case MerchantTransaction:
+              result = MerchantTransaction.fromJson(resultJson) as T;
               break;
 
             default:

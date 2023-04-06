@@ -199,7 +199,7 @@ class TChainPaymentLocalizationsId extends TChainPaymentLocalizations {
   String get you_are_about_to_deposit => 'Anda akan mendepostikan sejumlah';
 
   @override
-  String get go_to_home => 'Pergi ke Beranda';
+  String get go_home => 'Akses Beranda';
 
   @override
   String get enter_transfer_amount => 'Enter Transfer Amount';
@@ -254,4 +254,7 @@ class TChainPaymentLocalizationsId extends TChainPaymentLocalizations {
 
   @override
   String get coming_soon => 'Segera Hadir';
+
+  @override
+  String get view_transaction_detail => 'View Transaction Detail';
 }

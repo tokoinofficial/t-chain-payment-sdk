@@ -1,22 +1,4 @@
-import 'package:flutter/services.dart';
-
 class CONST {
-  // Network Type
-  static const NETWORK_TYPE_ETH = 1;
-  static const NETWORK_TYPE_BSC = 2;
-  static const NETWORK_TYPE_BTC = 3;
-  static const NETWORK_TYPE = {
-    "$NETWORK_TYPE_ETH": 'ETH',
-    "$NETWORK_TYPE_BSC": 'BSC',
-    "$NETWORK_TYPE_BTC": 'BTC'
-  };
-
-  static const NETWORK_TYPE_FEE = {
-    "$NETWORK_TYPE_ETH": 'ETH',
-    "$NETWORK_TYPE_BSC": 'BNB',
-    "$NETWORK_TYPE_BTC": 'BTC'
-  };
-
   static const kAssetNameBTC = 'BTC';
   static const kAssetNameBNB = 'BNB';
   static const kAssetNameETH = 'ETH';
@@ -63,5 +45,3 @@ class CONST {
     kAssetNameC98: 'farming_c98',
   };
 }
-
-const WAIT_FOR_RECEIPT_TIMEOUT_IN_SECOND = 300;

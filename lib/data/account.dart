@@ -1,4 +1,5 @@
 import 'package:t_chain_payment_sdk/data/asset.dart';
+import 'package:web3dart/web3dart.dart';
 
 class Account {
   Account({required this.privateKeyHex});
@@ -20,4 +21,6 @@ class Account {
   updateAsset(Asset asset) {
     _assets[asset.shortName] = asset;
   }
+
+  EthPrivateKey get privateKey => EthPrivateKey.fromHex(privateKeyHex);
 }

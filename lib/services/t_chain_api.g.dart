@@ -122,7 +122,7 @@ class _TChainAPI implements TChainAPI {
     )
             .compose(
               _dio.options,
-              '/t-chain-sdk/merchant-create-transaction',
+              '/t-chain-sdk/create-transaction',
               queryParameters: queryParameters,
               data: _data,
             )

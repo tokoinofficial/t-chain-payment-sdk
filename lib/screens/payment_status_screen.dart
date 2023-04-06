@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
-import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:t_chain_payment_sdk/widgets/app_bar_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/button_widget.dart';
+import 'package:t_chain_payment_sdk/widgets/gaps.dart';
+import 'package:t_chain_payment_sdk/widgets/ui_style.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 enum PaymentType {
   deposit,
@@ -16,8 +19,8 @@ enum PaymentTransactionStatus {
   failed,
 }
 
-class PaymentStatusScreen extends StatelessWidget {
-  static const waitingTimeBeforeClosingScreenInSeconds = 3;
+class PaymentStatusScreen extends StatelessWidget with UIStyle {
+  static const kWaitingTimeBeforeClosingScreenInSeconds = 3;
   factory PaymentStatusScreen.proceeding({
     required PaymentType type,
     required int second,
@@ -31,12 +34,14 @@ class PaymentStatusScreen extends StatelessWidget {
   factory PaymentStatusScreen.completed(
           {required PaymentType type,
           required int second,
+          required String txn,
           Function()? onViewTransactionDetail}) =>
       PaymentStatusScreen(
         paymentType: type,
         second: second,
         status: PaymentTransactionStatus.success,
         onViewTransactionDetail: onViewTransactionDetail,
+        txn: txn,
       );
 
   factory PaymentStatusScreen.failed({
@@ -54,8 +59,9 @@ class PaymentStatusScreen extends StatelessWidget {
   const PaymentStatusScreen({
     Key? key,
     this.paymentType = PaymentType.payment,
-    this.second = waitingTimeBeforeClosingScreenInSeconds,
+    this.second = kWaitingTimeBeforeClosingScreenInSeconds,
     required this.status,
+    this.txn,
     this.onViewTransactionDetail,
     this.onRetry,
   }) : super(key: key);
@@ -63,6 +69,7 @@ class PaymentStatusScreen extends StatelessWidget {
   final PaymentType paymentType;
   final int second;
   final PaymentTransactionStatus status;
+  final String? txn;
   final Function()? onViewTransactionDetail;
   final Function()? onRetry;
 
@@ -76,23 +83,22 @@ class PaymentStatusScreen extends StatelessWidget {
         appBar: _buildAppBar(context),
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 4),
             child: Column(
               children: [
                 Expanded(
                   flex: 7,
-                  child: Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(child: _buildIcon(context)),
-                        const SizedBox(height: 24),
-                        _buildTitle(context),
-                        const SizedBox(height: 12),
-                        _buildDesc(context),
-                      ],
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 105),
+                      _buildIcon(context),
+                      const SizedBox(height: 24),
+                      _buildTitle(context),
+                      const SizedBox(height: 12),
+                      _buildDesc(context),
+                    ],
                   ),
                 ),
                 _buildBottomBar(context),
@@ -124,57 +130,60 @@ class PaymentStatusScreen extends StatelessWidget {
       case PaymentTransactionStatus.success:
         return Theme.of(context).getPicture(
           Assets.paymentCompleted,
-          darkName: Assets.paymentCompletedDark,
           fit: BoxFit.none,
         );
       case PaymentTransactionStatus.failed:
         return Theme.of(context).getPicture(
           Assets.paymentFailed,
-          darkName: Assets.paymentFailedDark,
         );
       case PaymentTransactionStatus.processing:
         return Theme.of(context).getPicture(
           Assets.paymentProceeding,
-          darkName: Assets.paymentProceedingDark,
         );
     }
   }
 
   Widget _buildTitle(BuildContext context) {
-    TextStyle style = const TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 21,
-    );
+    TextStyle style = TextStyles.headline;
 
     switch (status) {
       case PaymentTransactionStatus.success:
         return Text(
           TChainPaymentLocalizations.of(context)!.payment_completed,
           style: style.copyWith(
-            color: oldThemeColors.statusSuccess,
+            color: themeColors.successMain,
           ),
         );
       case PaymentTransactionStatus.failed:
         return Text(
           TChainPaymentLocalizations.of(context)!.payment_failed,
           style: style.copyWith(
-            color: oldThemeColors.statusError,
+            color: themeColors.errorMain,
           ),
         );
       case PaymentTransactionStatus.processing:
         return Text(
           TChainPaymentLocalizations.of(context)!.payment_proceeding,
           style: style.copyWith(
-            color: oldThemeColors.statusWarning,
+            color: themeColors.primaryYellow,
           ),
         );
     }
   }
 
   Widget _buildDesc(BuildContext context) {
-    final style = themeTextStyles.body1.copyWith(
-      color: oldThemeColors.text11,
+    final style = TextStyle(
+      letterSpacing: -0.24,
+      fontSize: 15,
+      fontWeight: FontWeight.w400,
+      height: 22.5 / 15,
+      color: themeColors.textPrimary,
+      fontFamily: 'SF Pro Text',
     );
+
+    // final style = TextStyles.subhead1.copyWith(
+    //   color: themeColors.textPrimary,
+    // );
 
     switch (status) {
       case PaymentTransactionStatus.success:
@@ -229,40 +238,54 @@ class PaymentStatusScreen extends StatelessWidget {
     switch (status) {
       case PaymentTransactionStatus.success:
         return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 62, vertical: 12),
-            child: ButtonWidget(
-              onPressed: () {
-                // TODO
-                // Navigator.of(context).popUntil(
-                //   (route) => route.settings.name == ScreenRouter.MAIN,
-                // );
-              },
-              title: TChainPaymentLocalizations.of(context)!.go_to_home,
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              buildTextButton(
+                context,
+                onPressed: () {
+                  if (TChainPaymentSDK.instance.isTestnet) {
+                    launchUrlString('https://testnet.bscscan.com/tx/$txn');
+                  } else {
+                    launchUrlString('https://bscscan.com/tx/$txn');
+                  }
+                },
+                title: TChainPaymentLocalizations.of(context)!
+                    .view_transaction_detail,
+              ),
+              Gaps.px16,
+              buildElevatedButton(
+                context,
+                onPressed: () {
+                  Navigator.of(context)
+                    ..pop()
+                    ..pop();
+                },
+                title: TChainPaymentLocalizations.of(context)!.go_home,
+              ),
+            ],
           ),
         );
+
       case PaymentTransactionStatus.failed:
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 62, vertical: 12),
-                child: ButtonWidget(
-                  onPressed: () => onRetry?.call(),
-                  title: TChainPaymentLocalizations.of(context)!.retry,
-                ),
-              ),
-              ButtonWidget(
+              buildTextButton(
+                context,
                 onPressed: () {
-                  // TODO
-                  // Navigator.of(context).popUntil(
-                  //   (route) => route.settings.name == ScreenRouter.MAIN,
-                  // );
+                  Navigator.of(context)
+                    ..pop()
+                    ..pop();
                 },
-                title: TChainPaymentLocalizations.of(context)!.go_to_home,
+                title: TChainPaymentLocalizations.of(context)!.go_home,
+              ),
+              Gaps.px16,
+              buildElevatedButton(
+                context,
+                onPressed: () => onRetry?.call(),
+                title: TChainPaymentLocalizations.of(context)!.retry,
               ),
             ],
           ),

@@ -6,3 +6,4 @@ analyzer:
   exclude: 
     - lib/generated/**
     - lib/l10n/generated/*.dart
+    - lib/*/*.g.dart

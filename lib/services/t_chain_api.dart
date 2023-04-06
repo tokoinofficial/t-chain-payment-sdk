@@ -54,7 +54,7 @@ abstract class TChainAPI {
     @Header(kApiKey) required String apiKey,
   });
 
-  @POST('/t-chain-sdk/merchant-create-transaction')
+  @POST('/t-chain-sdk/create-transaction')
   Future<DataResponse<MerchantTransaction>> createMerchantTransaction({
     @Header(kApiKey) required String apiKey,
     @Body() required CreateTransactionBody body,

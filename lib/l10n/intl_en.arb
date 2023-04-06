@@ -59,7 +59,7 @@
     "payment_failed_brought_back_3rdapp": "Your payment is failed, you will be brought back to [3rd party app name] in {x} seconds",
     "unfortunately_payment_failed": "Unfortunately, your payment is failed.",
     "you_are_about_to_deposit": "You are about to deposit amount of",
-    "go_to_home": "Go to Home",
+    "go_home": "Go Home",
     "enter_transfer_amount": "Enter Transfer Amount",
     "merchant_client": "Merchant Client",
     "transfer_amount": "Transfer amount",
@@ -77,5 +77,6 @@
     "select_token": "Select Token",
     "insufficient_balance_to_use_token": "Insufficient balance to use this token for transfer",
     "invalid_exchange_rate": "Invalid exchange rate",
-    "coming_soon": "Coming Soon"
+    "coming_soon": "Coming Soon",
+    "view_transaction_detail": "View Transaction Detail"
 }

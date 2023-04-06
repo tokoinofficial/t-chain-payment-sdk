@@ -5,6 +5,7 @@ import 'dart:io';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/config/const.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
@@ -17,6 +18,8 @@ import 'package:t_chain_payment_sdk/smc/payment_smc.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart' as web3dart;
+
+const kWaitForReceiptTimeoutInSecond = 300;
 
 class WalletRepository {
   final gasStationAPI = GasStationAPI();
@@ -110,8 +113,7 @@ class WalletRepository {
 
   Future<web3dart.TransactionReceipt?> getTransactionReceipt(
       Asset asset, String txHash) async {
-    // TODO
-    // return await web3Client.getTxReceipt(txHash);
+    return await _web3Client!.getTransactionReceipt(txHash);
   }
 
   Future<String> approveDeposit(
@@ -214,21 +216,17 @@ class WalletRepository {
     getPaymentSmc();
   }
 
-  Future<web3dart.Transaction> buildPaymentContractTransaction({
-    required Asset asset,
-    required String functionName,
+  Future<web3dart.Transaction> buildDepositTransaction({
+    required String privateKeyHex,
     required List parameters,
     required num gasPrice,
   }) async {
-    return web3dart.Transaction();
-    // TODO
-    // Wallet wallet = asset.wallet!;
-    // return await TChainPayment.instance.buildContractTransaction(
-    //   privateKey: wallet.privateKey!,
-    //   functionName: functionName,
-    //   parameters: parameters,
-    //   gasPrice: gasPrice,
-    // );
+    final smc = await getPaymentSmc();
+    return await smc.buildDepositTransaction(
+      privateKeyHex: privateKeyHex,
+      parameters: parameters,
+      gasPrice: gasPrice,
+    );
   }
 
   Future<num> getPaymentDepositFee() async {
@@ -261,16 +259,17 @@ class WalletRepository {
     // );
   }
 
-  Future<String> sendPaymentTransaction(
-    Asset asset,
-    web3dart.Transaction tx,
-  ) async {
-    return '';
-    // TODO
-    // var hash = await TChainPayment.instance.sendRawTransaction(
-    //     privateKey: asset.wallet!.privateKey!, transaction: tx);
-    // log.d('sendPaymentTransaction hash $hash');
-    // return hash;
+  Future<String> sendPaymentTransaction({
+    required String privateKeyHex,
+    required web3dart.Transaction tx,
+  }) async {
+    final smc = await getPaymentSmc();
+    final hash = await smc.sendRawTransaction(
+        privateKey: privateKeyHex, transaction: tx);
+
+    debugPrint('sendPaymentTransaction hash $hash');
+
+    return hash;
   }
 
   Future<web3dart.Transaction> buildContractTransaction(
@@ -444,7 +443,7 @@ class WalletRepository {
     do {
       await Future.delayed(const Duration(seconds: 1));
       receipt = await getTransactionReceipt(asset, txHash);
-    } while (receipt == null && count++ < WAIT_FOR_RECEIPT_TIMEOUT_IN_SECOND);
+    } while (receipt == null && count++ < kWaitForReceiptTimeoutInSecond);
     return receipt?.status ?? false;
   }
 }

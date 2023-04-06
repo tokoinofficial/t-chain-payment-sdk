@@ -1,3 +1,5 @@
+import 'package:t_chain_payment_sdk/config/config.dart';
+import 'package:t_chain_payment_sdk/helpers/transaction_waiter.dart';
 import 'package:web3dart/web3dart.dart';
 import 'dart:math' as math;
 
@@ -25,28 +27,6 @@ class PaymentSmc extends GeneratedContract {
     return (response[0] as BigInt);
   }
 
-  // @override
-  // Future<Transaction> buildContractTransaction({
-  //   String privateKey = '',
-  //   String functionName = '',
-  //   required List parameters,
-  //   num gasPrice = 0,
-  // }) {
-  //   if (!isValidParams(
-  //       privateKey: privateKey,
-  //       gasPrice: gasPrice,
-  //       functionName: functionName)) {
-  //     throw Exception(LocaleKeys.error_invalid_params.tr());
-  //   }
-
-  //   return _contractTransaction.buildContractTransaction(
-  //     privateKey: privateKey,
-  //     functionName: functionName,
-  //     parameters: parameters,
-  //     gasPrice: gasPrice,
-  //   );
-  // }
-
   Future<num> getDepositFee() async {
     final function = self.abi.functions[1];
     final params = [];
@@ -56,21 +36,6 @@ class PaymentSmc extends GeneratedContract {
 
     return _toPercent(fee.toDouble());
   }
-
-  // Future<BigInt> debugDepositFee({//3
-  //   required String tokenAddress,
-  //   required num amount,
-  // }) async {
-  //   List<dynamic> results = await _contractTransaction.call(
-  //     functionName: 'debugDepositFee',
-  //     parameters: [
-  //       EthereumAddress.fromHex(tokenAddress),
-  //       TokoinNumber.fromNumber(amount).bigIntValue,
-  //     ],
-  //   );
-
-  //   return results.first;
-  // }
 
   Future<PaymentDiscountInfo> getDiscountFee({
     required String tokenAddress,
@@ -95,16 +60,53 @@ class PaymentSmc extends GeneratedContract {
     );
   }
 
-  // @override
-  // Future<String> sendRawTransaction({
-  //   required String privateKey,
-  //   required Transaction transaction,
-  // }) async {
-  //   return await _contractTransaction.sendRawTransaction(
-  //     privateKey: privateKey,
-  //     transaction: transaction,
-  //   );
-  // }
+  Future<BigInt> debugDepositFee({
+    required String tokenAddress,
+    required num amount,
+  }) async {
+    final function = self.abi.functions[3];
+    final params = [
+      EthereumAddress.fromHex(tokenAddress),
+      TokoinNumber.fromNumber(amount).bigIntValue,
+    ];
+    final response = await read(function, params, null);
+
+    return response.first;
+  }
+
+  Future<Transaction> buildDepositTransaction({
+    required String privateKeyHex,
+    required List parameters,
+    num gasPrice = 0,
+  }) async {
+    var credentials = EthPrivateKey.fromHex(privateKeyHex);
+    var address = credentials.address;
+    var nextNonce = await client.getTransactionCount(address,
+        atBlock: const BlockNum.pending());
+    return Transaction.callContract(
+      contract: self,
+      gasPrice: EtherAmount.fromBigInt(EtherUnit.gwei, BigInt.from(gasPrice)),
+      maxGas: Config.maxGas,
+      function: self.function('deposit'),
+      parameters: parameters,
+      nonce: nextNonce,
+    );
+  }
+
+  Future<String> sendRawTransaction({
+    required String privateKey,
+    required Transaction transaction,
+  }) async {
+    return await transactionWaiter.ready(() async {
+      var credentials = EthPrivateKey.fromHex(privateKey);
+      return await client.sendTransaction(
+        credentials,
+        transaction,
+        chainId: null,
+        fetchChainIdFromNetworkId: true,
+      );
+    });
+  }
 
   double _toPercent(num value) {
     final limitedValue = math.max(0, math.min(kMaximumFee, value));
