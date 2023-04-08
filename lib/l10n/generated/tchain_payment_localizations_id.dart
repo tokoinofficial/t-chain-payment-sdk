@@ -26,43 +26,16 @@ class TChainPaymentLocalizationsId extends TChainPaymentLocalizations {
   String get edit => 'Edit';
 
   @override
-  String get days => 'days';
-
-  @override
-  String get hours => 'hours';
-
-  @override
-  String get minutes => 'minutes';
-
-  @override
   String get close => 'Close';
 
   @override
   String get cancel => 'Batalkan';
 
   @override
-  String get slow => 'SLOW';
-
-  @override
-  String get fast => 'FAST';
-
-  @override
-  String get average => 'AVERAGE';
-
-  @override
   String get our_policy => ' our policy';
 
   @override
   String get next => 'Next';
-
-  @override
-  String get copy => 'Copy';
-
-  @override
-  String get paste => 'Tempel';
-
-  @override
-  String get no => 'No';
 
   @override
   String get btn_continue => 'Lanjutkan';
@@ -214,7 +187,7 @@ class TChainPaymentLocalizationsId extends TChainPaymentLocalizations {
   String get note_optional => 'Note (optional)';
 
   @override
-  String get add_a_note => 'Add a Note';
+  String get add_note => 'Add Note';
 
   @override
   String get note => 'Note';
@@ -257,4 +230,36 @@ class TChainPaymentLocalizationsId extends TChainPaymentLocalizations {
 
   @override
   String get view_transaction_detail => 'View Transaction Detail';
+
+  @override
+  String get please_try_again => 'Silahkan coba lagi';
+
+  @override
+  String allow_this_app_transfer(Object x) {
+    return 'Allow this app transfer up to $x on your behalf?';
+  }
+
+  @override
+  String get duration_of_approve_request => 'Durasi proses permintaan persetujuan mungkin membutuhkan waktu. Harap bersabar dan tunggu saat sedang diproses.';
+
+  @override
+  String get approve_request => 'Permintaan Persetujuan';
+
+  @override
+  String get failed_to_approve_deposit => 'Gagal menyetujui deposit';
+
+  @override
+  String get from => 'From';
+
+  @override
+  String get approve_request_pending => 'Approve Request Pending';
+
+  @override
+  String get approve_request_pending_desc => 'An approve request transaction is being processed. We recommend you wait until its process finishes or if you want to send another approve request, you will have to  pay another transaction fee.';
+
+  @override
+  String get send_another_request => 'Send Another Request';
+
+  @override
+  String get keep_waiting => 'Keep Waiting';
 }

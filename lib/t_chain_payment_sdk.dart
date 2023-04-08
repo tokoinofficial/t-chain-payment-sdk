@@ -16,9 +16,9 @@ import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
+import 'package:t_chain_payment_sdk/repo/storage_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
-import 'package:t_chain_payment_sdk/screens/merchant_input_screen.dart';
-import 'package:t_chain_payment_sdk/screens/payment_deposit_screen.dart';
+import 'package:t_chain_payment_sdk/screens/t_chain_root.dart';
 import 'package:t_chain_payment_sdk/services/blockchain_service.dart';
 import 'package:t_chain_payment_sdk/services/t_chain_api.dart';
 import 'package:uni_links/uni_links.dart';
@@ -74,6 +74,7 @@ class TChainPaymentSDK {
 
   late PaymentRepository _paymentRepository;
   late WalletRepository _walletRepository;
+  late StorageRepository _storageRepository;
 
   /// Initialize payment sdk
   init({
@@ -98,6 +99,7 @@ class TChainPaymentSDK {
     _walletRepository = WalletRepository(
       blockchainService: blockchainService,
     );
+    _storageRepository = StorageRepository();
 
     _initURIHandler();
     _incomingLinkHandler();
@@ -334,7 +336,7 @@ class TChainPaymentSDK {
 }
 
 extension TChainPaymentSDKWallet on TChainPaymentSDK {
-  openMerchantInputScreen(
+  startPayment(
     BuildContext context, {
     MerchantInfo? merchantInfo,
     String? qrCode,
@@ -346,35 +348,15 @@ extension TChainPaymentSDKWallet on TChainPaymentSDK {
           providers: [
             RepositoryProvider.value(value: _paymentRepository),
             RepositoryProvider.value(value: _walletRepository),
+            RepositoryProvider.value(value: _storageRepository),
           ],
-          child: MerchantInputScreen(
+          child: TChainRoot(
             merchantInfo: merchantInfo,
             qrCode: qrCode,
             bundleId: bundleId,
           ),
         ),
         fullscreenDialog: true,
-      ),
-    );
-  }
-
-  openDepositScreen(
-    BuildContext context, {
-    required MerchantInfo merchantInfo,
-    String? bundleId,
-  }) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => MultiRepositoryProvider(
-          providers: [
-            RepositoryProvider.value(value: _paymentRepository),
-            RepositoryProvider.value(value: _walletRepository),
-          ],
-          child: PaymentDepositScreen(
-            merchantInfo: merchantInfo,
-            bundleId: bundleId,
-          ),
-        ),
       ),
     );
   }

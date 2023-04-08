@@ -10,6 +10,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final Color? backgroundColor;
   final Color? shadowColor;
   final Color? tintColor;
+  final Widget? leading;
 
   @override
   final Size preferredSize;
@@ -22,6 +23,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor,
     this.shadowColor,
     this.tintColor,
+    this.leading,
   })  : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -43,6 +45,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       actions: actions,
       automaticallyImplyLeading: showBackButton,
       shadowColor: shadowColor,
+      leading: leading,
     );
   }
 }

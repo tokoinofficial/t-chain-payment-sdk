@@ -36,6 +36,17 @@ class Utils {
     // }
   }
 
+  static toast(dynamic str) {
+    Fluttertoast.showToast(
+        msg: str.toString(),
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 3,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 15.0);
+  }
+
   static errorToast(String errorMessage) {
     Fluttertoast.showToast(
       msg: errorMessage,

@@ -13,6 +13,7 @@ import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
+import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart' as web3dart;
 
 part 'payment_deposit_state.dart';
@@ -252,7 +253,13 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
       }
     }
 
-    num estimatedGas = await walletRepository.estimateGas(asset, tnx);
+    final privateKey = EthPrivateKey.fromHex(privateKeyHex);
+
+    num estimatedGas = await walletRepository.estimateGas(
+      address: privateKey.address,
+      transaction: tnx,
+    );
+
     bool isEnoughBalance = await walletRepository.isEnoughBnb(
       privateKeyHex: privateKeyHex,
       asset: asset,
@@ -431,7 +438,11 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
     String contractAddress,
   ) async {
     double depositAmount = amount.toDouble();
-    var allowance = await walletRepository.allowance(asset, contractAddress);
+    var allowance = await walletRepository.allowance(
+      privateKeyHex: privateKeyHex,
+      asset: asset,
+      contractAddress: contractAddress,
+    );
     return allowance >= depositAmount;
   }
 

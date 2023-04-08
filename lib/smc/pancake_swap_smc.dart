@@ -67,7 +67,6 @@ class PancakeSwapSmc extends GeneratedContract {
     return subResults.first;
   }
 
-  @override
   Future<Transaction> buildSwapTransaction({
     required String privateKeyHex,
     required String functionName,

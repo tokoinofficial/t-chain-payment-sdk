@@ -7,6 +7,8 @@ import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
 import 'package:t_chain_payment_sdk/helpers/deep_link_service.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
+import 'package:t_chain_payment_sdk/screens/t_chain_root.dart';
+import 'package:t_chain_payment_sdk/screens/t_chain_router_const.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:t_chain_payment_sdk/widgets/app_bar_widget.dart';
 import 'package:t_chain_payment_sdk/widgets/currency_selection_widget.dart';
@@ -72,6 +74,12 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
       child: Scaffold(
         appBar: AppBarWidget(
           title: TChainPaymentLocalizations.of(context)!.enter_transfer_amount,
+          leading: CloseButton(onPressed: () {
+            final currentContext = tChainNavigatorKey.currentContext;
+            if (currentContext != null) {
+              Navigator.of(currentContext, rootNavigator: true).pop();
+            }
+          }),
         ),
         backgroundColor: themeColors.mainBgPrimary,
         resizeToAvoidBottomInset: true,
@@ -321,11 +329,10 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
       currency: _paymentInfo!.currency.toCurrency().shortName,
     );
 
-    TChainPaymentSDK.instance.openDepositScreen(
-      context,
-      merchantInfo: _paymentInfo!,
-      bundleId: widget.bundleId,
-    );
+    Navigator.of(context).pushNamed(TChainRouterConst.kDeposit, arguments: {
+      TChainRouterConst.kArgMerchantInfo: _paymentInfo!,
+      TChainRouterConst.kArgBunderId: widget.bundleId,
+    });
   }
 
   Future<bool> _onWillPop() async {

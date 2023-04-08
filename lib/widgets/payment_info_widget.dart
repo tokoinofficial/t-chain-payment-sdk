@@ -74,8 +74,7 @@ class _PaymentInfoWidgetState extends State<PaymentInfoWidget> {
   }
 
   Widget _buildNotes() {
-    final buttonStyle = TextStyles.body1.copyWith(
-      fontWeight: FontWeight.w600,
+    final buttonStyle = TextStyles.subhead2.copyWith(
       color: themeColors.primaryBlue,
     );
 
@@ -86,7 +85,7 @@ class _PaymentInfoWidgetState extends State<PaymentInfoWidget> {
           ? GestureDetector(
               onTap: _showNotes,
               child: Text(
-                TChainPaymentLocalizations.of(context)!.add_a_note,
+                '  ${TChainPaymentLocalizations.of(context)!.add_note}  ',
                 style: buttonStyle,
               ),
             )

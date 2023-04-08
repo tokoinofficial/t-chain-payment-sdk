@@ -251,6 +251,14 @@ class TokoinNumber {
     return kEthPowExponent;
   }
 
+  static int getExponentWithAssetContractAddress(String? contractAddress) {
+    if (contractAddress == Config.bscDogeContractAddress) {
+      return kDogePowExponent;
+    }
+
+    return kEthPowExponent;
+  }
+
   @override
   int get hashCode => bigIntValue.hashCode + exponent.hashCode;
 }
@@ -260,7 +268,7 @@ extension DoubleExt on num {
   // expected: 65278412429009720
   // if you use `toBigInt`, the result will be 65278412429009728
   BigInt toBigIntBasedOnDecimal({decimals = kEthPowExponent}) {
-    if (this > 10e21) {
+    if (this > 10e20) {
       return BigInt.from(this);
     }
 

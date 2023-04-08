@@ -123,12 +123,20 @@ class WalletRepository {
     // );
   }
 
-  Future<num> allowance(Asset asset, String contractAddress) async {
-    return 100000;
-    // TODO
-    // BaseToken client = asset is BnbBscAsset ? WbnbAsset().client : asset.client;
-    // return await client.allowance(
-    //     address: asset.wallet!.address!, contractAddress: contractAddress);
+  Future<num> allowance({
+    required Asset asset,
+    required String privateKeyHex,
+    required String contractAddress,
+  }) async {
+    final tokenContractAddress =
+        asset.isBnb ? Asset.wbnb().contractAddress : asset.contractAddress;
+    final smc = await getBep20Smc(tokenContractAddress);
+
+    final privateKey = EthPrivateKey.fromHex(privateKeyHex);
+    return await smc.allowance(
+      walletAddress: privateKey.address.hex,
+      contractAddress: contractAddress,
+    );
   }
 
   Future<TransactionReceipt?> getTransactionReceipt(
@@ -136,22 +144,22 @@ class WalletRepository {
     return await _web3Client!.getTransactionReceipt(txHash);
   }
 
-  Future<String> approveDeposit(
-    Asset asset,
-    num gasPrice,
-    num gasLimit,
-    String contractAddress,
-  ) async {
-    return '';
-    // TODO
-    // // crowdfunding uses token registry contract for sending TOKO token
-    // BaseToken client = asset is BnbBscAsset ? WbnbAsset().client : asset.client;
-    // return await client.approve(
-    //   privateKey: asset.wallet!.privateKey!,
-    //   contractAddress: contractAddress,
-    //   gasPrice: gasPrice,
-    //   gasLimit: gasLimit,
-    // );
+  Future<TransactionInformation?> getTransactionByHash(
+      Asset asset, String txHash) async {
+    return await _web3Client!.getTransactionByHash(txHash);
+  }
+
+  Future<String> approveDeposit({
+    required String privateKeyHex,
+    required Asset asset,
+    required Transaction txForApproval,
+  }) async {
+    final smc = await getBep20Smc(asset.contractAddress);
+
+    return await smc.sendRawTransaction(
+      privateKey: privateKeyHex,
+      transaction: txForApproval,
+    );
   }
 
   Future<bool> isEnoughBnb({
@@ -280,51 +288,54 @@ class WalletRepository {
   }) async {
     final smc = await getPaymentSmc();
     final hash = await smc.sendRawTransaction(
-        privateKey: privateKeyHex, transaction: tx);
+      privateKey: privateKeyHex,
+      transaction: tx,
+    );
 
     debugPrint('sendPaymentTransaction hash $hash');
 
     return hash;
   }
 
-  Future<Transaction> buildApproveTransaction(
-    Asset asset,
-    String functionName,
-    List parameters,
-    num gasPrice,
+  Future<Transaction> buildApproveTransaction({
+    required String privateKeyHex,
+    required String contractAddress,
+    required BigInt amount,
+    num gasPrice = 0,
     int? nonce,
-  ) async {
-    return Transaction();
-    // TODO
-    // Wallet wallet = asset.wallet!;
-    // BaseToken client = asset is BnbBscAsset ? WbnbAsset().client : asset.client;
-    // return await client.buildContractTransaction(
-    //   privateKey: wallet.privateKey!,
-    //   functionName: functionName,
-    //   parameters: parameters,
-    //   gasPrice: gasPrice,
-    //   nonce: nonce,
-    // );
+  }) async {
+    final smc = await getBep20Smc(contractAddress);
+    return await smc.buildApprovalTransaction(
+      privateKeyHex: privateKeyHex,
+      contractAddress: contractAddress,
+      amount: amount,
+      gasPrice: gasPrice,
+      nonce: nonce,
+    );
   }
 
-  Future<num> estimateGas(
-    Asset asset,
-    Transaction transaction,
-  ) async {
-    return 0;
-    // TODO
-    // num gas = await asset.client.estimateGas(
-    //   sender: asset.wallet!.address!,
-    //   transaction: transaction,
-    // );
-    // // by * 20%, we'll make sure the gas limit is enough for covering this transaction
-    // gas = gas + (gas * 20 / 100);
-    // print('>>>>>>>>> estimateGas = $gas');
-    // return gas;
+  Future<num> estimateGas({
+    required EthereumAddress address,
+    required Transaction transaction,
+  }) async {
+    final estimatedGas = await _web3Client!.estimateGas(
+      sender: address,
+      to: transaction.to,
+      data: transaction.data,
+      value: transaction.value,
+      gasPrice: transaction.gasPrice,
+      amountOfGas: BigInt.from(Config.maxGas),
+    );
+
+    num gas = estimatedGas.toInt();
+
+    // by * 20%, we'll make sure the gas limit is enough for covering this transaction
+    gas = gas + (gas * 20 / 100);
+
+    return gas;
   }
 
   Future<BigInt?> getSwapAmountOut({required PancakeSwap pancakeSwap}) async {
-    // return BigInt.one;
     final smc = await getPancakeSwapSmc();
 
     return await smc.getAmountOut(

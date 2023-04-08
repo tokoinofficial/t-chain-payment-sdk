@@ -18,8 +18,10 @@ import 'package:t_chain_payment_sdk/helpers/deep_link_service.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/screens/payment_status_screen.dart';
+import 'package:t_chain_payment_sdk/screens/t_chain_root.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:t_chain_payment_sdk/widgets/app_bar_widget.dart';
+import 'package:t_chain_payment_sdk/widgets/approve_request_widget.dart';
 import 'package:t_chain_payment_sdk/widgets/gaps.dart';
 import 'package:t_chain_payment_sdk/widgets/payment_info_widget.dart';
 import 'package:t_chain_payment_sdk/widgets/transfer_tile.dart';
@@ -96,6 +98,9 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
     _exchangeRateRefreshingTimer?.cancel();
     _paymentDepositCubit.close();
     _exchangeRateCountdown.dispose();
+
+    _swapCubit.close();
+    _paymentDepositCubit.close();
 
     super.dispose();
   }
@@ -447,7 +452,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
 
         return Container(
           padding:
-              const EdgeInsets.only(left: 16, right: 10, top: 12, bottom: 12),
+              const EdgeInsets.only(left: 8, right: 10, top: 12, bottom: 12),
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: themeColors.fillBgQuarternary,
@@ -464,7 +469,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
                     style: TextStyles.subhead1.copyWith(
                       color: themeColors.textPrimary,
                     ),
-                    children: <TextSpan>[
+                    children: [
                       TextSpan(
                         text: time,
                         style: TextStyles.headline.copyWith(
@@ -575,14 +580,14 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
     required num amount,
     required String contractAddress,
   }) async {
-    // var result =
-    //     await Navigator.pushNamed(context, ScreenRouter.APPROVAL, arguments: {
-    //   ScreenRouter.ARG_ASSET: asset,
-    //   ScreenRouter.ARG_AMOUNT: amount,
-    //   ScreenRouter.ARG_CONTRACT_ADDRESS: contractAddress,
-    // });
+    var result = await ApproveRequestWidget.showBottomSheet(
+      context,
+      contractAddress: contractAddress,
+      asset: asset,
+      amount: amount,
+    );
 
-    // if (result != null) _onPay();
+    if (result == true) _onPay();
   }
 
   _onCancel() async {
@@ -624,9 +629,10 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
     if (widget.bundleId == null) {
       Navigator.of(context).pop();
     } else {
-      Navigator.of(context)
-        ..pop()
-        ..pop();
+      final currentContext = tChainNavigatorKey.currentContext;
+      if (currentContext != null) {
+        Navigator.of(currentContext, rootNavigator: true).pop();
+      }
     }
   }
 

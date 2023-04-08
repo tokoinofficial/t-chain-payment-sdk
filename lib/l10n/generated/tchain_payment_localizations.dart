@@ -135,24 +135,6 @@ abstract class TChainPaymentLocalizations {
   /// **'Edit'**
   String get edit;
 
-  /// No description provided for @days.
-  ///
-  /// In en, this message translates to:
-  /// **'days'**
-  String get days;
-
-  /// No description provided for @hours.
-  ///
-  /// In en, this message translates to:
-  /// **'hours'**
-  String get hours;
-
-  /// No description provided for @minutes.
-  ///
-  /// In en, this message translates to:
-  /// **'minutes'**
-  String get minutes;
-
   /// No description provided for @close.
   ///
   /// In en, this message translates to:
@@ -165,24 +147,6 @@ abstract class TChainPaymentLocalizations {
   /// **'Cancel'**
   String get cancel;
 
-  /// No description provided for @slow.
-  ///
-  /// In en, this message translates to:
-  /// **'SLOW'**
-  String get slow;
-
-  /// No description provided for @fast.
-  ///
-  /// In en, this message translates to:
-  /// **'FAST'**
-  String get fast;
-
-  /// No description provided for @average.
-  ///
-  /// In en, this message translates to:
-  /// **'AVERAGE'**
-  String get average;
-
   /// No description provided for @our_policy.
   ///
   /// In en, this message translates to:
@@ -194,24 +158,6 @@ abstract class TChainPaymentLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
-
-  /// No description provided for @copy.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy'**
-  String get copy;
-
-  /// No description provided for @paste.
-  ///
-  /// In en, this message translates to:
-  /// **'Paste'**
-  String get paste;
-
-  /// No description provided for @no.
-  ///
-  /// In en, this message translates to:
-  /// **'No'**
-  String get no;
 
   /// No description provided for @btn_continue.
   ///
@@ -483,11 +429,11 @@ abstract class TChainPaymentLocalizations {
   /// **'Note (optional)'**
   String get note_optional;
 
-  /// No description provided for @add_a_note.
+  /// No description provided for @add_note.
   ///
   /// In en, this message translates to:
-  /// **'Add a Note'**
-  String get add_a_note;
+  /// **'Add Note'**
+  String get add_note;
 
   /// No description provided for @note.
   ///
@@ -572,6 +518,66 @@ abstract class TChainPaymentLocalizations {
   /// In en, this message translates to:
   /// **'View Transaction Detail'**
   String get view_transaction_detail;
+
+  /// No description provided for @please_try_again.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again.'**
+  String get please_try_again;
+
+  /// No description provided for @allow_this_app_transfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow this app transfer up to {x} on your behalf?'**
+  String allow_this_app_transfer(Object x);
+
+  /// No description provided for @duration_of_approve_request.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration of approve request process may take time. Please be patient and wait while it’s being processed.'**
+  String get duration_of_approve_request;
+
+  /// No description provided for @approve_request.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve Request'**
+  String get approve_request;
+
+  /// No description provided for @failed_to_approve_deposit.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to approve deposit'**
+  String get failed_to_approve_deposit;
+
+  /// No description provided for @from.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get from;
+
+  /// No description provided for @approve_request_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve Request Pending'**
+  String get approve_request_pending;
+
+  /// No description provided for @approve_request_pending_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'An approve request transaction is being processed. We recommend you wait until its process finishes or if you want to send another approve request, you will have to  pay another transaction fee.'**
+  String get approve_request_pending_desc;
+
+  /// No description provided for @send_another_request.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Another Request'**
+  String get send_another_request;
+
+  /// No description provided for @keep_waiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Waiting'**
+  String get keep_waiting;
 }
 
 class _TChainPaymentLocalizationsDelegate extends LocalizationsDelegate<TChainPaymentLocalizations> {

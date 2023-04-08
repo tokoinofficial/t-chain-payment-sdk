@@ -138,6 +138,7 @@ mixin UIStyle {
       child: child ??
           Text(
             title!,
+            textAlign: TextAlign.center,
             style: TextStyles.subhead2,
           ),
     );
@@ -145,11 +146,16 @@ mixin UIStyle {
 
   Widget buildTextButton(
     BuildContext context, {
-    required String title,
+    Key? key,
+    String? title,
+    Widget? child,
     Function()? onPressed,
     bool isWarning = false,
   }) {
+    assert(title != null || child != null);
+
     return TextButton(
+      key: key,
       onPressed: onPressed,
       style: TextButton.styleFrom(
         elevation: 0,
@@ -160,15 +166,18 @@ mixin UIStyle {
         foregroundColor:
             isWarning ? themeColors.errorMain : themeColors.primaryBlue,
       ),
-      child: Text(
-        title,
-        style: TextStyles.subhead2,
-      ),
+      child: child ??
+          Text(
+            title!,
+            textAlign: TextAlign.center,
+            style: TextStyles.subhead2,
+          ),
     );
   }
 
   Widget buildOutlinedButton(
     BuildContext context, {
+    Key? key,
     String? title,
     Widget? child,
     Color? backgroundColor,
@@ -181,12 +190,15 @@ mixin UIStyle {
     assert(title != null || child != null);
 
     return OutlinedButton(
+      key: key,
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         elevation: 0,
         side: BorderSide(
           width: 1,
-          color: borderColor ?? themeColors.primaryBlue,
+          color: onPressed == null
+              ? themeColors.textQuarternary
+              : (borderColor ?? themeColors.primaryBlue),
         ),
         minimumSize: const Size.fromHeight(42),
         shape: RoundedRectangleBorder(
@@ -194,10 +206,12 @@ mixin UIStyle {
         ),
         backgroundColor: backgroundColor ?? Colors.white,
         foregroundColor: foregroundColor ?? themeColors.primaryBlue,
+        padding: const EdgeInsets.all(0),
       ),
       child: child ??
           Text(
             title!,
+            textAlign: TextAlign.center,
             style: TextStyles.subhead2,
           ),
     );

@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () {
                     const qrCode =
                         'TCHAIN.fa19615f226a28a82befd19644281f9a3dafe4cbefbfd7ab4ff5ed995cc7e7ca';
-                    TChainPaymentSDK.instance.openMerchantInputScreen(
+                    TChainPaymentSDK.instance.startPayment(
                       context,
                       qrCode: qrCode,
                     );
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       chainId: '56',
                     );
 
-                    TChainPaymentSDK.instance.openMerchantInputScreen(
+                    TChainPaymentSDK.instance.startPayment(
                       context,
                       merchantInfo: merchantInfo,
                     );

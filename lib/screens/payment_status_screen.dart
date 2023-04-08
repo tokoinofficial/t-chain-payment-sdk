@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
+import 'package:t_chain_payment_sdk/screens/t_chain_root.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:t_chain_payment_sdk/widgets/app_bar_widget.dart';
 import 'package:t_chain_payment_sdk/widgets/gaps.dart';
@@ -257,9 +258,10 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
               buildElevatedButton(
                 context,
                 onPressed: () {
-                  Navigator.of(context)
-                    ..pop()
-                    ..pop();
+                  final currentContext = tChainNavigatorKey.currentContext;
+                  if (currentContext != null) {
+                    Navigator.of(currentContext, rootNavigator: true).pop();
+                  }
                 },
                 title: TChainPaymentLocalizations.of(context)!.go_home,
               ),
@@ -275,9 +277,10 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
               buildTextButton(
                 context,
                 onPressed: () {
-                  Navigator.of(context)
-                    ..pop()
-                    ..pop();
+                  final currentContext = tChainNavigatorKey.currentContext;
+                  if (currentContext != null) {
+                    Navigator.of(currentContext, rootNavigator: true).pop();
+                  }
                 },
                 title: TChainPaymentLocalizations.of(context)!.go_home,
               ),

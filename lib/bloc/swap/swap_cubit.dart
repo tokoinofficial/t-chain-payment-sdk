@@ -61,8 +61,11 @@ class SwapCubit extends Cubit<SwapState> {
           pancakeSwap: pancakeSwap,
           gasPrice: gasPrice,
         );
-        num estimatedGas =
-            await walletRepository.estimateGas(pancakeSwap.assetIn, tnx);
+        final privateKey = EthPrivateKey.fromHex(privateKeyHex);
+        num estimatedGas = await walletRepository.estimateGas(
+          address: privateKey.address,
+          transaction: tnx,
+        );
         isEnoughBalance = await walletRepository.isEnoughBnb(
             privateKeyHex: privateKeyHex,
             asset: pancakeSwap.assetIn,
@@ -98,7 +101,11 @@ class SwapCubit extends Cubit<SwapState> {
   Future<bool> _hasEnoughAllowance(
       num amount, Asset asset, String contractAddress) async {
     double depositAmount = amount.toDouble();
-    var allowance = await walletRepository.allowance(asset, contractAddress);
+    var allowance = await walletRepository.allowance(
+      privateKeyHex: privateKeyHex,
+      asset: asset,
+      contractAddress: contractAddress,
+    );
     return allowance >= depositAmount;
   }
 }

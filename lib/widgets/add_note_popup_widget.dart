@@ -12,7 +12,7 @@ class AddNotePopupWidget extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (BuildContext popupContext) {
         return AddNotePopupWidget(
@@ -56,22 +56,18 @@ class _AddNotePopupWidgetState extends State<AddNotePopupWidget> with UIStyle {
     return SingleChildScrollView(
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                TChainPaymentLocalizations.of(context)!.add_a_note,
-                style: TextStyles.body2.copyWith(
-                  color: themeColors.textPrimary,
+                TChainPaymentLocalizations.of(context)!.note,
+                style: TextStyles.subhead1.copyWith(
+                  color: themeColors.textSecondary,
                 ),
               ),
-              Divider(
-                color: themeColors.textTertiary,
-                height: 32,
-              ),
-              Gaps.px8,
+              Gaps.px4,
               _buildInput(context),
               Gaps.px16,
               Row(
@@ -109,7 +105,7 @@ class _AddNotePopupWidgetState extends State<AddNotePopupWidget> with UIStyle {
   Widget _buildInput(BuildContext context) {
     final borderRadius = BorderRadius.circular(8);
     final border = OutlineInputBorder(
-      borderSide: BorderSide(color: themeColors.primaryBlue),
+      borderSide: BorderSide(color: themeColors.fillBgSecondary),
       borderRadius: borderRadius,
     );
 
@@ -119,10 +115,9 @@ class _AddNotePopupWidgetState extends State<AddNotePopupWidget> with UIStyle {
       style: TextStyles.subhead1.copyWith(
         color: themeColors.textPrimary,
       ),
-      minLines: 3,
-      maxLines: 3,
+      minLines: 6,
+      maxLines: 6,
       decoration: InputDecoration(
-        labelText: TChainPaymentLocalizations.of(context)!.note,
         hintText: TChainPaymentLocalizations.of(context)!.write_your_note,
         border: border,
         focusedBorder: border,
