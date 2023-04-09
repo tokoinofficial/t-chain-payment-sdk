@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
-import 'package:t_chain_payment_sdk/helpers/transaction_waiter.dart';
+import 'package:t_chain_payment_sdk/common/transaction_waiter.dart';
 import 'package:t_chain_payment_sdk/smc/bep_20_smc.dart';
 import 'package:t_chain_payment_sdk/smc/pancake_swap_smc.dart';
 import 'package:t_chain_payment_sdk/smc/payment_smc.dart';

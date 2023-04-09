@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:t_chain_payment_sdk/config/utils.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/gas_fee.dart';
-import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
-import 'package:t_chain_payment_sdk/helpers/transaction_waiter.dart';
+import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
+import 'package:t_chain_payment_sdk/common/transaction_waiter.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/repo/storage_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
@@ -178,7 +178,6 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
         emit(ApproveRequestWaiting());
       }
     } catch (e) {
-      debugPrint(e.toString());
       emit(ApproveRequestError(error: localizations.failed_to_approve_deposit));
     }
   }

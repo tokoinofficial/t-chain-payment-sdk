@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
-import 'package:t_chain_payment_sdk/widgets/chain_tag_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/gaps.dart';
+import 'package:t_chain_payment_sdk/screens/deposit/widgets/chain_tag_widget.dart';
+import 'package:t_chain_payment_sdk/common/gaps.dart';
 
 class CryptoWidget extends StatelessWidget {
   final Asset asset;

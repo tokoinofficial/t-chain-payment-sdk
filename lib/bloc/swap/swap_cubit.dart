@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
-import 'package:t_chain_payment_sdk/config/utils.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/pancake_swap.dart';
-import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
+import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:web3dart/web3dart.dart';
 

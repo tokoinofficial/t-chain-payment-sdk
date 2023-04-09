@@ -1,10 +1,10 @@
 import 'package:t_chain_payment_sdk/config/config.dart';
-import 'package:t_chain_payment_sdk/helpers/transaction_waiter.dart';
+import 'package:t_chain_payment_sdk/common/transaction_waiter.dart';
 import 'package:web3dart/web3dart.dart';
 import 'dart:math' as math;
 
 import 'package:t_chain_payment_sdk/data/payment_discount_fee.dart';
-import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
+import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
 
 class PaymentSmc extends GeneratedContract {
   static const kMaximumFee = 10000;

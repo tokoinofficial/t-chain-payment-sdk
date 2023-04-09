@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/data/merchant_info.dart';
-import 'package:t_chain_payment_sdk/screens/merchant_input_screen.dart';
-import 'package:t_chain_payment_sdk/screens/payment_deposit_screen.dart';
+import 'package:t_chain_payment_sdk/screens/merchant_input/merchant_input_screen.dart';
+import 'package:t_chain_payment_sdk/screens/deposit/payment_deposit_screen.dart';
 import 'package:t_chain_payment_sdk/screens/t_chain_router_const.dart';
 
 final tChainNavigatorKey = GlobalKey<NavigatorState>();

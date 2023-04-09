@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
-import 'package:t_chain_payment_sdk/widgets/gaps.dart';
+import 'package:t_chain_payment_sdk/common/gaps.dart';
 
 class CurrencySelectionWidget extends StatelessWidget {
   static Future<Currency?> showBottomSheet(BuildContext context,

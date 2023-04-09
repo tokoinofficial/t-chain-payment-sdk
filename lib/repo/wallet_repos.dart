@@ -7,7 +7,7 @@ import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/gas_fee.dart';
 import 'package:t_chain_payment_sdk/data/pancake_swap.dart';
 import 'package:t_chain_payment_sdk/data/payment_discount_fee.dart';
-import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
+import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/services/blockchain_service.dart';
 import 'package:t_chain_payment_sdk/services/gas_station_api.dart';
 import 'package:t_chain_payment_sdk/smc/bep_20_smc.dart';

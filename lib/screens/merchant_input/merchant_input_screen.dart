@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:t_chain_payment_sdk/bloc/payment_info_cubit.dart';
+import 'package:t_chain_payment_sdk/bloc/payment/payment_info_cubit.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
-import 'package:t_chain_payment_sdk/helpers/deep_link_service.dart';
+import 'package:t_chain_payment_sdk/common/deep_link_service.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/screens/t_chain_root.dart';
 import 'package:t_chain_payment_sdk/screens/t_chain_router_const.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
-import 'package:t_chain_payment_sdk/widgets/app_bar_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/currency_selection_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/gaps.dart';
-import 'package:t_chain_payment_sdk/widgets/ui_style.dart';
+import 'package:t_chain_payment_sdk/common/app_bar_widget.dart';
+import 'package:t_chain_payment_sdk/screens/merchant_input/widgets/currency_selection_widget.dart';
+import 'package:t_chain_payment_sdk/common/gaps.dart';
+import 'package:t_chain_payment_sdk/common/ui_style.dart';
 
 class MerchantInputScreen extends StatefulWidget {
   const MerchantInputScreen({

@@ -4,9 +4,9 @@ import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
 import 'package:t_chain_payment_sdk/screens/t_chain_root.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
-import 'package:t_chain_payment_sdk/widgets/app_bar_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/gaps.dart';
-import 'package:t_chain_payment_sdk/widgets/ui_style.dart';
+import 'package:t_chain_payment_sdk/common/app_bar_widget.dart';
+import 'package:t_chain_payment_sdk/common/gaps.dart';
+import 'package:t_chain_payment_sdk/common/ui_style.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 enum PaymentType {

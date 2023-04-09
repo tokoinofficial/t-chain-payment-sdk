@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:t_chain_payment_sdk/bloc/payment_deposit_cubit.dart';
+import 'package:t_chain_payment_sdk/bloc/payment/payment_deposit_cubit.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
-import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
+import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
-import 'package:t_chain_payment_sdk/widgets/add_note_popup_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/gaps.dart';
+import 'package:t_chain_payment_sdk/screens/deposit/widgets/add_note_popup_widget.dart';
+import 'package:t_chain_payment_sdk/common/gaps.dart';
 
 class PaymentInfoWidget extends StatefulWidget {
   final MerchantInfo merchantInfo;

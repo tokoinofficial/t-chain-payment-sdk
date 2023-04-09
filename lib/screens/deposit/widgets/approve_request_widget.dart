@@ -4,15 +4,15 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:t_chain_payment_sdk/bloc/approve_request/approve_request_cubit.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
-import 'package:t_chain_payment_sdk/config/utils.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/gas_fee.dart';
 import 'package:t_chain_payment_sdk/repo/storage_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
-import 'package:t_chain_payment_sdk/widgets/approve_request_pending_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/gaps.dart';
-import 'package:t_chain_payment_sdk/widgets/ui_style.dart';
+import 'package:t_chain_payment_sdk/screens/deposit/widgets/approve_request_pending_widget.dart';
+import 'package:t_chain_payment_sdk/common/gaps.dart';
+import 'package:t_chain_payment_sdk/common/ui_style.dart';
 
 class ApproveRequestWidget extends StatefulWidget {
   static Future<bool?> showBottomSheet(

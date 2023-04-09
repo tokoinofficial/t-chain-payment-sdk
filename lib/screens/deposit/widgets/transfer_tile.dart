@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
-import 'package:t_chain_payment_sdk/config/utils.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/currency.dart';
 import 'package:t_chain_payment_sdk/data/transfer_data.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
-import 'package:t_chain_payment_sdk/helpers/tokoin_number.dart';
+import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
-import 'package:t_chain_payment_sdk/widgets/crypto_widget.dart';
-import 'package:t_chain_payment_sdk/widgets/gaps.dart';
-import 'package:t_chain_payment_sdk/widgets/unable_to_apply_discount_widget.dart';
+import 'package:t_chain_payment_sdk/screens/deposit/widgets/crypto_widget.dart';
+import 'package:t_chain_payment_sdk/common/gaps.dart';
+import 'package:t_chain_payment_sdk/screens/deposit/widgets/unable_to_apply_discount_widget.dart';
 
 class TransferTile extends StatelessWidget {
   const TransferTile({
