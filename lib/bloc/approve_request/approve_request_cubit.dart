@@ -122,6 +122,7 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
       bool isEnoughBalance = false;
       Transaction tnx = await walletRepository.buildApproveTransaction(
         privateKeyHex: privateKeyHex,
+        asset: asset,
         contractAddress: contractAddress,
         amount: TokoinNumber.fromNumber(amount).bigIntValue,
         gasPrice: gasPrice,
@@ -177,6 +178,7 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
         emit(ApproveRequestWaiting());
       }
     } catch (e) {
+      debugPrint(e.toString());
       emit(ApproveRequestError(error: localizations.failed_to_approve_deposit));
     }
   }

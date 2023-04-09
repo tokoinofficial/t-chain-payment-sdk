@@ -17,7 +17,7 @@ class Bep20Smc extends GeneratedContract {
     EthereumAddress walletAddress, {
     BlockNum? atBlock,
   }) async {
-    final function = self.abi.functions[0];
+    final function = self.function('balanceOf');
 
     final params = [walletAddress];
     final response = await read(function, params, atBlock);
@@ -48,6 +48,7 @@ class Bep20Smc extends GeneratedContract {
     required String contractAddress,
     required BigInt amount,
     num gasPrice = 0,
+    num? gasLimit,
     int? nonce,
   }) async {
     var credentials = EthPrivateKey.fromHex(privateKeyHex);
@@ -59,7 +60,7 @@ class Bep20Smc extends GeneratedContract {
     return Transaction.callContract(
       contract: self,
       gasPrice: EtherAmount.fromBigInt(EtherUnit.gwei, BigInt.from(gasPrice)),
-      maxGas: Config.maxGas,
+      maxGas: gasLimit ?? Config.maxGas,
       function: self.function('approve'),
       parameters: [EthereumAddress.fromHex(contractAddress), amount],
       nonce: nextNonce,

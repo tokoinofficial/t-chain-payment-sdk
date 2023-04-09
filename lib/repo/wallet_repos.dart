@@ -299,12 +299,13 @@ class WalletRepository {
 
   Future<Transaction> buildApproveTransaction({
     required String privateKeyHex,
+    required Asset asset,
     required String contractAddress,
     required BigInt amount,
     num gasPrice = 0,
     int? nonce,
   }) async {
-    final smc = await getBep20Smc(contractAddress);
+    final smc = await getBep20Smc(asset.contractAddress);
     return await smc.buildApprovalTransaction(
       privateKeyHex: privateKeyHex,
       contractAddress: contractAddress,
