@@ -73,13 +73,13 @@ class PaymentDepositShowInfo extends PaymentDepositState {
     ]);
 }
 
-class PaymentDepositApproveRequest extends PaymentDepositState {
+class PaymentDepositAddAllowance extends PaymentDepositState {
   final Asset asset;
   final num amount;
   final String contractAddress;
   final List<TransferData> transferDataList;
 
-  const PaymentDepositApproveRequest({
+  const PaymentDepositAddAllowance({
     required this.asset,
     required this.amount,
     required this.contractAddress,

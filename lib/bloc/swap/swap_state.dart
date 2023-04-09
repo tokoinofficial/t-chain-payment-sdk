@@ -4,7 +4,7 @@ abstract class SwapState extends Equatable {
   const SwapState();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class SwapInitial extends SwapState {}
@@ -18,7 +18,7 @@ class SwapGetAmountOutSuccess extends SwapState {
   const SwapGetAmountOutSuccess(this.amountOut) : super();
 
   @override
-  List<Object> get props => super.props..add(amountOut);
+  List<Object?> get props => super.props..add(amountOut);
 }
 
 class SwapSuccess extends SwapState {
@@ -26,10 +26,28 @@ class SwapSuccess extends SwapState {
   const SwapSuccess(this.pancakeSwap) : super();
 
   @override
-  List<Object> get props => super.props..add(pancakeSwap);
+  List<Object?> get props => super.props..add(pancakeSwap);
 }
 
-class SwapRequiresApproval extends SwapState {}
+class SwapAddAllowance extends SwapState {
+  final Asset asset;
+  final num amount;
+  final String contractAddress;
+
+  const SwapAddAllowance({
+    required this.asset,
+    required this.amount,
+    required this.contractAddress,
+  }) : super();
+
+  @override
+  List<Object?> get props => super.props
+    ..addAll([
+      asset,
+      amount,
+      contractAddress,
+    ]);
+}
 
 class SwapFailed extends SwapState {
   final String errorMsg;
@@ -37,5 +55,5 @@ class SwapFailed extends SwapState {
   const SwapFailed(this.errorMsg) : super();
 
   @override
-  List<Object> get props => super.props..add(errorMsg);
+  List<Object?> get props => super.props..add(errorMsg);
 }

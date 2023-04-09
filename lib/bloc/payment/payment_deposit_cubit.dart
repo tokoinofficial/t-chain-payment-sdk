@@ -110,7 +110,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         );
 
         if (!hasTokoAllowance) {
-          emit(PaymentDepositApproveRequest(
+          emit(PaymentDepositAddAllowance(
             asset: tokoAsset,
             amount: discountInfo.deductAmount,
             contractAddress: Config.paymentContractAddress,
@@ -146,7 +146,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
       );
 
       if (!hasEnoughAllowance) {
-        emit(PaymentDepositApproveRequest(
+        emit(PaymentDepositAddAllowance(
           asset: asset,
           amount: assetAmount + feeAmount,
           contractAddress: Config.paymentTokenRegistry,

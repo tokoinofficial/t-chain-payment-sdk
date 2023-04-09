@@ -7,3 +7,4 @@ analyzer:
     - lib/generated/**
     - lib/l10n/generated/*.dart
     - lib/*/*.g.dart
+    - lib/config/config.dart

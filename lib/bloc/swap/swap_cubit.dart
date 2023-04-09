@@ -55,44 +55,51 @@ class SwapCubit extends Cubit<SwapState> {
 
       var hasEnoughAllowance = await _hasEnoughAllowance(
           pancakeSwap.amountIn!, pancakeSwap.assetIn, Config.pancakeRouter);
-      if (hasEnoughAllowance) {
-        Transaction tnx = await walletRepository.buildSwapContractTransaction(
-          privateKeyHex: privateKeyHex,
-          pancakeSwap: pancakeSwap,
-          gasPrice: gasPrice,
-        );
-        final privateKey = EthPrivateKey.fromHex(privateKeyHex);
-        num estimatedGas = await walletRepository.estimateGas(
-          address: privateKey.address,
-          transaction: tnx,
-        );
-        isEnoughBalance = await walletRepository.isEnoughBnb(
-            privateKeyHex: privateKeyHex,
-            asset: pancakeSwap.assetIn,
-            amount: pancakeSwap.amountIn!,
-            gasPrice: gasPrice,
-            estimatedGas: estimatedGas + externalGasPrice);
-        if (!isEnoughBalance) {
-          emit(SwapFailed(localizations.you_are_not_enough_bnb));
-        } else {
-          var hash = await walletRepository.swap(
-              privateKeyHex: privateKeyHex,
-              tx: tnx,
-              pancakeSwap: pancakeSwap,
-              gasLimit: estimatedGas,
-              gasPrice: gasPrice);
-          bool isSuccess = await walletRepository.waitForReceiptResult(
-              pancakeSwap.assetIn, hash);
-          if (!isSuccess) {
-            throw Exception(
-                localizations.something_went_wrong_please_try_later);
-          }
-
-          emit(SwapSuccess(pancakeSwap));
-        }
-      } else {
-        emit(SwapRequiresApproval());
+      if (!hasEnoughAllowance) {
+        emit(SwapAddAllowance(
+          contractAddress: Config.pancakeRouter,
+          asset: pancakeSwap.assetIn,
+          amount: pancakeSwap.amountIn!,
+        ));
+        return;
       }
+
+      Transaction tnx = await walletRepository.buildSwapContractTransaction(
+        privateKeyHex: privateKeyHex,
+        pancakeSwap: pancakeSwap,
+        gasPrice: gasPrice,
+      );
+      final privateKey = EthPrivateKey.fromHex(privateKeyHex);
+      num estimatedGas = await walletRepository.estimateGas(
+        address: privateKey.address,
+        transaction: tnx,
+      );
+      isEnoughBalance = await walletRepository.isEnoughBnb(
+          privateKeyHex: privateKeyHex,
+          asset: pancakeSwap.assetIn,
+          amount: pancakeSwap.amountIn!,
+          gasPrice: gasPrice,
+          estimatedGas: estimatedGas + externalGasPrice);
+
+      if (!isEnoughBalance) {
+        emit(SwapFailed(localizations.you_are_not_enough_bnb));
+        return;
+      }
+
+      var hash = await walletRepository.swap(
+          privateKeyHex: privateKeyHex,
+          tx: tnx,
+          pancakeSwap: pancakeSwap,
+          gasLimit: estimatedGas,
+          gasPrice: gasPrice);
+      bool isSuccess = await walletRepository.waitForReceiptResult(
+          pancakeSwap.assetIn, hash);
+
+      if (!isSuccess) {
+        throw Exception(localizations.something_went_wrong_please_try_later);
+      }
+
+      emit(SwapSuccess(pancakeSwap));
     } catch (e) {
       emit(SwapFailed(Utils.getErrorMsg(e)));
     }

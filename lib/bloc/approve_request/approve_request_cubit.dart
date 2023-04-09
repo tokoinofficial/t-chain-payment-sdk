@@ -89,14 +89,11 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
 
               if (isApproved) {
                 emit(ApproveRequestSuccess());
-              } else {
-                emit(ApproveRequestWaiting());
+                return;
               }
-
-              return;
             }
 
-            // this tx was failed --> start a new request
+            // this tx was failed or not enough --> start a new request
           } else {
             // tx may be not executed --> it's information
             TransactionInformation? info = await walletRepository
@@ -149,10 +146,11 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
         return;
       }
 
-      String txHash = await walletRepository.approveDeposit(
+      String txHash = await walletRepository.sendApproval(
         privateKeyHex: privateKeyHex,
         asset: asset,
-        txForApproval: tnx,
+        contractAddress: contractAddress,
+        gasPrice: gasPrice,
       );
 
       debugPrint('approving TxHash $txHash');

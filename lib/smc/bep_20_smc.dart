@@ -68,11 +68,11 @@ class Bep20Smc extends GeneratedContract {
   }
 
   Future<String> sendRawTransaction({
-    required String privateKey,
+    required String privateKeyHex,
     required Transaction transaction,
   }) async {
     return await transactionWaiter.ready(() async {
-      var credentials = EthPrivateKey.fromHex(privateKey);
+      var credentials = EthPrivateKey.fromHex(privateKeyHex);
       return await client.sendTransaction(
         credentials,
         transaction,

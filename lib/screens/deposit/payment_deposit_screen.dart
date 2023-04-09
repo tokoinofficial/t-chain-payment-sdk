@@ -157,8 +157,11 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
             listener: (context, state) {
               if (state is SwapSuccess) {
                 _handleSuccessSwap(state.pancakeSwap);
-              } else if (state is SwapRequiresApproval) {
-                _handleSwapApproveDeposit();
+              } else if (state is SwapAddAllowance) {
+                _handleApproveSwap(
+                  asset: state.asset,
+                  amount: state.amount,
+                );
               } else if (state is SwapFailed) {
                 Utils.errorToast(state.errorMsg);
               }
@@ -171,12 +174,15 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
                 _swappingAsset = state.toAsset;
                 _swappingAmount = state.amount;
                 _gasFee = state.gasFee;
-                _swap(swappingAsset: _swappingAsset!, amount: _swappingAmount!);
+                _swap(
+                  swappingAsset: _swappingAsset!,
+                  amount: _swappingAmount!,
+                );
               } else if (state is PaymentDepositSetUpCompleted) {
                 _paymentDepositCubit.getAllInfo();
               } else if (state is PaymentDepositError) {
                 Utils.errorToast(state.error);
-              } else if (state is PaymentDepositApproveRequest) {
+              } else if (state is PaymentDepositAddAllowance) {
                 _handleApproveDeposit(
                   asset: state.asset,
                   amount: state.amount,
@@ -283,7 +289,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
                   isLoaded = true;
                 } else if (state is PaymentDepositSetUpCompleted) {
                   isLoaded = false;
-                } else if (state is PaymentDepositApproveRequest) {
+                } else if (state is PaymentDepositAddAllowance) {
                   transferDataList = state.transferDataList;
                   isLoaded = true;
                 }
@@ -345,21 +351,25 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
     );
   }
 
-  _handleSwapApproveDeposit() async {
-    // TODO
-    // var result =
-    //     await Navigator.pushNamed(context, ScreenRouter.APPROVAL, arguments: {
-    //   ScreenRouter.ARG_ASSET: _currentAsset,
-    //   ScreenRouter.ARG_AMOUNT: widget.merchantInfo.amount,
-    //   ScreenRouter.ARG_CONTRACT_ADDRESS: Config.pancakeRouter
-    // });
+  _handleApproveSwap({
+    required Asset asset,
+    required num amount,
+  }) async {
+    if (_swappingAsset == null || _swappingAmount == null) return;
 
-    // if (result != null && _swappingAsset != null && _swappingAmount != null) {
-    //   _swap(
-    //     swappingAsset: _swappingAsset!,
-    //     amount: _swappingAmount!,
-    //   );
-    // }
+    var result = await ApproveRequestWidget.showBottomSheet(
+      context,
+      contractAddress: Config.pancakeRouter,
+      asset: asset,
+      amount: amount,
+    );
+
+    if (result == true) {
+      _swap(
+        swappingAsset: _swappingAsset!,
+        amount: _swappingAmount!,
+      );
+    }
   }
 
   _swap({

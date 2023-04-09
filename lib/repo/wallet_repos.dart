@@ -149,16 +149,54 @@ class WalletRepository {
     return await _web3Client!.getTransactionByHash(txHash);
   }
 
-  Future<String> approveDeposit({
+  Future<Transaction> buildApproveTransaction({
     required String privateKeyHex,
     required Asset asset,
-    required Transaction txForApproval,
+    required String contractAddress,
+    required BigInt amount,
+    num gasPrice = 0,
+    int? nonce,
   }) async {
-    final smc = await getBep20Smc(asset.contractAddress);
+    final tokenContractAddress =
+        asset.isBnb ? Asset.wbnb().contractAddress : asset.contractAddress;
+    final smc = await getBep20Smc(tokenContractAddress);
+
+    return await smc.buildApprovalTransaction(
+      privateKeyHex: privateKeyHex,
+      contractAddress: contractAddress,
+      amount: amount,
+      gasPrice: gasPrice,
+      nonce: nonce,
+    );
+  }
+
+  Future<String> sendApproval({
+    required String privateKeyHex,
+    required Asset asset,
+    required String contractAddress,
+    num gasPrice = 0,
+    int? nonce,
+  }) async {
+    final tokenContractAddress =
+        asset.isBnb ? Asset.wbnb().contractAddress : asset.contractAddress;
+    final smc = await getBep20Smc(tokenContractAddress);
+
+    final tnx = await buildApproveTransaction(
+      privateKeyHex: privateKeyHex,
+      asset: asset,
+      contractAddress: contractAddress,
+      amount: TokoinNumber.fromNumber(
+        kDefaultApprovedValue,
+        exponent: TokoinNumber.getExponentWithAssetContractAddress(
+            tokenContractAddress),
+      ).bigIntValue,
+      gasPrice: gasPrice,
+      nonce: nonce,
+    );
 
     return await smc.sendRawTransaction(
-      privateKey: privateKeyHex,
-      transaction: txForApproval,
+      privateKeyHex: privateKeyHex,
+      transaction: tnx,
     );
   }
 
@@ -295,24 +333,6 @@ class WalletRepository {
     debugPrint('sendPaymentTransaction hash $hash');
 
     return hash;
-  }
-
-  Future<Transaction> buildApproveTransaction({
-    required String privateKeyHex,
-    required Asset asset,
-    required String contractAddress,
-    required BigInt amount,
-    num gasPrice = 0,
-    int? nonce,
-  }) async {
-    final smc = await getBep20Smc(asset.contractAddress);
-    return await smc.buildApprovalTransaction(
-      privateKeyHex: privateKeyHex,
-      contractAddress: contractAddress,
-      amount: amount,
-      gasPrice: gasPrice,
-      nonce: nonce,
-    );
   }
 
   Future<num> estimateGas({
