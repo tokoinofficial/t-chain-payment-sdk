@@ -98,7 +98,11 @@ class WalletRepository {
     final smc = await getBep20Smc(smcAddressHex);
 
     final value = await smc.getBalance(privateKey.address);
-    return value.toDouble();
+
+    return TokoinNumber.fromBigInt(value,
+        exponent: TokoinNumber.getExponentWithAssetContractAddress(
+          smcAddressHex,
+        )).doubleValue;
   }
 
   Future<num> allowance({

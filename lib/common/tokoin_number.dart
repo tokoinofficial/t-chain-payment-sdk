@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:decimal/decimal.dart';
 import 'package:intl/intl.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
@@ -268,15 +269,7 @@ extension DoubleExt on num {
   // expected: 65278412429009720
   // if you use `toBigInt`, the result will be 65278412429009728
   BigInt toBigIntBasedOnDecimal({decimals = kEthPowExponent}) {
-    if (this > 10e20) {
-      return BigInt.from(this);
-    }
-
-    String string = toString();
-    if (string.contains('e')) {
-      string = toStringAsFixed(decimals);
-    }
-
+    String string = Decimal.parse(toString()).toString();
     final strings = string.split('.');
 
     // decimal number
