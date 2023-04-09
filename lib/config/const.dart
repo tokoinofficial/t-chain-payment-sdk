@@ -44,4 +44,6 @@ class CONST {
     kAssetNameDOGE: 'farming_doge',
     kAssetNameC98: 'farming_c98',
   };
+
+  static const policyUrl = 'https://tokoin.io/docs/privacy-policy';
 }

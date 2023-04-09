@@ -150,7 +150,7 @@ abstract class TChainPaymentLocalizations {
   /// No description provided for @our_policy.
   ///
   /// In en, this message translates to:
-  /// **' our policy'**
+  /// **'our policy'**
   String get our_policy;
 
   /// No description provided for @next.
@@ -578,6 +578,12 @@ abstract class TChainPaymentLocalizations {
   /// In en, this message translates to:
   /// **'Keep Waiting'**
   String get keep_waiting;
+
+  /// No description provided for @by_clicking_confirm_you_understood_and_agreed_to.
+  ///
+  /// In en, this message translates to:
+  /// **'By clicking “Confirm”, you understood and agreed to'**
+  String get by_clicking_confirm_you_understood_and_agreed_to;
 }
 
 class _TChainPaymentLocalizationsDelegate extends LocalizationsDelegate<TChainPaymentLocalizations> {

@@ -6,6 +6,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:t_chain_payment_sdk/bloc/payment/payment_deposit_cubit.dart';
 import 'package:t_chain_payment_sdk/bloc/swap/swap_cubit.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
+import 'package:t_chain_payment_sdk/config/const.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/common/utils.dart';
@@ -26,6 +27,7 @@ import 'package:t_chain_payment_sdk/common/gaps.dart';
 import 'package:t_chain_payment_sdk/screens/merchant_input/widgets/payment_info_widget.dart';
 import 'package:t_chain_payment_sdk/screens/deposit/widgets/transfer_tile.dart';
 import 'package:t_chain_payment_sdk/common/ui_style.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class PaymentDepositScreen extends StatefulWidget {
   const PaymentDepositScreen({
@@ -543,33 +545,33 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
   }
 
   Widget _buildConfirmDesc() {
-    return const SizedBox();
-    // TODO
-    // return Padding(
-    //   padding: const EdgeInsets.fromLTRB(32, 16, 32, 0),
-    //   child: InkWell(
-    //     child: RichText(
-    //       textAlign: TextAlign.center,
-    //       text: TextSpan(
-    //         text: TChainPaymentLocalizations.of(context)!
-    //                 .program_by_clicking_confirm_you_understood +
-    //             ' ',
-    //         style: App.theme.textStylesV1.body2
-    //             .copyWith(color: App.theme.colorsV1.text1),
-    //         children: <TextSpan>[
-    //           TextSpan(
-    //               text: LocaleKeys.program_our_policy.tr() + '.',
-    //               style: App.theme.textStylesV1.button2
-    //                   .copyWith(color: App.theme.colorsV1.primary)),
-    //         ],
-    //       ),
-    //     ),
-    //     onTap: () => Navigator.pushNamed(context, ScreenRouter.TNC,
-    //         arguments: <String, dynamic>{
-    //           "item": TermItem.COMMON,
-    //         }),
-    //   ),
-    // );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(32, 16, 32, 0),
+      child: InkWell(
+        child: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            text: TChainPaymentLocalizations.of(context)!
+                    .by_clicking_confirm_you_understood_and_agreed_to +
+                ' ',
+            style: TextStyles.caption1.copyWith(color: themeColors.textPrimary),
+            children: [
+              TextSpan(
+                text: TChainPaymentLocalizations.of(context)!.our_policy + '.',
+                style: TextStyles.caption1.copyWith(
+                  color: themeColors.primaryBlue,
+                ),
+              ),
+            ],
+          ),
+        ),
+        onTap: () async {
+          if (await canLaunchUrlString(CONST.policyUrl)) {
+            launchUrlString(CONST.policyUrl);
+          }
+        },
+      ),
+    );
   }
 
   Widget _buildConfirmButton(bool? isEnoughBnb) {

@@ -32,7 +32,7 @@ class TChainPaymentLocalizationsId extends TChainPaymentLocalizations {
   String get cancel => 'Batalkan';
 
   @override
-  String get our_policy => ' our policy';
+  String get our_policy => 'our policy';
 
   @override
   String get next => 'Next';
@@ -262,4 +262,7 @@ class TChainPaymentLocalizationsId extends TChainPaymentLocalizations {
 
   @override
   String get keep_waiting => 'Keep Waiting';
+
+  @override
+  String get by_clicking_confirm_you_understood_and_agreed_to => 'By clicking “Confirm”, you understood and agreed to ';
 }
