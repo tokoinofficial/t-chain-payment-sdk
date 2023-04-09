@@ -101,28 +101,6 @@ class WalletRepository {
     return value.toDouble();
   }
 
-  Future<String> sendTransaction(
-    Asset asset,
-    String destAddress,
-    num value,
-    num gasPrice,
-    num gasLimit,
-    int? nonce,
-  ) async {
-    return '';
-    // TODO
-    // Wallet wallet = asset.wallet!;
-    // return await asset.client.transfer(
-    //   privateKey: wallet.privateKey!,
-    //   fromAddress: wallet.address,
-    //   destAddress: destAddress,
-    //   value: value,
-    //   gasPrice: gasPrice,
-    //   gasLimit: gasLimit,
-    //   nonce: nonce,
-    // );
-  }
-
   Future<num> allowance({
     required Asset asset,
     required String privateKeyHex,
@@ -220,14 +198,13 @@ class WalletRepository {
       if (balanceOfBnb == 0 ||
           balanceOfBnb <
               amount +
-                  num.parse(
-                      GasFeeAverage(gasPrice, 0).toEthString(estimatedGas))) {
+                  num.parse(GasFee(gasPrice, 0).toEthString(estimatedGas))) {
         isEnoughBnb = false;
       }
     } else {
       if (balanceOfBnb == 0 ||
           balanceOfBnb <
-              num.parse(GasFeeAverage(gasPrice, 0).toEthString(estimatedGas))) {
+              num.parse(GasFee(gasPrice, 0).toEthString(estimatedGas))) {
         isEnoughBnb = false;
       }
     }
@@ -250,29 +227,9 @@ class WalletRepository {
     if (gasPrice < minimumGasPriceInBsc) {
       gasPrice = minimumGasPriceInBsc;
     }
-    GasFee gasFee = GasFeeAverage(gasPrice, DEFAULT_BSC_WAIT_MINUTES);
+    GasFee gasFee = GasFee(gasPrice, kDefaultBscWaitMinutes);
 
     return [gasFee];
-  }
-
-  Future<Transaction> buildTransferTransaction(
-    Asset asset,
-    String destAddress,
-    num value,
-    num gasPrice,
-    int? nonce,
-  ) async {
-    return Transaction();
-    // TODO
-    // Wallet wallet = asset.wallet!;
-    // return await asset.client.buildTransferTransaction(
-    //   privateKey: wallet.privateKey!,
-    //   fromAddress: wallet.address!,
-    //   destAddress: destAddress,
-    //   value: value,
-    //   gasPrice: gasPrice,
-    //   nonce: nonce,
-    // );
   }
 
   Future setupPaymentContract() async {

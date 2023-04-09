@@ -94,7 +94,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
         _loadingApprove = state is ApproveRequestLoading;
 
         if (state is ApproveRequestReady) {
-          _gasFee = GasFee.getGasFee(state.gasFees);
+          _gasFee = state.gasFees.first;
         } else if (state is ApproveRequestSuccess) {
           Navigator.of(context).pop(true);
         } else if (state is ApproveRequestWaiting) {
@@ -189,7 +189,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
                 _buildShimmerCell(
                   text: _gasFee == null
                       ? ''
-                      : "${_gasFee!.toEthString(ESTIMATE_GAS_LIMIT_FOR_APPROVE)} BNB",
+                      : "${_gasFee!.toEthString(kEstimateGasLimitForApprove)} BNB",
                   style: boldTextStyle,
                   textAlign: TextAlign.right,
                 ),

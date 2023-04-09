@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations_en.dart';
 import 'package:web3dart/crypto.dart';
 
 class Utils {
@@ -19,21 +21,18 @@ class Utils {
   }
 
   static String getErrorMsg(e) {
-    return e.toString();
-    // TODO
-    // try {
-    //   if (e is DioError) {
-    //     try {
-    //       return e.error.message;
-    //     } catch (_) {
-    //       return e.message;
-    //     }
-    //   }
+    try {
+      if (e is DioError) {
+        return e.message ??
+            TChainPaymentLocalizationsEn()
+                .something_went_wrong_please_try_later;
+      }
 
-    //   return e.message;
-    // } catch (_) {
-    //   return LocaleKeys.error_something_went_wrong_please_try_later.tr();
-    // }
+      return e.message;
+    } catch (_) {
+      return TChainPaymentLocalizationsEn()
+          .something_went_wrong_please_try_later;
+    }
   }
 
   static toast(dynamic str) {

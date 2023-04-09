@@ -428,8 +428,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
     if (asset == null || _gasFee == null) return false;
 
     return asset.balance >=
-        num.parse(
-            GasFeeAverage(_gasFee!.fee, 0).toEthString(_gasFee!.estimatedGas));
+        num.parse(GasFee(_gasFee!.fee, 0).toEthString(_gasFee!.estimatedGas));
   }
 
   Future<bool> _hasEnoughAllowance(
