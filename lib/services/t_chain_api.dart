@@ -4,6 +4,7 @@ import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/data/merchant_transaction.dart';
 import 'package:t_chain_payment_sdk/data/request_body.dart/create_transaction_body.dart';
 import 'package:t_chain_payment_sdk/data/request_body.dart/gen_qr_code_body.dart';
+import 'package:t_chain_payment_sdk/data/request_body.dart/merchant_info_body.dart';
 import 'package:t_chain_payment_sdk/data/response/data_response.dart';
 
 part 't_chain_api.g.dart';
@@ -42,11 +43,10 @@ abstract class TChainAPI {
     @Body() required GenQrCodeBody body,
   });
 
-  @GET('/t-chain/merchant-info')
+  @POST('/t-chain-sdk/merchant-info')
   Future<DataResponse<MerchantInfo>> getMerchantInfo({
     @Header(kApiKey) required String apiKey,
-    @Query('qr_code') required String qrCode,
-    @Query('amount') double? amount,
+    @Body() required MerchantInfoBody body,
   });
 
   @GET('/t-chain-sdk/exchange-rate')

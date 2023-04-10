@@ -49,27 +49,23 @@ class _TChainAPI implements TChainAPI {
   @override
   Future<DataResponse<MerchantInfo>> getMerchantInfo({
     required apiKey,
-    required qrCode,
-    amount,
+    required body,
   }) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'qr_code': qrCode,
-      r'amount': amount,
-    };
-    queryParameters.removeWhere((k, v) => v == null);
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'x-api-key': apiKey};
     _headers.removeWhere((k, v) => v == null);
-    final Map<String, dynamic>? _data = null;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<DataResponse<MerchantInfo>>(Options(
-      method: 'GET',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/t-chain/merchant-info',
+              '/t-chain-sdk/merchant-info',
               queryParameters: queryParameters,
               data: _data,
             )

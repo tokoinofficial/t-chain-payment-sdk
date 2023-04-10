@@ -3,6 +3,7 @@ import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/merchant_transaction.dart';
 import 'package:t_chain_payment_sdk/data/request_body.dart/create_transaction_body.dart';
 import 'package:t_chain_payment_sdk/data/request_body.dart/gen_qr_code_body.dart';
+import 'package:t_chain_payment_sdk/data/request_body.dart/merchant_info_body.dart';
 import 'package:t_chain_payment_sdk/data/response/data_response.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
 import 'package:t_chain_payment_sdk/services/t_chain_api.dart';
@@ -65,13 +66,12 @@ class PaymentRepository {
 
   Future<DataResponse<MerchantInfo>?> getMerchantInfo({
     required String qrCode,
-    double? amount,
   }) async {
+    final body = MerchantInfoBody(qrCode: qrCode);
     try {
       final response = await api.getMerchantInfo(
         apiKey: TChainPaymentSDK.instance.apiKey,
-        qrCode: qrCode,
-        amount: amount,
+        body: body,
       );
 
       return response;
