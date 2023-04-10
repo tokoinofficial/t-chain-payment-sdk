@@ -13,11 +13,10 @@ class PaymentCubit extends Cubit<PaymentState> {
   static const double defaultQrImageSize = 400;
 
   initial() {
-    TChainPaymentSDK.instance.init(
+    TChainPaymentSDK.shared.config(
       apiKey: Constants.apiKey,
-      bundleID: Constants.bundleID,
+      bundleId: Constants.bundleId,
       delegate: _onHandlePaymentResult,
-      privateKeyHex: Constants.privateKeyHex,
       env: TChainPaymentEnv.dev,
       isTestnet: true,
     );
@@ -56,7 +55,7 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   @override
   close() async {
-    TChainPaymentSDK.instance.close();
+    TChainPaymentSDK.shared.close();
 
     super.close();
   }
@@ -71,7 +70,7 @@ class PaymentCubit extends Cubit<PaymentState> {
     required Currency currency,
   }) async {
     emit(PaymentLoading());
-    final result = await TChainPaymentSDK.instance.deposit(
+    final result = await TChainPaymentSDK.shared.deposit(
       notes: notes,
       amount: amount,
       currency: currency,
@@ -92,7 +91,7 @@ class PaymentCubit extends Cubit<PaymentState> {
     double imageSize = defaultQrImageSize,
   }) async {
     emit(PaymentLoading());
-    final result = await TChainPaymentSDK.instance.generateQrCode(
+    final result = await TChainPaymentSDK.shared.generateQrCode(
       notes: notes,
       amount: amount,
       currency: currency,

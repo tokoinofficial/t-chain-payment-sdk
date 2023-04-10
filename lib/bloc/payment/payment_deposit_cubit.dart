@@ -42,7 +42,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   ExchangeRate _exchangeRate = ExchangeRate({});
 
   Future setup() async {
-    final address = TChainPaymentSDK.instance.account.privateKey.address.hex;
+    final address = TChainPaymentSDK.shared.account.privateKey.address.hex;
     if (!Utils.isValidEthereumAddress(address)) {
       emit(PaymentDepositUnsupportedWallet());
       return;
@@ -244,7 +244,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         privateKeyHex: privateKeyHex,
       );
 
-      TChainPaymentSDK.instance.account.updateAsset(
+      TChainPaymentSDK.shared.account.updateAsset(
         asset.copyWith(balance: balance),
       );
 
@@ -331,7 +331,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
                 .then(
               (value) {
                 final asset = entry.value.copyWith(balance: value);
-                TChainPaymentSDK.instance.account.updateAsset(asset);
+                TChainPaymentSDK.shared.account.updateAsset(asset);
               },
             ).catchError((e) {
               debugPrint(e.toString());
@@ -411,20 +411,20 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   }
 
   Asset _getTokoinAsset() {
-    return TChainPaymentSDK.instance.account.getAsset(
+    return TChainPaymentSDK.shared.account.getAsset(
       name: CONST.kAssetNameTOKO,
     )!;
   }
 
   Asset _getSwappingAsset() {
-    return TChainPaymentSDK.instance.account.getAsset(
+    return TChainPaymentSDK.shared.account.getAsset(
       name: CONST.kAssetNameUSDT,
     )!;
   }
 
   bool _isEnoughBnb() {
     Asset? asset =
-        TChainPaymentSDK.instance.account.getAsset(name: CONST.kAssetNameBNB);
+        TChainPaymentSDK.shared.account.getAsset(name: CONST.kAssetNameBNB);
     if (asset == null || _gasFee == null) return false;
 
     return asset.balance >=
@@ -452,7 +452,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
 
     _supportedAssets = _exchangeRate.map.keys
         .map((e) {
-          return TChainPaymentSDK.instance.account.getAsset(name: e);
+          return TChainPaymentSDK.shared.account.getAsset(name: e);
         })
         .where((element) => element != null)
         .cast<Asset>()

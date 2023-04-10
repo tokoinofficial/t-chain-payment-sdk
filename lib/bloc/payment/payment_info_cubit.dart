@@ -31,7 +31,7 @@ class PaymentInfoCubit extends Cubit<PaymentInfoState> {
 
       if (response == null ||
           response.result == null ||
-          response.result!.chainId != TChainPaymentSDK.instance.chainIdString) {
+          response.result!.chainId != TChainPaymentSDK.shared.chainIdString) {
         emit(PaymentInfoUnsupported());
         return;
       }

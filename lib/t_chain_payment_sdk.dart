@@ -29,19 +29,19 @@ export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 export 'package:t_chain_payment_sdk/data/currency.dart';
+export 'package:t_chain_payment_sdk/data/account.dart';
 export 'package:t_chain_payment_sdk/data/merchant_info.dart';
 export 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 
-/// TChainPaymnentSDK
-/// Helping you communicate with My T-Wallet easily.
+/// T-Chain Paymnent SDK
+/// T-Chain Payment is a B2B service helping small and medium-sized enterprises add another channel for users to purchase using crypto currency with minimum efforts.
 /// Features:
 /// - deposit
 /// - generate QR Code
-/// - withdraw
 ///
 class TChainPaymentSDK {
-  static final TChainPaymentSDK _instance = TChainPaymentSDK._();
-  static TChainPaymentSDK get instance => _instance;
+  static final TChainPaymentSDK _shared = TChainPaymentSDK._();
+  static TChainPaymentSDK get shared => _shared;
 
   TChainPaymentSDK._();
 
@@ -49,8 +49,8 @@ class TChainPaymentSDK {
   late String apiKey;
 
   /// Bundle id of merchant app
-  /// It's used for My T-Wallet callback function
-  late String bundleID;
+  /// It's used for wallet's callback function
+  late String bundleId;
 
   /// Environment
   late TChainPaymentEnv env;
@@ -73,20 +73,17 @@ class TChainPaymentSDK {
   String get chainIdString => '$chainID';
 
   late PaymentRepository _paymentRepository;
-  late WalletRepository _walletRepository;
-  late StorageRepository _storageRepository;
 
-  /// Initialize payment sdk
-  init({
+  /// config payment sdk
+  config({
     required String apiKey,
-    required String bundleID,
-    required String privateKeyHex,
+    required String bundleId,
     TChainPaymentEnv env = TChainPaymentEnv.dev,
     bool isTestnet = true,
     required Function(TChainPaymentResult) delegate,
   }) {
     this.apiKey = apiKey;
-    this.bundleID = bundleID;
+    this.bundleId = bundleId;
     this.env = env;
     this.isTestnet = isTestnet;
     this.delegate = delegate;
@@ -94,12 +91,6 @@ class TChainPaymentSDK {
 
     final api = TChainAPI.standard(env.apiUrl);
     _paymentRepository = PaymentRepository(api: api);
-    final blockchainService = BlockchainService();
-    account = Account(privateKeyHex: privateKeyHex);
-    _walletRepository = WalletRepository(
-      blockchainService: blockchainService,
-    );
-    _storageRepository = StorageRepository();
 
     _initURIHandler();
     _incomingLinkHandler();
@@ -109,7 +100,9 @@ class TChainPaymentSDK {
   close() {
     _streamSubscription?.cancel();
   }
+}
 
+extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
   /// Use case: App to App
   /// Alex wants to add funds into his wallet in a game platform, the system
   /// already provides several way to deposit such as redeem code, credit card...
@@ -221,7 +214,7 @@ class TChainPaymentSDK {
       notes: notes,
       amount: amount,
       currency: currency,
-      bundleID: bundleID,
+      bundleID: bundleId,
       chainId: '$chainID',
     );
 
@@ -282,7 +275,7 @@ class TChainPaymentSDK {
     if (!kIsWeb) {
       // It will handle app links while the app is already started - be it in
       // the foreground or in the background.
-      _streamSubscription = uriLinkStream.listen((Uri? uri) {
+      _streamSubscription ??= uriLinkStream.listen((Uri? uri) {
         debugPrint('Received URI: $uri');
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _handleDeepLink(uri);
@@ -335,20 +328,29 @@ class TChainPaymentSDK {
   }
 }
 
-extension TChainPaymentSDKWallet on TChainPaymentSDK {
-  startPayment(
+extension TChainPaymentSDKWalletApp on TChainPaymentSDK {
+  _startPayment(
     BuildContext context, {
+    required Account account,
     MerchantInfo? merchantInfo,
     String? qrCode,
     String? bundleId,
   }) {
+    this.account = account;
+
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) => MultiRepositoryProvider(
           providers: [
             RepositoryProvider.value(value: _paymentRepository),
-            RepositoryProvider.value(value: _walletRepository),
-            RepositoryProvider.value(value: _storageRepository),
+            RepositoryProvider(create: (context) {
+              return WalletRepository(
+                blockchainService: BlockchainService(),
+              );
+            }),
+            RepositoryProvider(create: (context) {
+              return StorageRepository();
+            }),
           ],
           child: TChainRoot(
             merchantInfo: merchantInfo,
@@ -359,5 +361,42 @@ extension TChainPaymentSDKWallet on TChainPaymentSDK {
         fullscreenDialog: true,
       ),
     );
+  }
+
+  // App to App
+  startPaymentWithQrCode(
+    BuildContext context, {
+    required Account account,
+    required String qrCode,
+    required String bundleId,
+  }) {
+    _startPayment(
+      context,
+      account: account,
+      qrCode: qrCode,
+      bundleId: bundleId,
+    );
+  }
+
+  // Window to App
+  startPaymentWithMerchantInfo(
+    BuildContext context, {
+    required Account account,
+    required MerchantInfo merchantInfo,
+  }) async {
+    _startPayment(
+      context,
+      account: account,
+      merchantInfo: merchantInfo,
+    );
+  }
+
+  Future<MerchantInfo?> getMerchantInfo({required String qrCode}) async {
+    try {
+      final response = await _paymentRepository.getMerchantInfo(qrCode: qrCode);
+      return response?.result;
+    } catch (e) {
+      return null;
+    }
   }
 }

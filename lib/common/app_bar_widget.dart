@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
@@ -35,7 +34,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       centerTitle: true,
       title: Text(
-        '$title${TChainPaymentSDK.instance.sandboxTitle}',
+        '$title${TChainPaymentSDK.shared.sandboxTitle}',
         style: TextStyles.headline.copyWith(
           color: tintColor ?? themeColors.textPrimary,
         ),

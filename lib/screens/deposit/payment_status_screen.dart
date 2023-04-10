@@ -245,7 +245,7 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
               buildTextButton(
                 context,
                 onPressed: () {
-                  if (TChainPaymentSDK.instance.isTestnet) {
+                  if (TChainPaymentSDK.shared.isTestnet) {
                     launchUrlString('https://testnet.bscscan.com/tx/$txn');
                   } else {
                     launchUrlString('https://bscscan.com/tx/$txn');

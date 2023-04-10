@@ -67,7 +67,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
     _approveRequestCubit = ApproveRequestCubit(
       walletRepository: walletRepository,
       storageRepository: storageRepository,
-      privateKeyHex: TChainPaymentSDK.instance.account.privateKeyHex,
+      privateKeyHex: TChainPaymentSDK.shared.account.privateKeyHex,
     );
 
     _approveRequestCubit.loadTokenInfo(asset: widget.asset);
@@ -174,7 +174,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
                 ),
                 _buildCell(
                   text: TChainPaymentSDK
-                      .instance.account.privateKey.address.hex.shortAddress,
+                      .shared.account.privateKey.address.hex.shortAddress,
                   style: boldTextStyle,
                   textAlign: TextAlign.right,
                   bottomGap: 8,

@@ -81,12 +81,12 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
       paymentRepository: paymentRepos,
       amount: safeOriginalAmount,
       currency: widget.merchantInfo.currency.toCurrency(),
-      privateKeyHex: TChainPaymentSDK.instance.account.privateKeyHex,
+      privateKeyHex: TChainPaymentSDK.shared.account.privateKeyHex,
     );
 
     _swapCubit = SwapCubit(
       walletRepository: walletRepos,
-      privateKeyHex: TChainPaymentSDK.instance.account.privateKeyHex,
+      privateKeyHex: TChainPaymentSDK.shared.account.privateKeyHex,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
@@ -624,7 +624,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
             : widget.merchantInfo.notes!;
 
     _paymentDepositCubit.deposit(
-      walletAddress: TChainPaymentSDK.instance.account.privateKey.address.hex,
+      walletAddress: TChainPaymentSDK.shared.account.privateKey.address.hex,
       asset: asset,
       useToko: asset.contractAddress == Config.bscTokoinContractAddress
           ? true

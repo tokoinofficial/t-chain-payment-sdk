@@ -34,7 +34,7 @@ class PaymentRepository {
     );
     try {
       final response = await api.generateQrCode(
-        apiKey: TChainPaymentSDK.instance.apiKey,
+        apiKey: TChainPaymentSDK.shared.apiKey,
         body: body,
       );
 
@@ -50,7 +50,7 @@ class PaymentRepository {
       }
 
       final Uri uri = Uri(
-        scheme: TChainPaymentSDK.instance.env.scheme,
+        scheme: TChainPaymentSDK.shared.env.scheme,
         host: 'app',
         path: action.path,
         queryParameters: params,
@@ -70,7 +70,7 @@ class PaymentRepository {
     final body = MerchantInfoBody(qrCode: qrCode);
     try {
       final response = await api.getMerchantInfo(
-        apiKey: TChainPaymentSDK.instance.apiKey,
+        apiKey: TChainPaymentSDK.shared.apiKey,
         body: body,
       );
 
@@ -85,7 +85,7 @@ class PaymentRepository {
   Future<DataResponse<Map<String, dynamic>>?> getExchangeRate() async {
     try {
       final response = await api.getExchangeRate(
-        apiKey: TChainPaymentSDK.instance.apiKey,
+        apiKey: TChainPaymentSDK.shared.apiKey,
       );
       return response;
     } catch (e) {
@@ -115,7 +115,7 @@ class PaymentRepository {
         notes: notes,
       );
       final response = await api.createMerchantTransaction(
-        apiKey: TChainPaymentSDK.instance.apiKey,
+        apiKey: TChainPaymentSDK.shared.apiKey,
         body: body,
       );
 

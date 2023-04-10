@@ -48,7 +48,7 @@ class WalletRepository {
     final newSmc = await blockchainService.createBep20Smc(
       address: address,
       client: _web3Client!,
-      chainId: TChainPaymentSDK.instance.chainID,
+      chainId: TChainPaymentSDK.shared.chainID,
     );
 
     _bep20SmcMap[addressHex] = newSmc;
@@ -64,7 +64,7 @@ class WalletRepository {
     final newSmc = await blockchainService.createPaymentSmc(
       address: address,
       client: _web3Client!,
-      chainId: TChainPaymentSDK.instance.chainID,
+      chainId: TChainPaymentSDK.shared.chainID,
     );
 
     _paymentSmc = newSmc;
@@ -78,7 +78,7 @@ class WalletRepository {
     final newSmc = await blockchainService.createPancakeSwapSmc(
       address: address,
       client: _web3Client!,
-      chainId: TChainPaymentSDK.instance.chainID,
+      chainId: TChainPaymentSDK.shared.chainID,
     );
 
     _pancakeSwapSmc = newSmc;
