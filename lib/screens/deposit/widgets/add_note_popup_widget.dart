@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
@@ -62,7 +63,7 @@ class _AddNotePopupWidgetState extends State<AddNotePopupWidget> with UIStyle {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                TChainPaymentLocalizations.of(context)!.note,
+                Utils.getLocalizations(context).note,
                 style: TextStyles.subhead1.copyWith(
                   color: themeColors.textSecondary,
                 ),
@@ -77,7 +78,7 @@ class _AddNotePopupWidgetState extends State<AddNotePopupWidget> with UIStyle {
                     child: buildOutlinedButton(
                       context,
                       onPressed: () => Navigator.of(context).pop(),
-                      title: TChainPaymentLocalizations.of(context)!.cancel,
+                      title: Utils.getLocalizations(context).cancel,
                     ),
                   ),
                   Gaps.px16,
@@ -87,7 +88,7 @@ class _AddNotePopupWidgetState extends State<AddNotePopupWidget> with UIStyle {
                       onPressed: () {
                         Navigator.of(context).pop(_noteController.text);
                       },
-                      title: TChainPaymentLocalizations.of(context)!.done,
+                      title: Utils.getLocalizations(context).done,
                     ),
                   )
                 ],
@@ -118,7 +119,7 @@ class _AddNotePopupWidgetState extends State<AddNotePopupWidget> with UIStyle {
       minLines: 6,
       maxLines: 6,
       decoration: InputDecoration(
-        hintText: TChainPaymentLocalizations.of(context)!.write_your_note,
+        hintText: Utils.getLocalizations(context).write_your_note,
         border: border,
         focusedBorder: border,
         errorBorder: border,

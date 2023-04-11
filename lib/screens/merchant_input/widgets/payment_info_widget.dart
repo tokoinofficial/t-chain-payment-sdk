@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:t_chain_payment_sdk/bloc/payment/payment_deposit_cubit.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/data/merchant_info.dart';
@@ -50,14 +51,13 @@ class _PaymentInfoWidgetState extends State<PaymentInfoWidget> {
               children: [
                 _buildInfo(
                   icon: Theme.of(context).getPicture(Assets.merchant),
-                  title:
-                      TChainPaymentLocalizations.of(context)!.merchant_client,
+                  title: Utils.getLocalizations(context).merchant_client,
                   value: widget.merchantInfo.fullname,
                 ),
                 Gaps.px16,
                 _buildInfo(
                   icon: Theme.of(context).getPicture(Assets.amount),
-                  title: TChainPaymentLocalizations.of(context)!.payment_amount,
+                  title: Utils.getLocalizations(context).payment_amount,
                   value: widget.merchantInfo.currency +
                       ' ' +
                       TokoinNumber.fromNumber(widget.merchantInfo.amount ?? 0)
@@ -80,12 +80,12 @@ class _PaymentInfoWidgetState extends State<PaymentInfoWidget> {
 
     return _buildInfo(
       icon: Theme.of(context).getPicture(Assets.notes),
-      title: TChainPaymentLocalizations.of(context)!.note_optional,
+      title: Utils.getLocalizations(context).note_optional,
       child: _notes.isEmpty
           ? GestureDetector(
               onTap: _showNotes,
               child: Text(
-                '  ${TChainPaymentLocalizations.of(context)!.add_note}  ',
+                '  ${Utils.getLocalizations(context).add_note}  ',
                 style: buttonStyle,
               ),
             )
@@ -108,7 +108,7 @@ class _PaymentInfoWidgetState extends State<PaymentInfoWidget> {
                   GestureDetector(
                     onTap: _showNotes,
                     child: Text(
-                      TChainPaymentLocalizations.of(context)!.edit,
+                      Utils.getLocalizations(context).edit,
                       style: buttonStyle,
                     ),
                   ),

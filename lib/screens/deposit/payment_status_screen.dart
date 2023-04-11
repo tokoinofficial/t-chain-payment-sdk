@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
@@ -115,9 +116,9 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
     String title;
 
     if (paymentType == PaymentType.deposit) {
-      title = TChainPaymentLocalizations.of(context)!.deposit_payment_status;
+      title = Utils.getLocalizations(context).deposit_payment_status;
     } else {
-      title = TChainPaymentLocalizations.of(context)!.payment_status;
+      title = Utils.getLocalizations(context).payment_status;
     }
 
     return AppBarWidget(
@@ -150,21 +151,21 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
     switch (status) {
       case PaymentTransactionStatus.success:
         return Text(
-          TChainPaymentLocalizations.of(context)!.payment_completed,
+          Utils.getLocalizations(context).payment_completed,
           style: style.copyWith(
             color: themeColors.successMain,
           ),
         );
       case PaymentTransactionStatus.failed:
         return Text(
-          TChainPaymentLocalizations.of(context)!.payment_failed,
+          Utils.getLocalizations(context).payment_failed,
           style: style.copyWith(
             color: themeColors.errorMain,
           ),
         );
       case PaymentTransactionStatus.processing:
         return Text(
-          TChainPaymentLocalizations.of(context)!.payment_proceeding,
+          Utils.getLocalizations(context).payment_proceeding,
           style: style.copyWith(
             color: themeColors.primaryYellow,
           ),
@@ -190,33 +191,31 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
       case PaymentTransactionStatus.success:
         return Text(
           paymentType == PaymentType.deposit
-              ? TChainPaymentLocalizations.of(context)!
+              ? Utils.getLocalizations(context)
                   .payment_completed_brought_back_3rdapp(second.toString())
-              : TChainPaymentLocalizations.of(context)!
-                  .payment_completed_successfully,
+              : Utils.getLocalizations(context).payment_completed_successfully,
           style: style,
           textAlign: TextAlign.center,
         );
       case PaymentTransactionStatus.failed:
         return Text(
           paymentType == PaymentType.deposit
-              ? TChainPaymentLocalizations.of(context)!
+              ? Utils.getLocalizations(context)
                   .payment_failed_brought_back_3rdapp(second.toString())
-              : TChainPaymentLocalizations.of(context)!
-                  .unfortunately_payment_failed,
+              : Utils.getLocalizations(context).unfortunately_payment_failed,
           style: style,
           textAlign: TextAlign.center,
         );
       case PaymentTransactionStatus.processing:
         String text = '';
         if (paymentType == PaymentType.deposit) {
-          text = TChainPaymentLocalizations.of(context)!
+          text = Utils.getLocalizations(context)
               .payment_proceeding_brought_back_3rdapp(second.toString());
         } else {
           text = second == 0
-              ? TChainPaymentLocalizations.of(context)!
+              ? Utils.getLocalizations(context)
                   .payment_proceeding_can_take_longer
-              : TChainPaymentLocalizations.of(context)!
+              : Utils.getLocalizations(context)
                   .payment_proceeding_can_take_up(second.toString());
         }
 
@@ -251,8 +250,7 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
                     launchUrlString('https://bscscan.com/tx/$txn');
                   }
                 },
-                title: TChainPaymentLocalizations.of(context)!
-                    .view_transaction_detail,
+                title: Utils.getLocalizations(context).view_transaction_detail,
               ),
               Gaps.px16,
               buildElevatedButton(
@@ -263,7 +261,7 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
                     Navigator.of(currentContext, rootNavigator: true).pop();
                   }
                 },
-                title: TChainPaymentLocalizations.of(context)!.go_home,
+                title: Utils.getLocalizations(context).go_home,
               ),
             ],
           ),
@@ -282,13 +280,13 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
                     Navigator.of(currentContext, rootNavigator: true).pop();
                   }
                 },
-                title: TChainPaymentLocalizations.of(context)!.go_home,
+                title: Utils.getLocalizations(context).go_home,
               ),
               Gaps.px16,
               buildElevatedButton(
                 context,
                 onPressed: () => onRetry?.call(),
-                title: TChainPaymentLocalizations.of(context)!.retry,
+                title: Utils.getLocalizations(context).retry,
               ),
             ],
           ),

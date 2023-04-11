@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/data/transfer_data.dart';
@@ -50,8 +51,7 @@ class UnableToApplyDiscountWidget extends StatelessWidget with UIStyle {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  TChainPaymentLocalizations.of(context)!
-                      .unable_to_apply_discount,
+                  Utils.getLocalizations(context).unable_to_apply_discount,
                   textAlign: TextAlign.center,
                   style: TextStyles.title2.copyWith(
                     color: themeColors.primaryBlue,
@@ -60,8 +60,7 @@ class UnableToApplyDiscountWidget extends StatelessWidget with UIStyle {
               ),
               Gaps.px16,
               Text(
-                TChainPaymentLocalizations.of(context)!
-                    .unable_to_apply_discount_desc(
+                Utils.getLocalizations(context).unable_to_apply_discount_desc(
                   TokoinNumber.fromNumber(transferData.tokoAsset!.balance)
                       .getFormalizedString(),
                   discountPercent,
@@ -74,7 +73,7 @@ class UnableToApplyDiscountWidget extends StatelessWidget with UIStyle {
               Gaps.px16,
               buildElevatedButton(
                 context,
-                title: TChainPaymentLocalizations.of(context)!.close,
+                title: Utils.getLocalizations(context).close,
                 onPressed: () {
                   Navigator.of(context).pop();
                 },

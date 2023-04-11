@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
@@ -52,7 +53,7 @@ class CurrencySelectionWidget extends StatelessWidget {
         right: 16,
       ),
       child: Text(
-        TChainPaymentLocalizations.of(context)!.select_currency,
+        Utils.getLocalizations(context).select_currency,
         textAlign: TextAlign.center,
         style: TextStyles.title2.copyWith(
           color: themeColors.textPrimary,
@@ -102,7 +103,7 @@ class CurrencySelectionWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(9),
                         ),
                         child: Text(
-                          TChainPaymentLocalizations.of(context)!.coming_soon,
+                          Utils.getLocalizations(context).coming_soon,
                           style: TextStyles.caption3.copyWith(
                             color: themeColors.textAccent,
                           ),

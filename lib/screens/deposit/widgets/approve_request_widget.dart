@@ -82,8 +82,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _approveRequestCubit.localizations =
-        TChainPaymentLocalizations.of(context)!;
+    _approveRequestCubit.localizations = Utils.getLocalizations(context);
   }
 
   @override
@@ -98,7 +97,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
         } else if (state is ApproveRequestSuccess) {
           Navigator.of(context).pop(true);
         } else if (state is ApproveRequestWaiting) {
-          Utils.toast(TChainPaymentLocalizations.of(context)!.please_try_again);
+          Utils.toast(Utils.getLocalizations(context).please_try_again);
           Navigator.of(context).pop(false);
         } else if (state is ApproveRequestError) {
           Utils.errorToast(state.error);
@@ -112,7 +111,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
             children: [
               Gaps.px20,
               applyPadding(Text(
-                TChainPaymentLocalizations.of(context)!.approve_request,
+                Utils.getLocalizations(context).approve_request,
                 textAlign: TextAlign.center,
                 style: TextStyles.title2.copyWith(
                   color: themeColors.textPrimary,
@@ -120,7 +119,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
               )),
               Gaps.px12,
               applyPadding(Text(
-                TChainPaymentLocalizations.of(context)!.allow_this_app_transfer(
+                Utils.getLocalizations(context).allow_this_app_transfer(
                   '${widget.amount} ${widget.asset.shortName}',
                 ),
                 textAlign: TextAlign.center,
@@ -132,8 +131,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
               _buildDetailsField(),
               Gaps.px32,
               applyPadding(Text(
-                TChainPaymentLocalizations.of(context)!
-                    .duration_of_approve_request,
+                Utils.getLocalizations(context).duration_of_approve_request,
                 textAlign: TextAlign.center,
                 style: TextStyles.footnote.copyWith(
                   color: themeColors.textPrimary,
@@ -168,7 +166,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
             children: [
               TableRow(children: [
                 _buildCell(
-                  text: '${TChainPaymentLocalizations.of(context)!.from}:',
+                  text: '${Utils.getLocalizations(context).from}:',
                   style: textStyle,
                   bottomGap: 8,
                 ),
@@ -182,8 +180,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
               ]),
               TableRow(children: [
                 _buildCell(
-                  text:
-                      '${TChainPaymentLocalizations.of(context)!.transaction_fee}:',
+                  text: '${Utils.getLocalizations(context).transaction_fee}:',
                   style: textStyle,
                 ),
                 _buildShimmerCell(
@@ -246,7 +243,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
             child: buildOutlinedButton(
               context,
               key: const Key('btnCancel'),
-              title: TChainPaymentLocalizations.of(context)!.cancel,
+              title: Utils.getLocalizations(context).cancel,
               onPressed: _loadingApprove
                   ? null
                   : () => Navigator.of(context).pop(false),
@@ -257,7 +254,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
             child: buildElevatedButton(
               context,
               key: const Key('btnApprove'),
-              title: TChainPaymentLocalizations.of(context)!.confirm,
+              title: Utils.getLocalizations(context).confirm,
               onPressed: _loadingApprove ? null : () => _onApproveDeposit(),
               child: _loadingApprove
                   ? const SizedBox(

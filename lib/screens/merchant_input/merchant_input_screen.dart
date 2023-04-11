@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:t_chain_payment_sdk/bloc/payment/payment_info_cubit.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
@@ -76,7 +77,7 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBarWidget(
-          title: TChainPaymentLocalizations.of(context)!.enter_transfer_amount,
+          title: Utils.getLocalizations(context).enter_transfer_amount,
           leading: CloseButton(onPressed: () {
             final currentContext = tChainNavigatorKey.currentContext;
             if (currentContext != null) {
@@ -105,7 +106,7 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
             if (state is PaymentInfoUnsupported) {
               return Center(
                 child: Text(
-                  TChainPaymentLocalizations.of(context)!.invalid_code,
+                  Utils.getLocalizations(context).invalid_code,
                 ),
               );
             }
@@ -131,7 +132,7 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
                             Gaps.px16,
                             buildLabel(
                               context,
-                              title: TChainPaymentLocalizations.of(context)!
+                              title: Utils.getLocalizations(context)
                                   .transfer_amount,
                             ),
                             Gaps.px4,
@@ -167,7 +168,7 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  TChainPaymentLocalizations.of(context)!.merchant_client,
+                  Utils.getLocalizations(context).merchant_client,
                   style: TextStyles.caption1.copyWith(
                     color: themeColors.textSecondary,
                   ),
@@ -291,7 +292,7 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
             child: buildElevatedButton(
               context,
               onPressed: enabled ? () => _onContinuePressed() : null,
-              title: TChainPaymentLocalizations.of(context)!.btn_continue,
+              title: Utils.getLocalizations(context).btn_continue,
             ),
           ),
         );

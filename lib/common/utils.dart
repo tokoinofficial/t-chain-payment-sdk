@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations_en.dart';
 import 'package:web3dart/crypto.dart';
 
@@ -31,6 +32,11 @@ class Utils {
       return TChainPaymentLocalizationsEn()
           .something_went_wrong_please_try_later;
     }
+  }
+
+  static late final _defaultLocalization = TChainPaymentLocalizationsEn();
+  static TChainPaymentLocalizations getLocalizations(BuildContext context) {
+    return TChainPaymentLocalizations.of(context) ?? _defaultLocalization;
   }
 
   static toast(dynamic str) {

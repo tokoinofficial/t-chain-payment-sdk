@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/common/ui_style.dart';
@@ -29,7 +30,7 @@ class ApproveRequestPendingWidget extends StatelessWidget with UIStyle {
         children: [
           Gaps.px20,
           applyPadding(Text(
-            TChainPaymentLocalizations.of(context)!.approve_request_pending,
+            Utils.getLocalizations(context).approve_request_pending,
             textAlign: TextAlign.center,
             style: TextStyles.title2.copyWith(
               color: themeColors.textPrimary,
@@ -37,7 +38,7 @@ class ApproveRequestPendingWidget extends StatelessWidget with UIStyle {
           )),
           Gaps.px12,
           applyPadding(Text(
-            TChainPaymentLocalizations.of(context)!.duration_of_approve_request,
+            Utils.getLocalizations(context).duration_of_approve_request,
             textAlign: TextAlign.center,
             style: TextStyles.footnote.copyWith(
               color: themeColors.textPrimary,
@@ -71,8 +72,7 @@ class ApproveRequestPendingWidget extends StatelessWidget with UIStyle {
             child: buildOutlinedButton(
               context,
               key: const Key('btnCancel'),
-              title:
-                  TChainPaymentLocalizations.of(context)!.send_another_request,
+              title: Utils.getLocalizations(context).send_another_request,
               onPressed: () => Navigator.of(context).pop(true),
             ),
           ),
@@ -81,7 +81,7 @@ class ApproveRequestPendingWidget extends StatelessWidget with UIStyle {
             child: buildElevatedButton(
               context,
               key: const Key('btnWaiting'),
-              title: TChainPaymentLocalizations.of(context)!.keep_waiting,
+              title: Utils.getLocalizations(context).keep_waiting,
               onPressed: () => Navigator.of(context).pop(false),
             ),
           )

@@ -173,7 +173,7 @@ class TransferTile extends StatelessWidget {
         ) ??
         '';
     return _buildInfo(
-      title: TChainPaymentLocalizations.of(context)!.transaction_fee,
+      title: Utils.getLocalizations(context).transaction_fee,
       value: value,
       showLoading: value == '',
     );
@@ -187,7 +187,7 @@ class TransferTile extends StatelessWidget {
     final amountToko =
         '${TokoinNumber.fromNumber(transferData.discountInfo!.deductAmount).getFormalizedString()} ${transferData.tokoAsset!.shortName}';
     return _buildInfo(
-      title: TChainPaymentLocalizations.of(context)!.pay_toko_amount,
+      title: Utils.getLocalizations(context).pay_toko_amount,
       value: amountToko,
     );
   }
@@ -202,7 +202,7 @@ class TransferTile extends StatelessWidget {
     }
 
     return _buildInfo(
-      title: TChainPaymentLocalizations.of(context)!.service_fee,
+      title: Utils.getLocalizations(context).service_fee,
       value: total,
       showLoading: total == '',
     );
@@ -218,7 +218,7 @@ class TransferTile extends StatelessWidget {
     }
 
     return _buildInfo(
-        title: TChainPaymentLocalizations.of(context)!.exchange_rate,
+        title: Utils.getLocalizations(context).exchange_rate,
         value: value,
         showLoading: value == '');
   }
@@ -249,7 +249,7 @@ class TransferTile extends StatelessWidget {
       child: Column(
         children: [
           _buildInfo(
-            title: TChainPaymentLocalizations.of(context)!.you_will_transfer,
+            title: Utils.getLocalizations(context).you_will_transfer,
             valueWidget: Row(
               children: [
                 Expanded(
@@ -338,7 +338,7 @@ class TransferTile extends StatelessWidget {
     final discountPercent = transferData.discountInfo!.discountFeePercent /
         transferData.serviceFeePercent! *
         100;
-    final desc = TChainPaymentLocalizations.of(context)!.x_discount_applied(
+    final desc = Utils.getLocalizations(context).x_discount_applied(
       discountPercent.removeTrailingZeros(),
     );
 
@@ -363,8 +363,7 @@ class TransferTile extends StatelessWidget {
           Gaps.px8,
           Expanded(
             child: Text(
-              TChainPaymentLocalizations.of(context)!
-                  .insufficient_balance_to_use_token,
+              Utils.getLocalizations(context).insufficient_balance_to_use_token,
               style: TextStyles.subhead1.copyWith(color: themeColors.errorMain),
             ),
           )
@@ -389,7 +388,7 @@ class TransferTile extends StatelessWidget {
     final amountToko =
         '${TokoinNumber.fromNumber(transferData.discountInfo!.deductAmount).getFormalizedString()} ${transferData.tokoAsset!.shortName}';
     final discount =
-        '${(transferData.discountInfo!.discountFeePercent / transferData.serviceFeePercent! * 100).removeTrailingZeros()}% ${TChainPaymentLocalizations.of(context)!.discount}';
+        '${(transferData.discountInfo!.discountFeePercent / transferData.serviceFeePercent! * 100).removeTrailingZeros()}% ${Utils.getLocalizations(context).discount}';
     final balance =
         '${TokoinNumber.fromNumber(transferData.tokoAsset!.balance).getFormalizedString()} ${transferData.tokoAsset!.shortName}';
 
@@ -422,7 +421,7 @@ class TransferTile extends StatelessWidget {
                 child: RichText(
                   textScaleFactor: 1,
                   text: TextSpan(
-                    text: TChainPaymentLocalizations.of(context)!.use_toko_pay,
+                    text: Utils.getLocalizations(context).use_toko_pay,
                     style: normalStyle,
                     children: <TextSpan>[
                       TextSpan(
@@ -430,14 +429,14 @@ class TransferTile extends StatelessWidget {
                         style: boldStyle,
                       ),
                       TextSpan(
-                          text: TChainPaymentLocalizations.of(context)!
-                              .use_toko_to_get),
+                        text: Utils.getLocalizations(context).use_toko_to_get,
+                      ),
                       TextSpan(
                         text: discount,
                         style: boldStyle,
                       ),
                       TextSpan(
-                        text: TChainPaymentLocalizations.of(context)!
+                        text: Utils.getLocalizations(context)
                             .use_toko_of_service_fee,
                       ),
                       TextSpan(

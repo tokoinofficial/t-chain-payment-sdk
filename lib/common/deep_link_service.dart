@@ -52,7 +52,7 @@ class DeepLinkService {
             }
 
             Utils.errorToast(
-              TChainPaymentLocalizations.of(context)!.invalid_code,
+              Utils.getLocalizations(context).invalid_code,
             );
           });
         }
@@ -85,7 +85,7 @@ class DeepLinkService {
             }
 
             Utils.errorToast(
-              TChainPaymentLocalizations.of(context)!.invalid_code,
+              Utils.getLocalizations(context).invalid_code,
             );
           });
         }

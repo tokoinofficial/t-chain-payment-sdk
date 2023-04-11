@@ -110,9 +110,8 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _paymentDepositCubit.localizations =
-        TChainPaymentLocalizations.of(context)!;
-    _swapCubit.localizations = TChainPaymentLocalizations.of(context)!;
+    _paymentDepositCubit.localizations = Utils.getLocalizations(context);
+    _swapCubit.localizations = Utils.getLocalizations(context);
   }
 
   _startExchangeRateTimer() {
@@ -405,12 +404,12 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
   PreferredSizeWidget _buildAppBar() {
     if (_paymentType == PaymentType.deposit) {
       return AppBarWidget(
-        title: TChainPaymentLocalizations.of(context)!.deposit_confirmation,
+        title: Utils.getLocalizations(context).deposit_confirmation,
       );
     }
 
     return AppBarWidget(
-      title: TChainPaymentLocalizations.of(context)!.select_token,
+      title: Utils.getLocalizations(context).select_token,
     );
   }
 
@@ -418,7 +417,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
       child: Text(
-        TChainPaymentLocalizations.of(context)!
+        Utils.getLocalizations(context)
             .the_selected_wallet_supports_eth_network_please_select_another_one,
         style: TextStyle(color: themeColors.errorMain),
       ),
@@ -439,10 +438,8 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Text(
         _paymentType == PaymentType.deposit
-            ? TChainPaymentLocalizations.of(context)!
-                .please_select_token_to_deposit
-            : TChainPaymentLocalizations.of(context)!
-                .please_select_token_to_transfer,
+            ? Utils.getLocalizations(context).please_select_token_to_deposit
+            : Utils.getLocalizations(context).please_select_token_to_transfer,
         textAlign: TextAlign.center,
         style: TextStyles.subhead1.copyWith(
           color: themeColors.textPrimary,
@@ -477,7 +474,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
                   textScaleFactor: 1,
                   text: TextSpan(
                     text:
-                        '${TChainPaymentLocalizations.of(context)!.exchange_rate_will_be_refreshed_after} ',
+                        '${Utils.getLocalizations(context).exchange_rate_will_be_refreshed_after} ',
                     style: TextStyles.subhead1.copyWith(
                       color: themeColors.textPrimary,
                     ),
@@ -533,7 +530,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
         Gaps.px20,
         Center(
           child: Text(
-            TChainPaymentLocalizations.of(context)!.invalid_exchange_rate,
+            Utils.getLocalizations(context).invalid_exchange_rate,
             style: TextStyle(color: themeColors.errorMain),
           ),
         ),
@@ -551,13 +548,13 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
         child: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            text: TChainPaymentLocalizations.of(context)!
+            text: Utils.getLocalizations(context)
                     .by_clicking_confirm_you_understood_and_agreed_to +
                 ' ',
             style: TextStyles.caption1.copyWith(color: themeColors.textPrimary),
             children: [
               TextSpan(
-                text: TChainPaymentLocalizations.of(context)!.our_policy + '.',
+                text: Utils.getLocalizations(context).our_policy + '.',
                 style: TextStyles.caption1.copyWith(
                   color: themeColors.primaryBlue,
                 ),
@@ -581,7 +578,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
         child: buildElevatedButton(
           context,
           onPressed: _currentAsset == null ? null : () => _onPay(),
-          title: TChainPaymentLocalizations.of(context)!.confirm,
+          title: Utils.getLocalizations(context).confirm,
         ),
       ),
     );
