@@ -8,6 +8,7 @@ class TransactionWaiter {
   //
   static const kWaitDuration = Duration(milliseconds: 29400);
   static const kWaitEverySecs = 5;
+  Duration waitDuration = kWaitDuration;
 
   var _lastTransactionExecutedTime = DateTime.now();
 
@@ -20,16 +21,16 @@ class TransactionWaiter {
   }
 
   reset() {
-    _lastTransactionExecutedTime = DateTime.now().subtract(kWaitDuration);
+    _lastTransactionExecutedTime = DateTime.now().subtract(waitDuration);
   }
 
   Future<dynamic> ready(Function func) async {
     var timeDiff = DateTime.now().difference(_lastTransactionExecutedTime);
-    var timePassed = timeDiff.inMilliseconds >= kWaitDuration.inMilliseconds;
+    var timePassed = timeDiff.inMilliseconds >= waitDuration.inMilliseconds;
 
     if (!timePassed) {
-      var waitDuration = kWaitDuration - timeDiff;
-      await Future.delayed(waitDuration);
+      var duration = waitDuration - timeDiff;
+      await Future.delayed(duration);
     }
 
     var result = await func();
@@ -40,7 +41,7 @@ class TransactionWaiter {
   }
 
   Future<bool> waitUntil(Function func) async {
-    var timeDiff = kWaitDuration;
+    var timeDiff = waitDuration;
     var timeDiffInSeconds = timeDiff.inSeconds;
     while (timeDiffInSeconds > 0) {
       timeDiffInSeconds = timeDiffInSeconds - kWaitEverySecs;

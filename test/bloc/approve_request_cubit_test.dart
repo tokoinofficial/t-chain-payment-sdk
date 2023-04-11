@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:t_chain_payment_sdk/bloc/approve_request/approve_request_cubit.dart';
+import 'package:t_chain_payment_sdk/common/transaction_waiter.dart';
 import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
@@ -35,6 +36,8 @@ void main() {
 
     setUp(() {
       bnb = Asset.createAsset(shortName: 'BNB');
+
+      TransactionWaiter().waitDuration = const Duration(seconds: 10);
     });
 
     blocTest<ApproveRequestCubit, ApproveRequestState>(
