@@ -73,12 +73,11 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   }
 
   Future deposit({
-    required String walletAddress,
     required Asset asset,
     required bool useToko,
     required String notes,
-    required String merchantID,
-    required String chainID,
+    required String merchantId,
+    required String chainId,
   }) async {
     try {
       final discountInfo = _discountInfoMap[asset.shortName];
@@ -111,8 +110,11 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
 
       Asset tokoAsset = _getTokoinAsset();
       if (useToko) {
+        final needAllowance =
+            asset.isToko ? assetAmount : discountInfo.deductAmount;
+
         bool hasTokoAllowance = await _hasEnoughAllowance(
-          discountInfo.deductAmount,
+          needAllowance,
           tokoAsset,
           Config.paymentContractAddress,
         );
@@ -120,7 +122,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         if (!hasTokoAllowance) {
           emit(PaymentDepositAddAllowance(
             asset: tokoAsset,
-            amount: discountInfo.deductAmount,
+            amount: needAllowance,
             contractAddress: Config.paymentContractAddress,
             transferDataList: _createTransferDataList(),
           ));
@@ -133,8 +135,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         }
       }
 
-      if (!asset.isStableCoin &&
-          asset.contractAddress != tokoAsset.contractAddress) {
+      if (!asset.isStableCoin && !asset.isToko) {
         Asset toAsset = _getSwappingAsset();
 
         emit(PaymentDepositSwapRequest(
@@ -168,15 +169,16 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         return;
       }
 
+      final privateKey = EthPrivateKey.fromHex(privateKeyHex);
       final transactionSignedHash =
           await paymentRepository.createMerchantTransaction(
-        walletAddress,
+        privateKey.address.hex,
         amount.toDouble(),
         currency,
         notes,
         asset.shortName,
-        merchantID,
-        chainID,
+        merchantId,
+        chainId,
       );
 
       if (transactionSignedHash == null) {

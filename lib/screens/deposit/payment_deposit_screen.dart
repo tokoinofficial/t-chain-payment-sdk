@@ -624,14 +624,13 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
             : widget.merchantInfo.notes!;
 
     _paymentDepositCubit.deposit(
-      walletAddress: TChainPaymentSDK.shared.account.privateKey.address.hex,
       asset: asset,
       useToko: asset.contractAddress == Config.bscTokoinContractAddress
           ? true
           : _useToko,
       notes: notes,
-      merchantID: widget.merchantInfo.merchantId,
-      chainID: widget.merchantInfo.chainId != null
+      merchantId: widget.merchantInfo.merchantId,
+      chainId: widget.merchantInfo.chainId != null
           ? widget.merchantInfo.chainId.toString()
           : Config.bscChainID.toString(),
     );

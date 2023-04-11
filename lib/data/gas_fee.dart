@@ -11,13 +11,12 @@ const kEstimateGasLimitForApprove =
 const kDefaultBscGasPriceGwei = 10;
 const kDefaultBscWaitMinutes = 5.0;
 
-// ignore: must_be_immutable
 class GasFee extends Equatable {
-  num fee;
-  int estimatedGas = kEstimateGasLimitForTransfer;
-  num waitInMin;
+  final num fee;
+  final int estimatedGas = kEstimateGasLimitForTransfer;
+  final num waitInMin;
 
-  GasFee(this.fee, this.waitInMin);
+  const GasFee(this.fee, this.waitInMin);
 
   toGwei() {
     return fee;

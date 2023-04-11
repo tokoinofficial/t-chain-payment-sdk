@@ -3,10 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:t_chain_payment_sdk/bloc/payment/payment_deposit_cubit.dart';
-import 'package:t_chain_payment_sdk/bloc/payment/payment_info_cubit.dart';
+import 'package:t_chain_payment_sdk/common/transaction_waiter.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/gas_fee.dart';
+import 'package:t_chain_payment_sdk/data/merchant_transaction.dart';
 import 'package:t_chain_payment_sdk/data/payment_discount_fee.dart';
 import 'package:t_chain_payment_sdk/data/response/data_response.dart';
 import 'package:t_chain_payment_sdk/data/transfer_data.dart';
@@ -29,6 +30,8 @@ void main() {
 
   setUp(() {
     Config.setEnvironment(TChainPaymentEnv.dev);
+
+    TransactionWaiter().waitDuration = const Duration(seconds: 10);
   });
 
   tearDown(() {});
@@ -37,28 +40,45 @@ void main() {
     Asset? bnb;
     Asset? toko;
     Asset? cake;
-    final gasFee = GasFee(10, 10);
+    Asset? usdt;
+    const gasFee = GasFee(10, 10);
     const discountInfo = PaymentDiscountInfo(
-      discountFeePercent: 50,
+      discountFeePercent: 1,
       deductAmount: 1000,
     );
+    late TransferData tokoTransferData;
+    late TransferData bnbTransferData;
 
     setUp(() {
       bnb = Asset.createAsset(shortName: 'BNB')!.copyWith(balance: 0.0);
-
       toko = Asset.createAsset(shortName: 'TOKO')!.copyWith(balance: 0.0);
       cake = Asset.createAsset(shortName: 'CAKE')!.copyWith(balance: 0.0);
+      usdt = Asset.createAsset(shortName: 'USDT')!.copyWith(balance: 0.0);
+
+      tokoTransferData = TransferData(
+        asset: toko!,
+        tokoAsset: toko,
+        discountInfo: discountInfo,
+        gasFee: gasFee,
+        serviceFeePercent: 0,
+        exchangeRate: 0.0031312488078522826,
+        amount: 1,
+        currency: Currency.usd,
+      );
+
+      bnbTransferData = TransferData(
+        asset: bnb!,
+        tokoAsset: toko,
+        discountInfo: discountInfo,
+        gasFee: gasFee,
+        serviceFeePercent: 2.0,
+        exchangeRate: 328.54587667254754,
+        amount: 1.0,
+        currency: Currency.usd,
+      );
 
       TChainPaymentSDK.shared.account = Account(privateKeyHex: privateKeyHex);
     });
-
-    final merchantInfoTestnet = MerchantInfo(
-      merchantId: 'merchantId',
-      currency: Currency.idr.shortName,
-      qrCode: 'qrCode',
-      chainId: kTestnetChainID.toString(),
-      status: 1,
-    );
 
     blocTest<PaymentDepositCubit, PaymentDepositState>(
       'emits [] when nothing is called',
@@ -114,7 +134,7 @@ void main() {
     );
 
     blocTest<PaymentDepositCubit, PaymentDepositState>(
-      'test getAllInfo and getExchangeRate',
+      'test getAllInfo(...) and getExchangeRate(...)',
       build: () => PaymentDepositCubit(
         walletRepository: mockWalletRepos,
         paymentRepository: mockPaymentRepos,
@@ -128,14 +148,6 @@ void main() {
           isEnoughBnb: false,
           transferDataList: [],
         ));
-
-        when(mockWalletRepos.isEnoughBnb(
-          privateKeyHex: privateKeyHex,
-          amount: 1,
-          asset: bnb!,
-          gasPrice: 10,
-          estimatedGas: 10,
-        )).thenAnswer((realInvocation) async => true);
 
         when(mockWalletRepos.getBSCGasFees())
             .thenAnswer((realInvocation) => Future.value([gasFee]));
@@ -278,6 +290,293 @@ void main() {
             ),
           ],
         )
+      ],
+    );
+
+    blocTest<PaymentDepositCubit, PaymentDepositState>(
+      'test deposit(...) emits [PaymentDepositSwapRequest]',
+      build: () => PaymentDepositCubit(
+        walletRepository: mockWalletRepos,
+        paymentRepository: mockPaymentRepos,
+        amount: 1,
+        currency: Currency.usd,
+        privateKeyHex: privateKeyHex,
+      ),
+      act: (cubit) async {
+        cubit.emit(const PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loaded,
+          isEnoughBnb: false,
+          transferDataList: [],
+        ));
+
+        when(mockWalletRepos.isEnoughBnb(
+          privateKeyHex: privateKeyHex,
+          amount: 1,
+          asset: bnb!,
+          gasPrice: 10,
+          estimatedGas: 10,
+        )).thenAnswer((realInvocation) async => true);
+
+        when(mockWalletRepos.getBSCGasFees())
+            .thenAnswer((realInvocation) => Future.value([gasFee]));
+
+        when(mockWalletRepos.getPaymentDepositFee())
+            .thenAnswer((realInvocation) => Future.value(2));
+
+        when(mockWalletRepos.getPaymentDiscountFee(
+                contractAddress: bnb!.contractAddress, amount: 1))
+            .thenAnswer((realInvocation) => Future.value(discountInfo));
+
+        when(mockPaymentRepos.getExchangeRate())
+            .thenAnswer((realInvocation) async => DataResponse(result: {
+                  "BNB": 328.54587667254754,
+                }));
+
+        await cubit.getAllInfo();
+
+        when(mockWalletRepos.allowance(
+                privateKeyHex: privateKeyHex,
+                asset: toko!,
+                contractAddress: anyNamed('contractAddress')))
+            .thenAnswer((realInvocation) async => 10000);
+
+        // emits PaymentDepositSwapRequest event
+        await cubit.deposit(
+          asset: bnb!,
+          useToko: true,
+          notes: 'notes',
+          merchantId: 'merchantId',
+          chainId: 'chainId',
+        );
+      },
+      expect: () => [
+        const PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loaded,
+          isEnoughBnb: false,
+          transferDataList: [],
+        ),
+        const PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loading,
+          isEnoughBnb: false,
+          transferDataList: [],
+        ),
+        PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loading,
+          isEnoughBnb: false,
+          transferDataList: [
+            TransferData(
+              asset: bnb!,
+              tokoAsset: toko,
+              serviceFeePercent: null,
+              exchangeRate: 328.54587667254754,
+              amount: 1.0,
+              currency: Currency.usd,
+            ),
+          ],
+        ),
+        PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loaded,
+          isEnoughBnb: false,
+          transferDataList: [bnbTransferData],
+        ),
+        // call deposit
+        PaymentDepositShowInfo(
+          status: PaymentDepositStatus.depositing,
+          isEnoughBnb: false,
+          transferDataList: [bnbTransferData],
+        ),
+        PaymentDepositSwapRequest(
+          fromAsset: bnb!,
+          toAsset: usdt!,
+          amount: 1 / 328.54587667254754 +
+              discountInfo.getDiscountedServiceFee(
+                serviceFeePercent: 2,
+                amount: 1 / 328.54587667254754,
+                useToko: true,
+              ),
+          gasFee: gasFee,
+          transferDataList: [bnbTransferData],
+        ),
+      ],
+    );
+
+    blocTest<PaymentDepositCubit, PaymentDepositState>(
+      'test deposit(...) emits [PaymentDepositCompleted]',
+      build: () => PaymentDepositCubit(
+        walletRepository: mockWalletRepos,
+        paymentRepository: mockPaymentRepos,
+        amount: 1,
+        currency: Currency.usd,
+        privateKeyHex: privateKeyHex,
+      ),
+      act: (cubit) async {
+        cubit.emit(const PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loaded,
+          isEnoughBnb: false,
+          transferDataList: [],
+        ));
+
+        when(mockWalletRepos.isEnoughBnb(
+          privateKeyHex: privateKeyHex,
+          amount: 1,
+          asset: bnb!,
+          gasPrice: 10,
+          estimatedGas: 10,
+        )).thenAnswer((realInvocation) async => true);
+
+        when(mockWalletRepos.getBSCGasFees())
+            .thenAnswer((realInvocation) => Future.value([gasFee]));
+
+        when(mockWalletRepos.getPaymentDepositFee())
+            .thenAnswer((realInvocation) => Future.value(2));
+
+        when(mockWalletRepos.getPaymentDiscountFee(
+                contractAddress: Config.bscTokoinContractAddress, amount: 1))
+            .thenAnswer((realInvocation) => Future.value(discountInfo));
+
+        when(mockPaymentRepos.getExchangeRate())
+            .thenAnswer((realInvocation) async => DataResponse(result: {
+                  "TOKO": 0.0031312488078522826,
+                }));
+
+        await cubit.getAllInfo();
+
+        when(mockWalletRepos.allowance(
+                privateKeyHex: privateKeyHex,
+                asset: toko!,
+                contractAddress: anyNamed('contractAddress')))
+            .thenAnswer((realInvocation) async => 0);
+
+        // emits PaymentDepositAddAllowance event
+        await cubit.deposit(
+          asset: toko!,
+          useToko: true,
+          notes: 'notes',
+          merchantId: 'merchantId',
+          chainId: 'chainId',
+        );
+
+        when(mockWalletRepos.allowance(
+                privateKeyHex: privateKeyHex,
+                asset: toko!,
+                contractAddress: anyNamed('contractAddress')))
+            .thenAnswer((realInvocation) async => 10000);
+
+        when(mockPaymentRepos.createMerchantTransaction(
+                any, any, any, any, any, any, any))
+            .thenAnswer((realInvocation) async => MerchantTransaction(
+                  transactionID: 'id',
+                  offchain: 'offchain',
+                  amount: 1,
+                  amountUint256: BigInt.one.toString(),
+                  fee: 10,
+                  feeUint256: BigInt.one.toString(),
+                  signedHash: 'signedHash',
+                  expiredTime: 1,
+                  rate: 1,
+                ));
+
+        when(mockWalletRepos.balanceOf(
+                smcAddressHex: anyNamed('smcAddressHex'),
+                privateKeyHex: privateKeyHex))
+            .thenAnswer((_) async => 10000);
+
+        when(mockWalletRepos.estimateGas(
+                address: anyNamed('address'),
+                transaction: anyNamed('transaction')))
+            .thenAnswer((realInvocation) async => 1);
+
+        when(mockWalletRepos.isEnoughBnb(
+                privateKeyHex: privateKeyHex,
+                asset: toko!,
+                amount: 1.0 / 0.0031312488078522826,
+                gasPrice: 10,
+                estimatedGas: 1))
+            .thenAnswer((realInvocation) async => true);
+
+        when(mockWalletRepos.sendPaymentTransaction(
+          privateKeyHex: privateKeyHex,
+          tx: anyNamed('tx'),
+        )).thenAnswer((realInvocation) async => 'txHash');
+
+        when(mockWalletRepos.waitForReceiptResult(toko!, 'txHash'))
+            .thenAnswer((realInvocation) async => true);
+
+        // emits PaymentDepositCompleted event
+        await cubit.deposit(
+          asset: toko!,
+          useToko: true,
+          notes: 'notes',
+          merchantId: 'merchantId',
+          chainId: 'chainId',
+        );
+      },
+      expect: () => [
+        const PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loaded,
+          isEnoughBnb: false,
+          transferDataList: [],
+        ),
+        const PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loading,
+          isEnoughBnb: false,
+          transferDataList: [],
+        ),
+        PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loading,
+          isEnoughBnb: false,
+          transferDataList: [
+            TransferData(
+              asset: toko!,
+              tokoAsset: toko,
+              serviceFeePercent: 0.0,
+              exchangeRate: 0.0031312488078522826,
+              amount: 1.0,
+              currency: Currency.usd,
+            ),
+          ],
+        ),
+        PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loaded,
+          isEnoughBnb: false,
+          transferDataList: [
+            TransferData(
+              asset: toko!,
+              tokoAsset: toko,
+              discountInfo: discountInfo,
+              gasFee: gasFee,
+              serviceFeePercent: 0.0,
+              exchangeRate: 0.0031312488078522826,
+              amount: 1.0,
+              currency: Currency.usd,
+            ),
+          ],
+        ),
+        // call deposit
+        PaymentDepositShowInfo(
+          status: PaymentDepositStatus.depositing,
+          isEnoughBnb: false,
+          transferDataList: [tokoTransferData],
+        ),
+        PaymentDepositAddAllowance(
+          asset: toko!,
+          amount: 1.0 / 0.0031312488078522826,
+          contractAddress: Config.paymentContractAddress,
+          transferDataList: [tokoTransferData],
+        ),
+        PaymentDepositShowInfo(
+          status: PaymentDepositStatus.loaded,
+          isEnoughBnb: false,
+          transferDataList: [tokoTransferData],
+        ),
+        // call deposit
+        PaymentDepositShowInfo(
+          status: PaymentDepositStatus.depositing,
+          isEnoughBnb: false,
+          transferDataList: [tokoTransferData],
+        ),
+        const PaymentDepositProceeding(txn: 'txHash'),
+        const PaymentDepositCompleted(txn: 'txHash'),
       ],
     );
   });
