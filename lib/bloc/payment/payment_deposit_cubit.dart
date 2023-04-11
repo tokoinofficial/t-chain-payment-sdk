@@ -14,7 +14,6 @@ import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations_
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
-import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart' as web3dart;
 
 part 'payment_deposit_state.dart';
@@ -25,13 +24,13 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
     required this.paymentRepository,
     required this.amount,
     required this.currency,
-    required this.privateKeyHex,
+    required this.account,
   }) : super(PaymentDepositInitial());
 
   final WalletRepository walletRepository;
   final PaymentRepository paymentRepository;
   TChainPaymentLocalizations localizations = TChainPaymentLocalizationsEn();
-  final String privateKeyHex;
+  final Account account;
 
   final double amount;
   final Currency currency;
@@ -44,8 +43,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
 
   Future setup() async {
     try {
-      final privateKey = EthPrivateKey.fromHex(privateKeyHex);
-      final address = privateKey.address.hex;
+      final address = account.privateKey.address.hex;
 
       if (!Utils.isValidEthereumAddress(address)) {
         emit(PaymentDepositUnsupportedWallet());
@@ -169,10 +167,9 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         return;
       }
 
-      final privateKey = EthPrivateKey.fromHex(privateKeyHex);
       final transactionSignedHash =
           await paymentRepository.createMerchantTransaction(
-        privateKey.address.hex,
+        account.privateKey.address.hex,
         amount.toDouble(),
         currency,
         notes,
@@ -199,7 +196,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
       ];
 
       web3dart.Transaction tnx = await walletRepository.buildDepositTransaction(
-        privateKeyHex: privateKeyHex,
+        privateKey: account.privateKey,
         parameters: [params],
         gasPrice: _gasFee!.toGwei(),
       );
@@ -211,7 +208,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         gasFee: _gasFee!.fee,
       )) {
         String hash = await walletRepository.sendPaymentTransaction(
-          privateKeyHex: privateKeyHex,
+          privateKey: account.privateKey,
           tx: tnx,
         );
         emit(PaymentDepositProceeding(txn: hash));
@@ -251,10 +248,10 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
     if (!asset.isBnb) {
       final balance = await walletRepository.balanceOf(
         smcAddressHex: asset.contractAddress,
-        privateKeyHex: privateKeyHex,
+        privateKey: account.privateKey,
       );
 
-      TChainPaymentSDK.shared.account.updateAsset(
+      account.updateAsset(
         asset.copyWith(balance: balance.toDouble()),
       );
 
@@ -263,15 +260,13 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
       }
     }
 
-    final privateKey = EthPrivateKey.fromHex(privateKeyHex);
-
     num estimatedGas = await walletRepository.estimateGas(
-      address: privateKey.address,
+      address: account.privateKey.address,
       transaction: tnx,
     );
 
     bool isEnoughBalance = await walletRepository.isEnoughBnb(
-      privateKeyHex: privateKeyHex,
+      privateKey: account.privateKey,
       asset: asset,
       amount: amount,
       gasPrice: gasFee,
@@ -336,7 +331,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
             return walletRepository
                 .balanceOf(
               smcAddressHex: entry.value.contractAddress,
-              privateKeyHex: privateKeyHex,
+              privateKey: account.privateKey,
             )
                 .then(
               (value) {
@@ -448,7 +443,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   ) async {
     double depositAmount = amount.toDouble();
     var allowance = await walletRepository.allowance(
-      privateKeyHex: privateKeyHex,
+      privateKey: account.privateKey,
       asset: asset,
       contractAddress: contractAddress,
     );

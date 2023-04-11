@@ -87,10 +87,8 @@ class WalletRepository {
 
   Future<num> balanceOf({
     required String smcAddressHex,
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
   }) async {
-    final privateKey = EthPrivateKey.fromHex(privateKeyHex);
-
     if (smcAddressHex == Config.bnbContractAddress) {
       EtherAmount balance = await _web3Client!.getBalance(privateKey.address);
       return balance.getValueInUnit(EtherUnit.ether);
@@ -107,14 +105,13 @@ class WalletRepository {
 
   Future<num> allowance({
     required Asset asset,
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required String contractAddress,
   }) async {
     final tokenContractAddress =
         asset.isBnb ? Asset.wbnb().contractAddress : asset.contractAddress;
     final smc = await getBep20Smc(tokenContractAddress);
 
-    final privateKey = EthPrivateKey.fromHex(privateKeyHex);
     return await smc.allowance(
       walletAddress: privateKey.address.hex,
       contractAddress: contractAddress,
@@ -132,7 +129,7 @@ class WalletRepository {
   }
 
   Future<Transaction> buildApproveTransaction({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required Asset asset,
     required String contractAddress,
     required BigInt amount,
@@ -144,7 +141,7 @@ class WalletRepository {
     final smc = await getBep20Smc(tokenContractAddress);
 
     return await smc.buildApprovalTransaction(
-      privateKeyHex: privateKeyHex,
+      privateKey: privateKey,
       contractAddress: contractAddress,
       amount: amount,
       gasPrice: gasPrice,
@@ -153,7 +150,7 @@ class WalletRepository {
   }
 
   Future<String> sendApproval({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required Asset asset,
     required String contractAddress,
     num gasPrice = 0,
@@ -164,7 +161,7 @@ class WalletRepository {
     final smc = await getBep20Smc(tokenContractAddress);
 
     final tnx = await buildApproveTransaction(
-      privateKeyHex: privateKeyHex,
+      privateKey: privateKey,
       asset: asset,
       contractAddress: contractAddress,
       amount: TokoinNumber.fromNumber(
@@ -177,13 +174,13 @@ class WalletRepository {
     );
 
     return await smc.sendRawTransaction(
-      privateKeyHex: privateKeyHex,
+      privateKey: privateKey,
       transaction: tnx,
     );
   }
 
   Future<bool> isEnoughBnb({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required Asset asset,
     required num amount,
     required num gasPrice,
@@ -195,7 +192,6 @@ class WalletRepository {
       estimatedGas = Config.maxGas;
     }
 
-    final privateKey = EthPrivateKey.fromHex(privateKeyHex);
     final balance = await _web3Client!.getBalance(privateKey.address);
     var balanceOfBnb = balance.getValueInUnit(EtherUnit.ether);
     if (asset.isBnb) {
@@ -241,13 +237,13 @@ class WalletRepository {
   }
 
   Future<Transaction> buildDepositTransaction({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required List parameters,
     required num gasPrice,
   }) async {
     final smc = await getPaymentSmc();
     return await smc.buildDepositTransaction(
-      privateKeyHex: privateKeyHex,
+      privateKey: privateKey,
       parameters: parameters,
       gasPrice: gasPrice,
     );
@@ -282,12 +278,12 @@ class WalletRepository {
   }
 
   Future<String> sendPaymentTransaction({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required Transaction tx,
   }) async {
     final smc = await getPaymentSmc();
     final hash = await smc.sendRawTransaction(
-      privateKey: privateKeyHex,
+      privateKey: privateKey,
       transaction: tx,
     );
 
@@ -336,7 +332,7 @@ class WalletRepository {
   }
 
   Future<String> swap({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required num gasPrice,
     required num gasLimit,
     required PancakeSwap pancakeSwap,
@@ -350,7 +346,7 @@ class WalletRepository {
     */
     num balance = await balanceOf(
       smcAddressHex: pancakeSwap.assetIn.contractAddress,
-      privateKeyHex: privateKeyHex,
+      privateKey: privateKey,
     );
 
     if (pancakeSwap.amountIn == balance) {
@@ -360,7 +356,7 @@ class WalletRepository {
     }
 
     var hash = await smc.sendRawTransaction(
-      privateKey: privateKeyHex,
+      privateKey: privateKey,
       transaction: tx,
     );
     return hash;
@@ -371,13 +367,12 @@ class WalletRepository {
       functionName == 'swapExactETHForTokens';
 
   Future<Transaction> buildSwapContractTransaction({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required PancakeSwap pancakeSwap,
     required num gasPrice,
     int? nonce,
   }) async {
     final smc = await getPancakeSwapSmc();
-    final privateKey = EthPrivateKey.fromHex(privateKeyHex);
 
     List parameters = [
       TokoinNumber.fromNumber(
@@ -395,7 +390,7 @@ class WalletRepository {
         .bigIntValue;
     if (!isPayableFunction) parameters.insert(0, amountIn);
     return await smc.buildSwapTransaction(
-        privateKeyHex: privateKeyHex,
+        privateKey: privateKey,
         functionName: _getFunctionName(pancakeSwap),
         parameters: parameters,
         gasPrice: gasPrice,

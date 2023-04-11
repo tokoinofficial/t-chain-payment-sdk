@@ -11,7 +11,7 @@ void main() {
   });
 
   test('Account - get asset', () {
-    final account = Account(privateKeyHex: 'privateKeyHex');
+    final account = Account.fromPrivateKeyHex(hex: 'privateKeyHex');
 
     // automatically create valid asset
     final toko = account.getAsset(name: CONST.kAssetNameTOKO);

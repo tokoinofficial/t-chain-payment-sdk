@@ -326,7 +326,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
   @override
   _i10.Future<num> balanceOf({
     required String? smcAddressHex,
-    required String? privateKeyHex,
+    required _i8.EthPrivateKey? privateKey,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -334,7 +334,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
           [],
           {
             #smcAddressHex: smcAddressHex,
-            #privateKeyHex: privateKeyHex,
+            #privateKey: privateKey,
           },
         ),
         returnValue: _i10.Future<num>.value(0),
@@ -343,7 +343,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
   @override
   _i10.Future<num> allowance({
     required _i16.Asset? asset,
-    required String? privateKeyHex,
+    required _i8.EthPrivateKey? privateKey,
     required String? contractAddress,
   }) =>
       (super.noSuchMethod(
@@ -352,7 +352,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
           [],
           {
             #asset: asset,
-            #privateKeyHex: privateKeyHex,
+            #privateKey: privateKey,
             #contractAddress: contractAddress,
           },
         ),
@@ -394,7 +394,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
       ) as _i10.Future<_i8.TransactionInformation?>);
   @override
   _i10.Future<_i8.Transaction> buildApproveTransaction({
-    required String? privateKeyHex,
+    required _i8.EthPrivateKey? privateKey,
     required _i16.Asset? asset,
     required String? contractAddress,
     required BigInt? amount,
@@ -406,7 +406,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
           #buildApproveTransaction,
           [],
           {
-            #privateKeyHex: privateKeyHex,
+            #privateKey: privateKey,
             #asset: asset,
             #contractAddress: contractAddress,
             #amount: amount,
@@ -420,7 +420,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
             #buildApproveTransaction,
             [],
             {
-              #privateKeyHex: privateKeyHex,
+              #privateKey: privateKey,
               #asset: asset,
               #contractAddress: contractAddress,
               #amount: amount,
@@ -436,7 +436,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
             #buildApproveTransaction,
             [],
             {
-              #privateKeyHex: privateKeyHex,
+              #privateKey: privateKey,
               #asset: asset,
               #contractAddress: contractAddress,
               #amount: amount,
@@ -448,7 +448,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
       ) as _i10.Future<_i8.Transaction>);
   @override
   _i10.Future<String> sendApproval({
-    required String? privateKeyHex,
+    required _i8.EthPrivateKey? privateKey,
     required _i16.Asset? asset,
     required String? contractAddress,
     num? gasPrice = 0,
@@ -459,7 +459,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
           #sendApproval,
           [],
           {
-            #privateKeyHex: privateKeyHex,
+            #privateKey: privateKey,
             #asset: asset,
             #contractAddress: contractAddress,
             #gasPrice: gasPrice,
@@ -471,7 +471,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
       ) as _i10.Future<String>);
   @override
   _i10.Future<bool> isEnoughBnb({
-    required String? privateKeyHex,
+    required _i8.EthPrivateKey? privateKey,
     required _i16.Asset? asset,
     required num? amount,
     required num? gasPrice,
@@ -482,7 +482,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
           #isEnoughBnb,
           [],
           {
-            #privateKeyHex: privateKeyHex,
+            #privateKey: privateKey,
             #asset: asset,
             #amount: amount,
             #gasPrice: gasPrice,
@@ -513,7 +513,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
       ) as _i10.Future<dynamic>);
   @override
   _i10.Future<_i8.Transaction> buildDepositTransaction({
-    required String? privateKeyHex,
+    required _i8.EthPrivateKey? privateKey,
     required List<dynamic>? parameters,
     required num? gasPrice,
   }) =>
@@ -522,7 +522,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
           #buildDepositTransaction,
           [],
           {
-            #privateKeyHex: privateKeyHex,
+            #privateKey: privateKey,
             #parameters: parameters,
             #gasPrice: gasPrice,
           },
@@ -533,7 +533,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
             #buildDepositTransaction,
             [],
             {
-              #privateKeyHex: privateKeyHex,
+              #privateKey: privateKey,
               #parameters: parameters,
               #gasPrice: gasPrice,
             },
@@ -546,7 +546,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
             #buildDepositTransaction,
             [],
             {
-              #privateKeyHex: privateKeyHex,
+              #privateKey: privateKey,
               #parameters: parameters,
               #gasPrice: gasPrice,
             },
@@ -619,7 +619,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
       ) as _i10.Future<BigInt>);
   @override
   _i10.Future<String> sendPaymentTransaction({
-    required String? privateKeyHex,
+    required _i8.EthPrivateKey? privateKey,
     required _i8.Transaction? tx,
   }) =>
       (super.noSuchMethod(
@@ -627,7 +627,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
           #sendPaymentTransaction,
           [],
           {
-            #privateKeyHex: privateKeyHex,
+            #privateKey: privateKey,
             #tx: tx,
           },
         ),
@@ -677,7 +677,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
       ) as _i10.Future<BigInt?>);
   @override
   _i10.Future<String> swap({
-    required String? privateKeyHex,
+    required _i8.EthPrivateKey? privateKey,
     required num? gasPrice,
     required num? gasLimit,
     required _i19.PancakeSwap? pancakeSwap,
@@ -688,7 +688,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
           #swap,
           [],
           {
-            #privateKeyHex: privateKeyHex,
+            #privateKey: privateKey,
             #gasPrice: gasPrice,
             #gasLimit: gasLimit,
             #pancakeSwap: pancakeSwap,
@@ -700,7 +700,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
       ) as _i10.Future<String>);
   @override
   _i10.Future<_i8.Transaction> buildSwapContractTransaction({
-    required String? privateKeyHex,
+    required _i8.EthPrivateKey? privateKey,
     required _i19.PancakeSwap? pancakeSwap,
     required num? gasPrice,
     int? nonce,
@@ -710,7 +710,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
           #buildSwapContractTransaction,
           [],
           {
-            #privateKeyHex: privateKeyHex,
+            #privateKey: privateKey,
             #pancakeSwap: pancakeSwap,
             #gasPrice: gasPrice,
             #nonce: nonce,
@@ -722,7 +722,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
             #buildSwapContractTransaction,
             [],
             {
-              #privateKeyHex: privateKeyHex,
+              #privateKey: privateKey,
               #pancakeSwap: pancakeSwap,
               #gasPrice: gasPrice,
               #nonce: nonce,
@@ -736,7 +736,7 @@ class MockWalletRepository extends _i1.Mock implements _i15.WalletRepository {
             #buildSwapContractTransaction,
             [],
             {
-              #privateKeyHex: privateKeyHex,
+              #privateKey: privateKey,
               #pancakeSwap: pancakeSwap,
               #gasPrice: gasPrice,
               #nonce: nonce,

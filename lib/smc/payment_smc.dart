@@ -64,12 +64,11 @@ class PaymentSmc extends GeneratedContract {
   }
 
   Future<Transaction> buildDepositTransaction({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required List parameters,
     num gasPrice = 0,
   }) async {
-    var credentials = EthPrivateKey.fromHex(privateKeyHex);
-    var address = credentials.address;
+    var address = privateKey.address;
     var nextNonce = await client.getTransactionCount(address,
         atBlock: const BlockNum.pending());
     return Transaction.callContract(
@@ -83,11 +82,11 @@ class PaymentSmc extends GeneratedContract {
   }
 
   Future<String> sendRawTransaction({
-    required String privateKey,
+    required EthPrivateKey privateKey,
     required Transaction transaction,
   }) async {
     return await transactionWaiter.ready(() async {
-      var credentials = EthPrivateKey.fromHex(privateKey);
+      var credentials = privateKey;
       return await client.sendTransaction(
         credentials,
         transaction,

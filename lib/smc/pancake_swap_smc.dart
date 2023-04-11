@@ -68,14 +68,14 @@ class PancakeSwapSmc extends GeneratedContract {
   }
 
   Future<Transaction> buildSwapTransaction({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required String functionName,
     required List parameters,
     num gasPrice = 0,
     int? nonce,
     BigInt? value,
   }) async {
-    var credentials = EthPrivateKey.fromHex(privateKeyHex);
+    var credentials = privateKey;
     var address = credentials.address;
     var nextNonce = nonce ??
         await client.getTransactionCount(address,
@@ -94,11 +94,11 @@ class PancakeSwapSmc extends GeneratedContract {
   }
 
   Future<String> sendRawTransaction({
-    required String privateKey,
+    required EthPrivateKey privateKey,
     required Transaction transaction,
   }) async {
     return await transactionWaiter.ready(() async {
-      var credentials = EthPrivateKey.fromHex(privateKey);
+      var credentials = privateKey;
       return await client.sendTransaction(
         credentials,
         transaction,

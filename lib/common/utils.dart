@@ -22,10 +22,8 @@ class Utils {
 
   static String getErrorMsg(e) {
     try {
-      if (e is DioError) {
-        return e.message ??
-            TChainPaymentLocalizationsEn()
-                .something_went_wrong_please_try_later;
+      if (e is DioError && e.message != null) {
+        return e.message!;
       }
 
       return e.message;

@@ -44,14 +44,14 @@ class Bep20Smc extends GeneratedContract {
   }
 
   Future<Transaction> buildApprovalTransaction({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required String contractAddress,
     required BigInt amount,
     num gasPrice = 0,
     num? gasLimit,
     int? nonce,
   }) async {
-    var credentials = EthPrivateKey.fromHex(privateKeyHex);
+    var credentials = privateKey;
     var address = credentials.address;
     var nextNonce = nonce ??
         await client.getTransactionCount(address,
@@ -68,11 +68,11 @@ class Bep20Smc extends GeneratedContract {
   }
 
   Future<String> sendRawTransaction({
-    required String privateKeyHex,
+    required EthPrivateKey privateKey,
     required Transaction transaction,
   }) async {
     return await transactionWaiter.ready(() async {
-      var credentials = EthPrivateKey.fromHex(privateKeyHex);
+      var credentials = privateKey;
       return await client.sendTransaction(
         credentials,
         transaction,

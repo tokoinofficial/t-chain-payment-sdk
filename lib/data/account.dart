@@ -2,9 +2,9 @@ import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:web3dart/web3dart.dart';
 
 class Account {
-  Account({required this.privateKeyHex});
+  Account({required this.privateKey});
 
-  final String privateKeyHex;
+  final EthPrivateKey privateKey;
   final Map<String, Asset> _assets = {};
 
   Asset? getAsset({required String name}) {
@@ -22,5 +22,7 @@ class Account {
     _assets[asset.shortName] = asset;
   }
 
-  EthPrivateKey get privateKey => EthPrivateKey.fromHex(privateKeyHex);
+  factory Account.fromPrivateKeyHex({required String hex}) {
+    return Account(privateKey: EthPrivateKey.fromHex(hex));
+  }
 }

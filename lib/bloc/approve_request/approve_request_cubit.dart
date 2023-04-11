@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/common/utils.dart';
+import 'package:t_chain_payment_sdk/data/account.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/gas_fee.dart';
 import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
@@ -18,12 +19,12 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
   ApproveRequestCubit({
     required this.walletRepository,
     required this.storageRepository,
-    required this.privateKeyHex,
+    required this.account,
   }) : super(ApproveRequestInitial());
 
   final WalletRepository walletRepository;
   final StorageRepository storageRepository;
-  final String privateKeyHex;
+  final Account account;
   TChainPaymentLocalizations localizations = TChainPaymentLocalizationsEn();
 
   Future<void> loadTokenInfo({required Asset asset, event}) async {
@@ -32,7 +33,7 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
       List<Future<dynamic>> infoNeeded = [
         walletRepository.balanceOf(
           smcAddressHex: asset.contractAddress,
-          privateKeyHex: privateKeyHex,
+          privateKey: account.privateKey,
         ),
         walletRepository.getBSCGasFees(),
       ];
@@ -72,13 +73,12 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
         emit(ApproveRequestSuccess());
         return;
       }
-      EthPrivateKey privateKey = EthPrivateKey.fromHex(privateKeyHex);
 
       if (!resend) {
         // check pending approval
         String? pendingApprovalTxHash =
             await storageRepository.getPendingApprovalTxHash(
-          walletAddress: privateKey.address.hex,
+          walletAddress: account.privateKey.address.hex,
           contractAddress: contractAddress,
         );
 
@@ -118,13 +118,13 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
 
       // user wants to send a new request --> remove the pending approval on local storage if needed
       storageRepository.removePendingApprovalTxHash(
-        walletAddress: privateKey.address.hex,
+        walletAddress: account.privateKey.address.hex,
         contractAddress: contractAddress,
       );
 
       bool isEnoughBalance = false;
       Transaction tnx = await walletRepository.buildApproveTransaction(
-        privateKeyHex: privateKeyHex,
+        privateKey: account.privateKey,
         asset: asset,
         contractAddress: contractAddress,
         amount: TokoinNumber.fromNumber(amount).bigIntValue,
@@ -132,12 +132,12 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
       );
 
       num estimatedGas = await walletRepository.estimateGas(
-        address: privateKey.address,
+        address: account.privateKey.address,
         transaction: tnx,
       );
 
       isEnoughBalance = await walletRepository.isEnoughBnb(
-        privateKeyHex: privateKeyHex,
+        privateKey: account.privateKey,
         asset: asset,
         amount: amount,
         gasPrice: gasPrice,
@@ -153,7 +153,7 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
       }
 
       String txHash = await walletRepository.sendApproval(
-        privateKeyHex: privateKeyHex,
+        privateKey: account.privateKey,
         asset: asset,
         contractAddress: contractAddress,
         gasPrice: gasPrice,
@@ -175,7 +175,7 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
         // store tx to check pending approval later
         storageRepository.setPendingApprovalTxHash(
           txHash: txHash,
-          walletAddress: privateKey.address.hex,
+          walletAddress: account.privateKey.address.hex,
           contractAddress: contractAddress,
         );
 
@@ -193,7 +193,7 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
   ) async {
     double depositAmount = amount.toDouble();
     var allowance = await walletRepository.allowance(
-      privateKeyHex: privateKeyHex,
+      privateKey: account.privateKey,
       asset: asset,
       contractAddress: contractAddress,
     );

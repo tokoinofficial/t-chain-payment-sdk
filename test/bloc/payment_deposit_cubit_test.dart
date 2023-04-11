@@ -27,6 +27,7 @@ void main() {
 
   final mockPaymentRepos = MockPaymentRepository();
   final translations = TChainPaymentLocalizationsEn();
+  final account = Account.fromPrivateKeyHex(hex: privateKeyHex);
 
   setUp(() {
     Config.setEnvironment(TChainPaymentEnv.dev);
@@ -77,7 +78,8 @@ void main() {
         currency: Currency.usd,
       );
 
-      TChainPaymentSDK.shared.account = Account(privateKeyHex: privateKeyHex);
+      TChainPaymentSDK.shared.account =
+          Account.fromPrivateKeyHex(hex: privateKeyHex);
     });
 
     blocTest<PaymentDepositCubit, PaymentDepositState>(
@@ -87,7 +89,7 @@ void main() {
         paymentRepository: mockPaymentRepos,
         amount: 1,
         currency: Currency.idr,
-        privateKeyHex: privateKeyHex,
+        account: account,
       ),
       expect: () => [],
     );
@@ -99,7 +101,7 @@ void main() {
         paymentRepository: mockPaymentRepos,
         amount: 1,
         currency: Currency.usd,
-        privateKeyHex: '',
+        account: Account.fromPrivateKeyHex(hex: 'invalid'),
       ),
       act: (cubit) {
         cubit.setup();
@@ -116,7 +118,7 @@ void main() {
         paymentRepository: mockPaymentRepos,
         amount: 1,
         currency: Currency.usd,
-        privateKeyHex: privateKeyHex,
+        account: account,
       ),
       act: (cubit) async {
         when(mockWalletRepos.isReady).thenReturn(false);
@@ -140,7 +142,7 @@ void main() {
         paymentRepository: mockPaymentRepos,
         amount: 1,
         currency: Currency.usd,
-        privateKeyHex: privateKeyHex,
+        account: account,
       ),
       act: (cubit) async {
         cubit.emit(const PaymentDepositShowInfo(
@@ -300,7 +302,7 @@ void main() {
         paymentRepository: mockPaymentRepos,
         amount: 1,
         currency: Currency.usd,
-        privateKeyHex: privateKeyHex,
+        account: account,
       ),
       act: (cubit) async {
         cubit.emit(const PaymentDepositShowInfo(
@@ -310,7 +312,7 @@ void main() {
         ));
 
         when(mockWalletRepos.isEnoughBnb(
-          privateKeyHex: privateKeyHex,
+          privateKey: account.privateKey,
           amount: 1,
           asset: bnb!,
           gasPrice: 10,
@@ -335,7 +337,7 @@ void main() {
         await cubit.getAllInfo();
 
         when(mockWalletRepos.allowance(
-                privateKeyHex: privateKeyHex,
+                privateKey: account.privateKey,
                 asset: toko!,
                 contractAddress: anyNamed('contractAddress')))
             .thenAnswer((realInvocation) async => 10000);
@@ -407,7 +409,7 @@ void main() {
         paymentRepository: mockPaymentRepos,
         amount: 1,
         currency: Currency.usd,
-        privateKeyHex: privateKeyHex,
+        account: account,
       ),
       act: (cubit) async {
         cubit.emit(const PaymentDepositShowInfo(
@@ -417,7 +419,7 @@ void main() {
         ));
 
         when(mockWalletRepos.isEnoughBnb(
-          privateKeyHex: privateKeyHex,
+          privateKey: account.privateKey,
           amount: 1,
           asset: bnb!,
           gasPrice: 10,
@@ -442,7 +444,7 @@ void main() {
         await cubit.getAllInfo();
 
         when(mockWalletRepos.allowance(
-                privateKeyHex: privateKeyHex,
+                privateKey: account.privateKey,
                 asset: toko!,
                 contractAddress: anyNamed('contractAddress')))
             .thenAnswer((realInvocation) async => 0);
@@ -457,7 +459,7 @@ void main() {
         );
 
         when(mockWalletRepos.allowance(
-                privateKeyHex: privateKeyHex,
+                privateKey: account.privateKey,
                 asset: toko!,
                 contractAddress: anyNamed('contractAddress')))
             .thenAnswer((realInvocation) async => 10000);
@@ -478,7 +480,7 @@ void main() {
 
         when(mockWalletRepos.balanceOf(
                 smcAddressHex: anyNamed('smcAddressHex'),
-                privateKeyHex: privateKeyHex))
+                privateKey: account.privateKey))
             .thenAnswer((_) async => 10000);
 
         when(mockWalletRepos.estimateGas(
@@ -487,7 +489,7 @@ void main() {
             .thenAnswer((realInvocation) async => 1);
 
         when(mockWalletRepos.isEnoughBnb(
-                privateKeyHex: privateKeyHex,
+                privateKey: account.privateKey,
                 asset: toko!,
                 amount: 1.0 / 0.0031312488078522826,
                 gasPrice: 10,
@@ -495,7 +497,7 @@ void main() {
             .thenAnswer((realInvocation) async => true);
 
         when(mockWalletRepos.sendPaymentTransaction(
-          privateKeyHex: privateKeyHex,
+          privateKey: account.privateKey,
           tx: anyNamed('tx'),
         )).thenAnswer((realInvocation) async => 'txHash');
 

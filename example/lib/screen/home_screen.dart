@@ -61,9 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () {
                     const qrCode =
                         'TCHAIN.fa19615f226a28a82befd19644281f9a3dafe4cbefbfd7ab4ff5ed995cc7e7ca';
+
                     TChainPaymentSDK.shared.startPaymentWithQrCode(
                       context,
-                      account: Account(privateKeyHex: Constants.privateKeyHex),
+                      account: Account.fromPrivateKeyHex(
+                        hex: Constants.privateKeyHex,
+                      ),
                       qrCode: qrCode,
                       bundleId: Constants.bundleId,
                     );
@@ -84,7 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     TChainPaymentSDK.shared.startPaymentWithMerchantInfo(
                       context,
-                      account: Account(privateKeyHex: Constants.privateKeyHex),
+                      account: Account.fromPrivateKeyHex(
+                        hex: Constants.privateKeyHex,
+                      ),
                       merchantInfo: merchantInfo,
                     );
                   },

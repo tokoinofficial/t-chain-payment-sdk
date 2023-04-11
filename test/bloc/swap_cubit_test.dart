@@ -19,6 +19,7 @@ void main() {
       '0097ad7d1294e0268bbaaf4642c6ccb4c4a76421bff0285023716e354c605513ee';
   final mockWalletRepos = MockWalletRepository();
   final translations = TChainPaymentLocalizationsEn();
+  final account = Account.fromPrivateKeyHex(hex: privateKeyHex);
 
   setUp(() {
     Config.setEnvironment(TChainPaymentEnv.dev);
@@ -43,7 +44,7 @@ void main() {
       'emits [] when nothing is called',
       build: () => SwapCubit(
         walletRepository: mockWalletRepos,
-        privateKeyHex: privateKeyHex,
+        account: account,
       ),
       expect: () => [],
     );
@@ -52,7 +53,7 @@ void main() {
       'emits [SwapFailed] when missing amountIn and amountOut',
       build: () => SwapCubit(
         walletRepository: mockWalletRepos,
-        privateKeyHex: '',
+        account: account,
       ),
       act: (bloc) {
         bloc.confirmSwap(
@@ -75,7 +76,7 @@ void main() {
       'emits [SwapAddAllowance] when has not enough allowance',
       build: () => SwapCubit(
         walletRepository: mockWalletRepos,
-        privateKeyHex: privateKeyHex,
+        account: account,
       ),
       act: (bloc) {
         final pancakeSwap = PancakeSwap(
@@ -89,7 +90,7 @@ void main() {
 
         when(mockWalletRepos.allowance(
                 asset: pancakeSwap.assetIn,
-                privateKeyHex: privateKeyHex,
+                privateKey: account.privateKey,
                 contractAddress: Config.pancakeRouter))
             .thenAnswer((realInvocation) async => 0);
 
@@ -112,7 +113,7 @@ void main() {
       'emits [SwapFailed] when not enough balance',
       build: () => SwapCubit(
         walletRepository: mockWalletRepos,
-        privateKeyHex: privateKeyHex,
+        account: account,
       ),
       act: (bloc) {
         final pancakeSwap = PancakeSwap(
@@ -126,7 +127,7 @@ void main() {
 
         when(mockWalletRepos.allowance(
                 asset: pancakeSwap.assetIn,
-                privateKeyHex: privateKeyHex,
+                privateKey: account.privateKey,
                 contractAddress: Config.pancakeRouter))
             .thenAnswer((realInvocation) async => 100);
 
@@ -136,7 +137,7 @@ void main() {
         )).thenAnswer((realInvocation) async => 10);
 
         when(mockWalletRepos.isEnoughBnb(
-          privateKeyHex: privateKeyHex,
+          privateKey: account.privateKey,
           asset: pancakeSwap.assetIn,
           amount: pancakeSwap.amountIn,
           gasPrice: anyNamed('gasPrice'),
@@ -160,7 +161,7 @@ void main() {
       'emits [SwapSuccess] when successfully swap',
       build: () => SwapCubit(
         walletRepository: mockWalletRepos,
-        privateKeyHex: privateKeyHex,
+        account: account,
       ),
       act: (bloc) async {
         final pancakeSwap = PancakeSwap(
@@ -174,7 +175,7 @@ void main() {
 
         when(mockWalletRepos.allowance(
                 asset: pancakeSwap.assetIn,
-                privateKeyHex: privateKeyHex,
+                privateKey: account.privateKey,
                 contractAddress: Config.pancakeRouter))
             .thenAnswer((realInvocation) async => 100);
 
@@ -184,7 +185,7 @@ void main() {
         )).thenAnswer((realInvocation) async => 10);
 
         when(mockWalletRepos.isEnoughBnb(
-          privateKeyHex: privateKeyHex,
+          privateKey: account.privateKey,
           asset: pancakeSwap.assetIn,
           amount: pancakeSwap.amountIn,
           gasPrice: anyNamed('gasPrice'),

@@ -81,12 +81,12 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
       paymentRepository: paymentRepos,
       amount: safeOriginalAmount,
       currency: widget.merchantInfo.currency.toCurrency(),
-      privateKeyHex: TChainPaymentSDK.shared.account.privateKeyHex,
+      account: TChainPaymentSDK.shared.account,
     );
 
     _swapCubit = SwapCubit(
       walletRepository: walletRepos,
-      privateKeyHex: TChainPaymentSDK.shared.account.privateKeyHex,
+      account: TChainPaymentSDK.shared.account,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {

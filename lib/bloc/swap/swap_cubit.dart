@@ -7,20 +7,19 @@ import 'package:t_chain_payment_sdk/data/pancake_swap.dart';
 import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations_en.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:web3dart/web3dart.dart';
-
-import '../../l10n/generated/tchain_payment_localizations.dart';
 
 part 'swap_state.dart';
 
 class SwapCubit extends Cubit<SwapState> {
   SwapCubit({
     required this.walletRepository,
-    required this.privateKeyHex,
+    required this.account,
   }) : super(SwapInitial());
 
   final WalletRepository walletRepository;
-  final String privateKeyHex;
+  final Account account;
   TChainPaymentLocalizations localizations = TChainPaymentLocalizationsEn();
 
   /// externalGasPrice is used for checking gas in case the process has multi-steps
@@ -73,17 +72,17 @@ class SwapCubit extends Cubit<SwapState> {
       }
 
       Transaction tnx = await walletRepository.buildSwapContractTransaction(
-        privateKeyHex: privateKeyHex,
+        privateKey: account.privateKey,
         pancakeSwap: pancakeSwap,
         gasPrice: gasPrice,
       );
-      final privateKey = EthPrivateKey.fromHex(privateKeyHex);
+
       num estimatedGas = await walletRepository.estimateGas(
-        address: privateKey.address,
+        address: account.privateKey.address,
         transaction: tnx,
       );
       isEnoughBalance = await walletRepository.isEnoughBnb(
-          privateKeyHex: privateKeyHex,
+          privateKey: account.privateKey,
           asset: pancakeSwap.assetIn,
           amount: pancakeSwap.amountIn!,
           gasPrice: gasPrice,
@@ -95,7 +94,7 @@ class SwapCubit extends Cubit<SwapState> {
       }
 
       var hash = await walletRepository.swap(
-          privateKeyHex: privateKeyHex,
+          privateKey: account.privateKey,
           tx: tnx,
           pancakeSwap: pancakeSwap,
           gasLimit: estimatedGas,
@@ -120,7 +119,7 @@ class SwapCubit extends Cubit<SwapState> {
   ) async {
     double depositAmount = amount.toDouble();
     var allowance = await walletRepository.allowance(
-      privateKeyHex: privateKeyHex,
+      privateKey: account.privateKey,
       asset: asset,
       contractAddress: contractAddress,
     );

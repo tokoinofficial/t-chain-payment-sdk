@@ -67,7 +67,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
     _approveRequestCubit = ApproveRequestCubit(
       walletRepository: walletRepository,
       storageRepository: storageRepository,
-      privateKeyHex: TChainPaymentSDK.shared.account.privateKeyHex,
+      account: TChainPaymentSDK.shared.account,
     );
 
     _approveRequestCubit.loadTokenInfo(asset: widget.asset);
