@@ -6,7 +6,6 @@ import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
-import 'package:t_chain_payment_sdk/common/deep_link_service.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/screens/t_chain_root.dart';
 import 'package:t_chain_payment_sdk/screens/t_chain_router_const.dart';
@@ -345,7 +344,7 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
   }
 
   _onCancel() async {
-    DeepLinkService.instance.cancel(
+    Utils.cancel(
       bundleID: widget.bundleId,
       notes: '',
     );

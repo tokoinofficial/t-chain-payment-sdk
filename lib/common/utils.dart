@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations_en.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:web3dart/crypto.dart';
+
+const kMerchant = 'merchant';
 
 class Utils {
   /// ethereum address: contains 0x and 42 characters long
@@ -60,6 +63,88 @@ class Utils {
       textColor: Colors.white,
       fontSize: 13.0,
     );
+  }
+
+  // User has already paid/has already withdrawn, calling this function to send back to merchant app
+  // Required transaction ID because the transaction's status doesn't update immediately
+  // Merchant app would check it manually once it has tnx
+  static void success({
+    String? bundleID,
+    String? notes,
+    required String txn,
+  }) {
+    if (bundleID == null || bundleID.isEmpty) return;
+
+    final uri = Uri(
+      scheme: '$kMerchant.$bundleID',
+      host: 'app',
+      path: 'success',
+      queryParameters: {
+        if (notes != null) 'notes': notes,
+        'txn': txn,
+      },
+    );
+
+    launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  static void fail({
+    String? bundleID,
+    String? notes,
+    required String txn,
+  }) {
+    if (bundleID == null || bundleID.isEmpty) return;
+
+    final uri = Uri(
+      scheme: '$kMerchant.$bundleID',
+      host: 'app',
+      path: 'fail',
+      queryParameters: {
+        if (notes != null) 'notes': notes,
+        'txn': txn,
+      },
+    );
+
+    launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  static void proceeding({
+    String? bundleID,
+    String? notes,
+    required String txn,
+  }) {
+    if (bundleID == null || bundleID.isEmpty) return;
+
+    final uri = Uri(
+      scheme: '$kMerchant.$bundleID',
+      host: 'app',
+      path: 'proceeding',
+      queryParameters: {
+        if (notes != null) 'notes': notes,
+        'txn': txn,
+      },
+    );
+
+    launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  // User cancels action, calling this function to send back to merchant app
+  static void cancel({
+    String? bundleID,
+    String? notes,
+  }) {
+    if (bundleID == null || bundleID.isEmpty) return;
+
+    final uri = Uri(
+      scheme: '$kMerchant.$bundleID',
+      host: 'app',
+      path: 'cancelled',
+      queryParameters: {
+        if (notes != null) 'notes': notes,
+      },
+    );
+
+    launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }
 

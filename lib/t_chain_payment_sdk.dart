@@ -31,6 +31,7 @@ export 'package:t_chain_payment_sdk/data/currency.dart';
 export 'package:t_chain_payment_sdk/data/account.dart';
 export 'package:t_chain_payment_sdk/data/merchant_info.dart';
 export 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
+export 'package:t_chain_payment_sdk/services/deep_link_service.dart';
 
 /// T-Chain Paymnent SDK
 /// T-Chain Payment is a B2B service helping small and medium-sized enterprises add another channel for users to purchase using crypto currency with minimum efforts.

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:wallet_example/utils/constants.dart';
-import 'package:wallet_example/utils/deeplink.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,6 +18,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     DeepLinkService.shared.listen();
     DeepLinkService.shared.onReceived = _handleUrl;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    DeepLinkService.shared.close();
   }
 
   @override

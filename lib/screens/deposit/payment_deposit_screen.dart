@@ -15,7 +15,6 @@ import 'package:t_chain_payment_sdk/data/gas_fee.dart';
 import 'package:t_chain_payment_sdk/data/pancake_swap.dart';
 import 'package:t_chain_payment_sdk/data/transfer_data.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
-import 'package:t_chain_payment_sdk/common/deep_link_service.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/screens/deposit/payment_status_screen.dart';
@@ -211,19 +210,19 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
 
                       final currentState = _paymentDepositCubit.state;
                       if (currentState is PaymentDepositCompleted) {
-                        DeepLinkService.instance.success(
+                        Utils.success(
                           bundleID: widget.bundleId,
                           notes: widget.merchantInfo.notes,
                           txn: currentState.txn,
                         );
                       } else if (currentState is PaymentDepositFailed) {
-                        DeepLinkService.instance.fail(
+                        Utils.fail(
                           bundleID: widget.bundleId,
                           notes: widget.merchantInfo.notes,
                           txn: currentState.txn,
                         );
                       } else if (currentState is PaymentDepositProceeding) {
-                        DeepLinkService.instance.proceeding(
+                        Utils.proceeding(
                           bundleID: widget.bundleId,
                           notes: widget.merchantInfo.notes,
                           txn: currentState.txn,
@@ -600,7 +599,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
   }
 
   _onCancel() async {
-    DeepLinkService.instance.cancel(
+    Utils.cancel(
       bundleID: widget.bundleId,
       notes: '',
     );
