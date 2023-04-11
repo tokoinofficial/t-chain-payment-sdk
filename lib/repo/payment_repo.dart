@@ -20,6 +20,7 @@ class PaymentRepository {
   // in case generating QR code, let the bundleID be empty
   Future<Uri?> generateDeeplink({
     required TChainPaymentAction action,
+    required String walletScheme,
     required String notes,
     required double amount,
     required Currency currency,
@@ -50,7 +51,7 @@ class PaymentRepository {
       }
 
       final Uri uri = Uri(
-        scheme: TChainPaymentSDK.shared.env.scheme,
+        scheme: walletScheme,
         host: 'app',
         path: action.path,
         queryParameters: params,

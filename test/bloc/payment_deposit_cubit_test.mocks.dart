@@ -136,6 +136,7 @@ class MockPaymentRepository extends _i1.Mock implements _i9.PaymentRepository {
   @override
   _i10.Future<Uri?> generateDeeplink({
     required _i11.TChainPaymentAction? action,
+    required String? walletScheme,
     required String? notes,
     required double? amount,
     required _i12.Currency? currency,
@@ -148,6 +149,7 @@ class MockPaymentRepository extends _i1.Mock implements _i9.PaymentRepository {
           [],
           {
             #action: action,
+            #walletScheme: walletScheme,
             #notes: notes,
             #amount: amount,
             #currency: currency,

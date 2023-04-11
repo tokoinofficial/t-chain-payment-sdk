@@ -23,7 +23,6 @@ import 'package:t_chain_payment_sdk/services/blockchain_service.dart';
 import 'package:t_chain_payment_sdk/services/t_chain_api.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
@@ -74,8 +73,15 @@ class TChainPaymentSDK {
 
   late PaymentRepository _paymentRepository;
 
+  /// Close payment sdk
+  close() {
+    _streamSubscription?.cancel();
+  }
+}
+
+extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
   /// config payment sdk
-  config({
+  configMerchantApp({
     required String apiKey,
     required String bundleId,
     TChainPaymentEnv env = TChainPaymentEnv.dev,
@@ -96,13 +102,6 @@ class TChainPaymentSDK {
     _incomingLinkHandler();
   }
 
-  /// Close payment sdk
-  close() {
-    _streamSubscription?.cancel();
-  }
-}
-
-extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
   /// Use case: App to App
   /// Alex wants to add funds into his wallet in a game platform, the system
   /// already provides several way to deposit such as redeem code, credit card...
@@ -114,12 +113,14 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
   /// [notes] unique id of each order. It is called offchain in blockchain terms.
   /// [amount] a sum of money to make a depositary
   Future<TChainPaymentResult> deposit({
+    required String walletScheme,
     required String notes,
     required double amount,
     required Currency currency,
   }) async {
     return await _callPaymentAction(
       action: TChainPaymentAction.deposit,
+      walletScheme: walletScheme,
       notes: notes,
       amount: amount,
       currency: currency,
@@ -151,6 +152,7 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
   /// [notes] unique id of each order. It is called offchain in blockchain terms.
   /// [amount] a sum of money to make a depositary
   Future<TChainPaymentQRResult> generateQrCode({
+    required String walletScheme,
     required String notes,
     required double amount,
     required Currency currency,
@@ -166,6 +168,7 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
 
     final Uri? uri = await _paymentRepository.generateDeeplink(
       action: TChainPaymentAction.deposit,
+      walletScheme: walletScheme,
       notes: notes,
       amount: amount,
       currency: currency,
@@ -197,6 +200,7 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
 
   Future<TChainPaymentResult> _callPaymentAction({
     required TChainPaymentAction action,
+    required String walletScheme,
     required String notes,
     required double amount,
     required Currency currency,
@@ -210,6 +214,7 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
     }
 
     final Uri? uri = await _paymentRepository.generateDeeplink(
+      walletScheme: walletScheme,
       action: action,
       notes: notes,
       amount: amount,
@@ -234,8 +239,6 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
     }
 
     if (result == false) {
-      launchUrlString(env.downloadUrl);
-
       return TChainPaymentResult(
         status: TChainPaymentStatus.failed,
         notes: notes,
@@ -329,6 +332,25 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
 }
 
 extension TChainPaymentSDKWalletApp on TChainPaymentSDK {
+  /// config payment sdk
+  configWallet({
+    required String apiKey,
+    TChainPaymentEnv env = TChainPaymentEnv.dev,
+    bool isTestnet = true,
+  }) {
+    this.apiKey = apiKey;
+    this.env = env;
+    this.isTestnet = isTestnet;
+
+    Config.setEnvironment(env);
+
+    final api = TChainAPI.standard(env.apiUrl);
+    _paymentRepository = PaymentRepository(api: api);
+
+    _initURIHandler();
+    _incomingLinkHandler();
+  }
+
   _startPayment(
     BuildContext context, {
     required Account account,
