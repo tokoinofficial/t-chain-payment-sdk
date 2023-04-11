@@ -3,7 +3,6 @@ import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/common/ui_style.dart';
-import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/common/gaps.dart';
 
 class ApproveRequestPendingWidget extends StatelessWidget with UIStyle {

@@ -7,7 +7,6 @@ import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
 import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
-import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/screens/deposit/widgets/add_note_popup_widget.dart';
 import 'package:t_chain_payment_sdk/common/gaps.dart';
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:wallet_example/utils/constants.dart';
 import 'package:wallet_example/utils/deeplink.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,8 +14,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    DeepLinkService.shared.setup(context);
-    DeepLinkService.shared.onReceived = DeepLinkService.shared.handleUrl;
+
+    TChainPaymentSDK.shared.configWallet(apiKey: Constants.apiKey);
+
+    DeepLinkService.shared.listen();
+    DeepLinkService.shared.onReceived = _handleUrl;
   }
 
   @override
@@ -26,5 +31,25 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Text('Wallet example app'),
       ),
     );
+  }
+
+  _handleUrl(Uri deepLink) {
+    // T-Chain payment
+    if (deepLink.scheme == 'walletexample' && deepLink.host == 'app') {
+      final qrCode = deepLink.queryParameters['qr_code'] ?? '';
+      final bundleId = deepLink.queryParameters['bundle_id'] ?? '';
+
+      switch (deepLink.path) {
+        case '/payment_deposit':
+          TChainPaymentSDK.shared.startPaymentWithQrCode(
+            context,
+            account: Account.fromPrivateKeyHex(hex: Constants.privateKeyHex),
+            qrCode: qrCode,
+            bundleId: bundleId,
+          );
+
+          break;
+      }
+    }
   }
 }

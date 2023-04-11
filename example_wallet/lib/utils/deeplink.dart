@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:wallet_example/utils/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 // ignore: depend_on_referenced_packages
 import 'package:uni_links/uni_links.dart';
 // ignore: depend_on_referenced_packages
@@ -19,17 +17,11 @@ class DeepLinkService {
   static const kMerchant = 'merchant';
 
   StreamSubscription? _streamSubscription;
-  Function(BuildContext, Uri)? onReceived;
+  Function(Uri)? onReceived;
 
-  late BuildContext context;
-
-  setup(BuildContext context) {
-    this.context = context;
+  listen() {
     _initUriHandler();
     _incomingLinkHandler();
-    TChainPaymentSDK.shared.configWallet(
-      apiKey: Constants.apiKey,
-    );
   }
 
   close() {
@@ -45,12 +37,7 @@ class DeepLinkService {
         final initialUri = await getInitialUri();
         if (initialUri != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (isPaymentUrl(initialUri)) {
-              onReceived?.call(context, initialUri);
-              return;
-            }
-
-            // Utils.instance.errorToast(LocaleKeys.error_invalid_code.tr());
+            onReceived?.call(initialUri);
           });
         }
       } on PlatformException {
@@ -71,10 +58,7 @@ class DeepLinkService {
         debugPrint('Received URI: $uri');
         if (uri != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (isPaymentUrl(uri)) {
-              onReceived?.call(context, uri);
-              return;
-            }
+            onReceived?.call(uri);
           });
         }
       }, onError: (Object err) {
@@ -163,41 +147,5 @@ class DeepLinkService {
     );
 
     launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-
-  bool isPaymentUrl(Uri uri) {
-    return (uri.scheme == 'mtwallet' ||
-            uri.scheme == 'mtwallet.dev' ||
-            uri.scheme == 'walletexample') &&
-        uri.host == 'app' &&
-        uri.queryParameters['qr_code'] != null;
-  }
-
-  handleUrl(BuildContext context, Uri deepLink) {
-    // T-Chain payment
-    if (deepLink.host == 'app') {
-      final qrCode = deepLink.queryParameters['qr_code'] ?? '';
-      final bundleId = deepLink.queryParameters['bundle_id'] ?? '';
-
-      switch (deepLink.path) {
-        case '/payment_deposit':
-          TChainPaymentSDK.shared.startPaymentWithQrCode(
-            context,
-            account: Account.fromPrivateKeyHex(hex: Constants.privateKeyHex),
-            qrCode: qrCode,
-            bundleId: bundleId,
-          );
-
-          break;
-      }
-    }
-  }
-
-  handleQRPayment(BuildContext context, MerchantInfo merchantInfo) {
-    TChainPaymentSDK.shared.startPaymentWithMerchantInfo(
-      context,
-      account: Account.fromPrivateKeyHex(hex: Constants.privateKeyHex),
-      merchantInfo: merchantInfo,
-    );
   }
 }
