@@ -15,7 +15,7 @@ abstract class _$AssetCWProxy {
 
   Asset iconName(String iconName);
 
-  Asset balance(num balance);
+  Asset balance(double balance);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Asset(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -28,7 +28,7 @@ abstract class _$AssetCWProxy {
     String? fullName,
     String? shortName,
     String? iconName,
-    num? balance,
+    double? balance,
   });
 }
 
@@ -52,7 +52,7 @@ class _$AssetCWProxyImpl implements _$AssetCWProxy {
   Asset iconName(String iconName) => this(iconName: iconName);
 
   @override
-  Asset balance(num balance) => this(balance: balance);
+  Asset balance(double balance) => this(balance: balance);
 
   @override
 
@@ -90,7 +90,7 @@ class _$AssetCWProxyImpl implements _$AssetCWProxy {
       balance: balance == const $CopyWithPlaceholder() || balance == null
           ? _value.balance
           // ignore: cast_nullable_to_non_nullable
-          : balance as num,
+          : balance as double,
     );
   }
 }
@@ -110,7 +110,7 @@ Asset _$AssetFromJson(Map<String, dynamic> json) => Asset(
       fullName: json['fullName'] as String,
       shortName: json['shortName'] as String,
       iconName: json['iconName'] as String,
-      balance: json['balance'] as num? ?? 0.0,
+      balance: (json['balance'] as num?)?.toDouble() ?? 0.0,
     );
 
 Map<String, dynamic> _$AssetToJson(Asset instance) => <String, dynamic>{

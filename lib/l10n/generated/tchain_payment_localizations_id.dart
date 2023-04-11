@@ -265,4 +265,7 @@ class TChainPaymentLocalizationsId extends TChainPaymentLocalizations {
 
   @override
   String get by_clicking_confirm_you_understood_and_agreed_to => 'By clicking “Confirm”, you understood and agreed to ';
+
+  @override
+  String get cannot_get_gas_fee => 'Cannot get gas fee';
 }

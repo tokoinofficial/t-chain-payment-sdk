@@ -94,7 +94,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
         _loadingApprove = state is ApproveRequestLoading;
 
         if (state is ApproveRequestReady) {
-          _gasFee = state.gasFees.first;
+          _gasFee = state.gasFee;
         } else if (state is ApproveRequestSuccess) {
           Navigator.of(context).pop(true);
         } else if (state is ApproveRequestWaiting) {
@@ -286,7 +286,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
   }
 
   _onApproveDeposit({bool? resend}) {
-    _approveRequestCubit.approveDepositTransaction(
+    _approveRequestCubit.approve(
       gasPrice: _gasFee?.toGwei(),
       amount: widget.amount,
       asset: widget.asset,

@@ -49,7 +49,10 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
       _paymentInfo = widget.merchantInfo?.copyWith();
       _canEditAmount = widget.merchantInfo?.isDynamic ?? false;
     } else {
-      _paymentInfoCubit.getPaymentInfo(qrCode: widget.qrCode);
+      _paymentInfoCubit.getPaymentInfo(
+        qrCode: widget.qrCode,
+        currentChainId: TChainPaymentSDK.shared.chainIdString,
+      );
     }
 
     _amountController = TextEditingController(

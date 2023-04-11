@@ -10,6 +10,7 @@ import 'package:t_chain_payment_sdk/data/gas_fee.dart';
 import 'package:t_chain_payment_sdk/data/payment_discount_fee.dart';
 import 'package:t_chain_payment_sdk/data/transfer_data.dart';
 import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
+import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations_en.dart';
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
@@ -29,7 +30,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
 
   final WalletRepository walletRepository;
   final PaymentRepository paymentRepository;
-  late TChainPaymentLocalizations localizations;
+  TChainPaymentLocalizations localizations = TChainPaymentLocalizationsEn();
   final String privateKeyHex;
 
   final double amount;
@@ -42,8 +43,15 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   ExchangeRate _exchangeRate = ExchangeRate({});
 
   Future setup() async {
-    final address = TChainPaymentSDK.shared.account.privateKey.address.hex;
-    if (!Utils.isValidEthereumAddress(address)) {
+    try {
+      final privateKey = EthPrivateKey.fromHex(privateKeyHex);
+      final address = privateKey.address.hex;
+
+      if (!Utils.isValidEthereumAddress(address)) {
+        emit(PaymentDepositUnsupportedWallet());
+        return;
+      }
+    } catch (e) {
       emit(PaymentDepositUnsupportedWallet());
       return;
     }
@@ -245,7 +253,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
       );
 
       TChainPaymentSDK.shared.account.updateAsset(
-        asset.copyWith(balance: balance),
+        asset.copyWith(balance: balance.toDouble()),
       );
 
       if (balance < amount) {
@@ -330,7 +338,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
             )
                 .then(
               (value) {
-                final asset = entry.value.copyWith(balance: value);
+                final asset = entry.value.copyWith(balance: value.toDouble());
                 TChainPaymentSDK.shared.account.updateAsset(asset);
               },
             ).catchError((e) {

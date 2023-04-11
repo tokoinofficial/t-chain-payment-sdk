@@ -584,6 +584,12 @@ abstract class TChainPaymentLocalizations {
   /// In en, this message translates to:
   /// **'By clicking “Confirm”, you understood and agreed to'**
   String get by_clicking_confirm_you_understood_and_agreed_to;
+
+  /// No description provided for @cannot_get_gas_fee.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot get gas fee'**
+  String get cannot_get_gas_fee;
 }
 
 class _TChainPaymentLocalizationsDelegate extends LocalizationsDelegate<TChainPaymentLocalizations> {

@@ -15,12 +15,12 @@ class ApproveRequestReady extends ApproveRequestState {
   final Asset asset;
   final num balance;
 
-  final List<GasFee> gasFees;
+  final GasFee gasFee;
 
   const ApproveRequestReady({
     required this.asset,
     required this.balance,
-    required this.gasFees,
+    required this.gasFee,
   }) : super();
 
   @override
@@ -28,7 +28,7 @@ class ApproveRequestReady extends ApproveRequestState {
     ..addAll([
       asset,
       balance,
-      gasFees,
+      gasFee,
     ]);
 }
 

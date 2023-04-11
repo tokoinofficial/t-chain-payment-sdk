@@ -16,7 +16,7 @@ class PaymentInfoCubit extends Cubit<PaymentInfoState> {
     emit(PaymentInfoLoaded(merchantInfo: merchantInfo));
   }
 
-  getPaymentInfo({String? qrCode}) async {
+  getPaymentInfo({String? qrCode, required String currentChainId}) async {
     if (state is PaymentInfoLoading) return;
     emit(PaymentInfoLoading());
 
@@ -31,7 +31,7 @@ class PaymentInfoCubit extends Cubit<PaymentInfoState> {
 
       if (response == null ||
           response.result == null ||
-          response.result!.chainId != TChainPaymentSDK.shared.chainIdString) {
+          response.result!.chainId != currentChainId) {
         emit(PaymentInfoUnsupported());
         return;
       }

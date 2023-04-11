@@ -7,6 +7,7 @@ import 'package:t_chain_payment_sdk/data/gas_fee.dart';
 import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
 import 'package:t_chain_payment_sdk/common/transaction_waiter.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
+import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations_en.dart';
 import 'package:t_chain_payment_sdk/repo/storage_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:web3dart/web3dart.dart';
@@ -23,7 +24,7 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
   final WalletRepository walletRepository;
   final StorageRepository storageRepository;
   final String privateKeyHex;
-  late TChainPaymentLocalizations localizations;
+  TChainPaymentLocalizations localizations = TChainPaymentLocalizationsEn();
 
   Future<void> loadTokenInfo({required Asset asset, event}) async {
     try {
@@ -38,17 +39,22 @@ class ApproveRequestCubit extends Cubit<ApproveRequestState> {
 
       List<dynamic> list = await Future.wait(infoNeeded);
 
+      final List<GasFee> gasFees = list.length > 1 ? list[1] : [];
+      if (gasFees.isEmpty) {
+        throw Exception(localizations.cannot_get_gas_fee);
+      }
+
       emit(ApproveRequestReady(
         asset: asset,
         balance: list[0],
-        gasFees: list.length > 1 ? list[1] : [],
+        gasFee: gasFees.first,
       ));
     } catch (e) {
       emit(ApproveRequestError(error: Utils.getErrorMsg(e)));
     }
   }
 
-  Future<void> approveDepositTransaction({
+  Future<void> approve({
     required Asset asset,
     required num amount,
     required bool resend,

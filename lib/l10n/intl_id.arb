@@ -80,5 +80,6 @@
     "approve_request_pending_desc": "An approve request transaction is being processed. We recommend you wait until its process finishes or if you want to send another approve request, you will have to  pay another transaction fee.",
     "send_another_request": "Send Another Request",
     "keep_waiting": "Keep Waiting",
-    "by_clicking_confirm_you_understood_and_agreed_to": "By clicking “Confirm”, you understood and agreed to "
+    "by_clicking_confirm_you_understood_and_agreed_to": "By clicking “Confirm”, you understood and agreed to ",
+    "cannot_get_gas_fee": "Cannot get gas fee"
 }

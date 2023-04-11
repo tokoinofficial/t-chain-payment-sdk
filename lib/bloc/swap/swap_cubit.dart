@@ -5,6 +5,7 @@ import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';
 import 'package:t_chain_payment_sdk/data/pancake_swap.dart';
 import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
+import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations_en.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -20,7 +21,7 @@ class SwapCubit extends Cubit<SwapState> {
 
   final WalletRepository walletRepository;
   final String privateKeyHex;
-  late TChainPaymentLocalizations localizations;
+  TChainPaymentLocalizations localizations = TChainPaymentLocalizationsEn();
 
   /// externalGasPrice is used for checking gas in case the process has multi-steps
   Future<void> confirmSwap({
@@ -32,25 +33,32 @@ class SwapCubit extends Cubit<SwapState> {
       emit(SwapSending());
       bool isEnoughBalance = false;
 
+      if (pancakeSwap.amountIn == null && pancakeSwap.amountOut == null) {
+        throw Exception(localizations.something_went_wrong_please_try_later);
+      }
+
       if (pancakeSwap.amountIn == null) {
         BigInt? amountInBigInt =
             await walletRepository.getSwapAmountIn(pancakeSwap: pancakeSwap);
         final exponent = TokoinNumber.getExponentWithAsset(pancakeSwap.assetIn);
-        pancakeSwap.amountIn = TokoinNumber.fromBigInt(
+        final amountIn = TokoinNumber.fromBigInt(
           amountInBigInt ?? BigInt.zero,
           exponent: exponent,
         ).doubleValue;
-      }
 
-      if (pancakeSwap.amountOut == null) {
+        pancakeSwap = pancakeSwap.copyWith(
+          amountIn: amountIn,
+        );
+      } else if (pancakeSwap.amountOut == null) {
         BigInt? amountOutBigInt =
             await walletRepository.getSwapAmountOut(pancakeSwap: pancakeSwap);
         final exponent =
             TokoinNumber.getExponentWithAsset(pancakeSwap.assetOut);
-        pancakeSwap.amountOut = TokoinNumber.fromBigInt(
+        final amountOut = TokoinNumber.fromBigInt(
           amountOutBigInt ?? BigInt.zero,
           exponent: exponent,
         ).doubleValue;
+        pancakeSwap = pancakeSwap.copyWith(amountOut: amountOut);
       }
 
       var hasEnoughAllowance = await _hasEnoughAllowance(
@@ -106,7 +114,10 @@ class SwapCubit extends Cubit<SwapState> {
   }
 
   Future<bool> _hasEnoughAllowance(
-      num amount, Asset asset, String contractAddress) async {
+    num amount,
+    Asset asset,
+    String contractAddress,
+  ) async {
     double depositAmount = amount.toDouble();
     var allowance = await walletRepository.allowance(
       privateKeyHex: privateKeyHex,

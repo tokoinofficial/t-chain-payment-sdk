@@ -355,7 +355,8 @@ class WalletRepository {
 
     if (pancakeSwap.amountIn == balance) {
       var epsilon = 0.000000001;
-      pancakeSwap.amountIn = (pancakeSwap.amountIn! - epsilon);
+      var amountIn = (pancakeSwap.amountIn! - epsilon);
+      pancakeSwap.copyWith(amountIn: amountIn);
     }
 
     var hash = await smc.sendRawTransaction(

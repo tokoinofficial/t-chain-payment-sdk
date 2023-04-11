@@ -38,6 +38,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  bloc_test: ^9.1.1
   flutter_lints: ^1.0.0
   build_runner: ^2.3.3
   retrofit_generator: ^6.0.0+1
@@ -45,6 +46,7 @@ dev_dependencies:
   copy_with_extension_gen: ^5.0.2
   url_launcher_platform_interface: ^2.1.0
   plugin_platform_interface: ^2.1.2
+  mockito: ^5.4.0
 
 
 flutter:

@@ -19,7 +19,7 @@ class Asset extends Equatable {
 
   static Asset? createAsset({required String shortName}) {
     String? contractAddress;
-    switch (shortName) {
+    switch (shortName.toUpperCase()) {
       case CONST.kAssetNameBNB:
         contractAddress = Config.bnbContractAddress;
         break;
@@ -62,7 +62,7 @@ class Asset extends Equatable {
 
     return Asset(
       contractAddress: contractAddress,
-      shortName: shortName,
+      shortName: shortName.toUpperCase(),
       fullName: fullName,
       iconName: iconName,
     );
@@ -84,7 +84,7 @@ class Asset extends Equatable {
   final String shortName;
   final String fullName;
   final String iconName;
-  final num balance;
+  final double balance;
 
   factory Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);
   Map<String, dynamic> toJson() => _$AssetToJson(this);

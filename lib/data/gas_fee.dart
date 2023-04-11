@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:t_chain_payment_sdk/services/gas_station_api.dart';
 
 const kGweiUnitPerEther = 1000000000.0;
@@ -10,7 +11,8 @@ const kEstimateGasLimitForApprove =
 const kDefaultBscGasPriceGwei = 10;
 const kDefaultBscWaitMinutes = 5.0;
 
-class GasFee {
+// ignore: must_be_immutable
+class GasFee extends Equatable {
   num fee;
   int estimatedGas = kEstimateGasLimitForTransfer;
   num waitInMin;
@@ -40,6 +42,13 @@ class GasFee {
       return kDefaultBscGasPriceGwei;
     }
   }
+
+  @override
+  List<Object?> get props => [
+        fee,
+        estimatedGas,
+        waitInMin,
+      ];
 }
 
 String _removeDecimalZeroFormat(double n) {
