@@ -2,9 +2,7 @@ library t_chain_payment_sdk;
 
 import 'dart:async';
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
@@ -21,8 +19,8 @@ import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/screens/t_chain_root.dart';
 import 'package:t_chain_payment_sdk/services/blockchain_service.dart';
 import 'package:t_chain_payment_sdk/services/t_chain_api.dart';
-import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:t_chain_payment_sdk/services/deep_link_service.dart';
 
 export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
@@ -64,9 +62,6 @@ class TChainPaymentSDK {
   /// To handle payment result
   late Function(TChainPaymentResult) delegate;
 
-  bool _initialURILinkHandled = false;
-  StreamSubscription? _streamSubscription;
-
   String get sandboxTitle => isTestnet ? ' - SANDBOX' : '';
 
   int get chainID => isTestnet ? kTestnetChainID : kMainnetChainID;
@@ -76,7 +71,7 @@ class TChainPaymentSDK {
 
   /// Close payment sdk
   close() {
-    _streamSubscription?.cancel();
+    DeepLinkService.shared.close();
   }
 }
 
@@ -99,8 +94,7 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
     final api = TChainAPI.standard(env.apiUrl);
     _paymentRepository = PaymentRepository(api: api);
 
-    _initURIHandler();
-    _incomingLinkHandler();
+    DeepLinkService.shared.listen(_handleDeepLink);
   }
 
   /// Use case: App to App
@@ -252,44 +246,6 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
     );
   }
 
-  /// Handle deeplink when user open the app
-  Future<void> _initURIHandler() async {
-    if (!_initialURILinkHandled) {
-      _initialURILinkHandled = true;
-      debugPrint('init URI Handler');
-
-      try {
-        final initialURI = await getInitialUri();
-        // Use the initialURI and warn the user if it is not correct,
-        // but keep in mind it could be `null`.
-        _handleDeepLink(initialURI);
-      } on PlatformException {
-        // Platform messages may fail, so we use a try/catch PlatformException.
-        // Handle exception by warning the user their action did not succeed
-        debugPrint("Failed to receive initial uri");
-      } on FormatException catch (err) {
-        debugPrint('Malformed Initial URI received: $err');
-      }
-    }
-  }
-
-  /// Handle incoming links - the ones that the app will receive from the OS
-  /// while already started.
-  void _incomingLinkHandler() {
-    if (!kIsWeb) {
-      // It will handle app links while the app is already started - be it in
-      // the foreground or in the background.
-      _streamSubscription ??= uriLinkStream.listen((Uri? uri) {
-        debugPrint('Received URI: $uri');
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _handleDeepLink(uri);
-        });
-      }, onError: (Object err) {
-        debugPrint('Error occurred: $err');
-      });
-    }
-  }
-
   _handleDeepLink(Uri? deepLink) {
     if (deepLink == null) return;
 
@@ -338,6 +294,7 @@ extension TChainPaymentSDKWalletApp on TChainPaymentSDK {
     required String apiKey,
     TChainPaymentEnv env = TChainPaymentEnv.dev,
     bool isTestnet = true,
+    Function(Uri)? onDeeplinkReceived,
   }) {
     this.apiKey = apiKey;
     this.env = env;
@@ -348,8 +305,7 @@ extension TChainPaymentSDKWalletApp on TChainPaymentSDK {
     final api = TChainAPI.standard(env.apiUrl);
     _paymentRepository = PaymentRepository(api: api);
 
-    _initURIHandler();
-    _incomingLinkHandler();
+    DeepLinkService.shared.listen(onDeeplinkReceived);
   }
 
   _startPayment(

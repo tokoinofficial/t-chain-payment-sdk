@@ -14,7 +14,8 @@ class DeepLinkService {
   StreamSubscription? _streamSubscription;
   Function(Uri)? onReceived;
 
-  listen() {
+  listen([Function(Uri)? onReceived]) {
+    this.onReceived = onReceived;
     _initUriHandler();
     _incomingLinkHandler();
   }

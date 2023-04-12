@@ -14,10 +14,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    TChainPaymentSDK.shared.configWallet(apiKey: Constants.apiKey);
-
-    DeepLinkService.shared.listen();
-    DeepLinkService.shared.onReceived = _handleUrl;
+    TChainPaymentSDK.shared.configWallet(
+      apiKey: Constants.apiKey,
+      onDeeplinkReceived: _handleUrl,
+    );
   }
 
   @override
@@ -32,8 +32,14 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Wallet example app'),
       ),
-      body: const Center(
-        child: Text('Wallet example app'),
+      body: Container(
+        padding: const EdgeInsets.all(32),
+        child: const Center(
+          child: Text(
+            'To test T-Chain Payment, you can use the example app, then click on App to App or open a T-Chain deeplink',
+            textAlign: TextAlign.center,
+          ),
+        ),
       ),
     );
   }
