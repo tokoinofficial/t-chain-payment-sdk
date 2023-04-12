@@ -58,7 +58,7 @@ class DepositWidget extends StatelessWidget {
       value: currency,
       underline: const SizedBox(),
       isDense: true,
-      items: Currency.values.map(
+      items: Currency.values.where((element) => element.available).map(
         (e) {
           return DropdownMenuItem(
             key: Key(e.shortName),

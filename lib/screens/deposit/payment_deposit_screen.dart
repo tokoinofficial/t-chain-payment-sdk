@@ -163,7 +163,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
                   amount: state.amount,
                 );
               } else if (state is SwapFailed) {
-                Utils.errorToast(state.errorMsg);
+                Utils.errorToast(context, data: state.errorMsg);
               }
             },
           ),
@@ -181,7 +181,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
               } else if (state is PaymentDepositSetUpCompleted) {
                 _paymentDepositCubit.getAllInfo();
               } else if (state is PaymentDepositError) {
-                Utils.errorToast(state.error);
+                Utils.errorToast(context, data: state.error);
               } else if (state is PaymentDepositAddAllowance) {
                 _handleApproveDeposit(
                   asset: state.asset,

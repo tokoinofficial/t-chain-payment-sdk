@@ -268,4 +268,12 @@ class TChainPaymentLocalizationsEn extends TChainPaymentLocalizations {
 
   @override
   String get cannot_get_gas_fee => 'Cannot get gas fee';
+
+  @override
+  String get to_fix_please_try_again => 'Please try again.';
+
+  @override
+  String still_not_working_contact_email_for_customer_support(Object email) {
+    return 'Still not working, please contact $email for customer support';
+  }
 }

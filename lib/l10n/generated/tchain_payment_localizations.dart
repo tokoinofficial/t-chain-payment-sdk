@@ -590,6 +590,18 @@ abstract class TChainPaymentLocalizations {
   /// In en, this message translates to:
   /// **'Cannot get gas fee'**
   String get cannot_get_gas_fee;
+
+  /// No description provided for @to_fix_please_try_again.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again.'**
+  String get to_fix_please_try_again;
+
+  /// No description provided for @still_not_working_contact_email_for_customer_support.
+  ///
+  /// In en, this message translates to:
+  /// **'Still not working, please contact {email} for customer support'**
+  String still_not_working_contact_email_for_customer_support(Object email);
 }
 
 class _TChainPaymentLocalizationsDelegate extends LocalizationsDelegate<TChainPaymentLocalizations> {

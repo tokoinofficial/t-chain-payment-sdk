@@ -81,5 +81,7 @@
     "send_another_request": "Send Another Request",
     "keep_waiting": "Keep Waiting",
     "by_clicking_confirm_you_understood_and_agreed_to": "By clicking “Confirm”, you understood and agreed to",
-    "cannot_get_gas_fee": "Cannot get gas fee"
+    "cannot_get_gas_fee": "Cannot get gas fee",
+    "to_fix_please_try_again": "Please try again.",
+    "still_not_working_contact_email_for_customer_support": "Still not working, please contact {email} for customer support"
 }

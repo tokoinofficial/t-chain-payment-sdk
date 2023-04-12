@@ -46,4 +46,6 @@ class CONST {
   };
 
   static const policyUrl = 'https://tokoin.io/docs/privacy-policy';
+
+  static const supportEmail = 'hello@tokoin.io';
 }

@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:t_chain_payment_sdk/config/theme.dart';
+import 'package:t_chain_payment_sdk/data/error_message.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
 import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations_en.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -53,13 +55,19 @@ class Utils {
         fontSize: 15.0);
   }
 
-  static errorToast(String errorMessage) {
+  static errorToast(BuildContext context, {required String data}) {
+    final errorMsg = ErrorMessage.fromString(data);
+    errorToastForErrorMessage(context, errorMsg);
+  }
+
+  static errorToastForErrorMessage(
+      BuildContext context, ErrorMessage errorMessage) {
     Fluttertoast.showToast(
-      msg: errorMessage,
+      msg: errorMessage.getMessage(context),
       toastLength: Toast.LENGTH_LONG,
       timeInSecForIosWeb: 3,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.red.shade400,
+      backgroundColor: themeColors.errorDark,
       textColor: Colors.white,
       fontSize: 13.0,
     );

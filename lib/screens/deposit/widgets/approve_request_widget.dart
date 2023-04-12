@@ -100,7 +100,7 @@ class _ApproveRequestWidgetState extends State<ApproveRequestWidget>
           Utils.toast(Utils.getLocalizations(context).please_try_again);
           Navigator.of(context).pop(false);
         } else if (state is ApproveRequestError) {
-          Utils.errorToast(state.error);
+          Utils.errorToast(context, data: state.error);
         } else if (state is ApproveRequestPending) {
           _showConfirmResendAlert();
         }
