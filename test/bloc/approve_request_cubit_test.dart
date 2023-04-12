@@ -22,9 +22,9 @@ void main() {
   const privateKeyHex =
       '0097ad7d1294e0268bbaaf4642c6ccb4c4a76421bff0285023716e354c605513ee';
   final mockWalletRepos = MockWalletRepository();
-  final mockStorageRepos = MockStorageRepository();
+  late MockStorageRepository mockStorageRepos;
   final translations = TChainPaymentLocalizationsEn();
-  final account = Account.fromPrivateKeyHex(hex: privateKeyHex);
+  late Account account;
 
   setUp(() {
     Config.setEnvironment(TChainPaymentEnv.dev);
@@ -39,6 +39,8 @@ void main() {
       bnb = Asset.createAsset(shortName: 'BNB');
 
       TransactionWaiter().waitDuration = const Duration(seconds: 10);
+      mockStorageRepos = MockStorageRepository();
+      account = Account.fromPrivateKeyHex(hex: privateKeyHex);
     });
 
     blocTest<ApproveRequestCubit, ApproveRequestState>(

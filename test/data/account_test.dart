@@ -11,7 +11,9 @@ void main() {
   });
 
   test('Account - get asset', () {
-    final account = Account.fromPrivateKeyHex(hex: 'privateKeyHex');
+    final account = Account.fromPrivateKeyHex(
+      hex: '0097ad7d1294e0268bbaaf4642c6ccb4c4a76421bff0285023716e354c605513ee',
+    );
 
     // automatically create valid asset
     final toko = account.getAsset(name: CONST.kAssetNameTOKO);

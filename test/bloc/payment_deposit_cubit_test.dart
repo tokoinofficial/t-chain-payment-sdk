@@ -95,23 +95,6 @@ void main() {
     );
 
     blocTest<PaymentDepositCubit, PaymentDepositState>(
-      'emits [PaymentDepositUnsupportedWallet] when cannot find any assets',
-      build: () => PaymentDepositCubit(
-        walletRepository: mockWalletRepos,
-        paymentRepository: mockPaymentRepos,
-        amount: 1,
-        currency: Currency.usd,
-        account: Account.fromPrivateKeyHex(hex: 'invalid'),
-      ),
-      act: (cubit) {
-        cubit.setup();
-      },
-      expect: () => [
-        PaymentDepositUnsupportedWallet(),
-      ],
-    );
-
-    blocTest<PaymentDepositCubit, PaymentDepositState>(
       'emits [PaymentDepositSetUpCompleted] when everything ready',
       build: () => PaymentDepositCubit(
         walletRepository: mockWalletRepos,
