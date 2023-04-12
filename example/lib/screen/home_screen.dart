@@ -1,10 +1,8 @@
 import 'package:example/cubit/fcm/fcm_cubit.dart';
 import 'package:example/cubit/payment/payment_cubit.dart';
 import 'package:example/router/screen_router.dart';
-import 'package:example/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
