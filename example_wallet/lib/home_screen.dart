@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(32),
         child: const Center(
           child: Text(
-            'To test T-Chain Payment, you can use the example app, then click on App to App or open a T-Chain deeplink',
+            'To test T-Chain Payment\nyou can use the example app, click on App to App button to create a deeplink',
             textAlign: TextAlign.center,
           ),
         ),
