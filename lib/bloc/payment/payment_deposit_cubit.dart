@@ -14,6 +14,7 @@ import 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations_
 import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
 import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
+import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3dart;
 
 part 'payment_deposit_state.dart';
@@ -182,13 +183,15 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         throw Exception(localizations.something_went_wrong_please_try_later);
       }
 
-      var signatureBytes = transactionSignedHash.signedHash.toBytes32();
+      var signatureBytes = hexToBytes(transactionSignedHash.signedHash);
+      final merchantIdBytes32 = keccakUtf8(merchantId);
       var offchainBytes32 = transactionSignedHash.offchain.toBytes32();
 
       final params = [
         web3dart.EthereumAddress.fromHex(asset.contractAddress),
         useToko,
         signatureBytes,
+        merchantIdBytes32,
         offchainBytes32,
         TokoinNumber.fromNumber(assetAmount).bigIntValue,
         TokoinNumber.fromNumber(feeAmount).bigIntValue,
