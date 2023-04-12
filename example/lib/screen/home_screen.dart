@@ -56,45 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const Text('POS QR'),
                 ),
                 const SizedBox(height: 12),
-                ElevatedButton(
-                  key: const Key('openWithQrCode'),
-                  onPressed: () {
-                    const qrCode =
-                        'TCHAIN.fa19615f226a28a82befd19644281f9a3dafe4cbefbfd7ab4ff5ed995cc7e7ca';
-
-                    TChainPaymentSDK.shared.startPaymentWithQrCode(
-                      context,
-                      account: Account.fromPrivateKeyHex(
-                        hex: Constants.privateKeyHex,
-                      ),
-                      qrCode: qrCode,
-                      bundleId: Constants.bundleId,
-                    );
-                  },
-                  child: const Text('Open with QrCode'),
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  key: const Key('openWithMerchantInfo'),
-                  onPressed: () async {
-                    const qrCode =
-                        'TCHAIN.29f5520f929c599412586be97e27b6c226c38365ebd727ac46fdc7a5ef854bf6';
-
-                    final merchantInfo = await TChainPaymentSDK.shared
-                        .getMerchantInfo(qrCode: qrCode);
-
-                    if (merchantInfo == null) return;
-
-                    TChainPaymentSDK.shared.startPaymentWithMerchantInfo(
-                      context,
-                      account: Account.fromPrivateKeyHex(
-                        hex: Constants.privateKeyHex,
-                      ),
-                      merchantInfo: merchantInfo,
-                    );
-                  },
-                  child: const Text('Open with MerchantInfo'),
-                ),
               ],
             ),
           ),
