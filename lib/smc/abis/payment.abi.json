@@ -2,6 +2,30 @@
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "debugDepositFee",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "components": [
                     {
                         "internalType": "address",
@@ -17,6 +41,11 @@
                         "internalType": "bytes",
                         "name": "signature",
                         "type": "bytes"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "merchantId",
+                        "type": "bytes32"
                     },
                     {
                         "internalType": "bytes32",
@@ -85,30 +114,6 @@
             {
                 "internalType": "uint256",
                 "name": "deductAmount",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "debugDepositFee",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
                 "type": "uint256"
             }
         ],

@@ -1,3 +1,4 @@
+import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/common/transaction_waiter.dart';
 import 'package:web3dart/web3dart.dart';
@@ -17,7 +18,7 @@ class PaymentSmc extends GeneratedContract {
   }) : super(DeployedContract(contractAbi, address), client, chainId);
 
   Future<num> getDepositFee() async {
-    final function = self.abi.functions[1];
+    final function = self.function('depositFee');
     final params = [];
     final response = await read(function, params, null);
 
@@ -30,7 +31,7 @@ class PaymentSmc extends GeneratedContract {
     required String tokenAddress,
     required num amount,
   }) async {
-    final function = self.abi.functions[2];
+    final function = self.function('getDiscountFee');
     final params = [
       EthereumAddress.fromHex(tokenAddress),
       TokoinNumber.fromNumber(amount).bigIntValue,
@@ -53,7 +54,7 @@ class PaymentSmc extends GeneratedContract {
     required String tokenAddress,
     required num amount,
   }) async {
-    final function = self.abi.functions[3];
+    final function = self.function('debugDepositFee');
     final params = [
       EthereumAddress.fromHex(tokenAddress),
       TokoinNumber.fromNumber(amount).bigIntValue,
