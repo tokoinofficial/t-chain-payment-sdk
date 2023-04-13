@@ -80,7 +80,7 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
           leading: CloseButton(onPressed: () {
             final currentContext = tChainNavigatorKey.currentContext;
             if (currentContext != null) {
-              Navigator.of(currentContext, rootNavigator: true).pop();
+              Navigator.of(context, rootNavigator: true).pop(false);
             }
           }),
         ),

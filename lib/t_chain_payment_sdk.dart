@@ -308,48 +308,49 @@ extension TChainPaymentSDKWalletApp on TChainPaymentSDK {
     DeepLinkService.shared.listen(onDeeplinkReceived);
   }
 
-  _startPayment(
+  Future<bool> _startPayment(
     BuildContext context, {
     required Account account,
     MerchantInfo? merchantInfo,
     String? qrCode,
     String? bundleId,
-  }) {
+  }) async {
     this.account = account;
 
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => MultiRepositoryProvider(
-          providers: [
-            RepositoryProvider.value(value: _paymentRepository),
-            RepositoryProvider(create: (context) {
-              return WalletRepository(
-                blockchainService: BlockchainService(),
-              );
-            }),
-            RepositoryProvider(create: (context) {
-              return StorageRepository();
-            }),
-          ],
-          child: TChainRoot(
-            merchantInfo: merchantInfo,
-            qrCode: qrCode,
-            bundleId: bundleId,
+    return await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => MultiRepositoryProvider(
+              providers: [
+                RepositoryProvider.value(value: _paymentRepository),
+                RepositoryProvider(create: (context) {
+                  return WalletRepository(
+                    blockchainService: BlockchainService(),
+                  );
+                }),
+                RepositoryProvider(create: (context) {
+                  return StorageRepository();
+                }),
+              ],
+              child: TChainRoot(
+                merchantInfo: merchantInfo,
+                qrCode: qrCode,
+                bundleId: bundleId,
+              ),
+            ),
+            fullscreenDialog: true,
           ),
-        ),
-        fullscreenDialog: true,
-      ),
-    );
+        ) as bool? ??
+        false;
   }
 
   // App to App
-  startPaymentWithQrCode(
+  Future<bool> startPaymentWithQrCode(
     BuildContext context, {
     required Account account,
     required String qrCode,
     required String bundleId,
   }) {
-    _startPayment(
+    return _startPayment(
       context,
       account: account,
       qrCode: qrCode,
@@ -358,12 +359,12 @@ extension TChainPaymentSDKWalletApp on TChainPaymentSDK {
   }
 
   // Window to App
-  startPaymentWithMerchantInfo(
+  Future<bool> startPaymentWithMerchantInfo(
     BuildContext context, {
     required Account account,
     required MerchantInfo merchantInfo,
-  }) async {
-    _startPayment(
+  }) {
+    return _startPayment(
       context,
       account: account,
       merchantInfo: merchantInfo,

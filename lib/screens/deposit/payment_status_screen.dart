@@ -258,7 +258,7 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
                 onPressed: () {
                   final currentContext = tChainNavigatorKey.currentContext;
                   if (currentContext != null) {
-                    Navigator.of(currentContext, rootNavigator: true).pop();
+                    Navigator.of(currentContext, rootNavigator: true).pop(true);
                   }
                 },
                 title: Utils.getLocalizations(context).go_home,
@@ -277,7 +277,8 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
                 onPressed: () {
                   final currentContext = tChainNavigatorKey.currentContext;
                   if (currentContext != null) {
-                    Navigator.of(currentContext, rootNavigator: true).pop();
+                    Navigator.of(currentContext, rootNavigator: true)
+                        .pop(false);
                   }
                 },
                 title: Utils.getLocalizations(context).go_home,

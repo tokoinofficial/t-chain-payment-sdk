@@ -215,21 +215,22 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
                           notes: widget.merchantInfo.notes,
                           txn: currentState.txn,
                         );
+                        _onCloseScreen(true);
                       } else if (currentState is PaymentDepositFailed) {
                         Utils.fail(
                           bundleID: widget.bundleId,
                           notes: widget.merchantInfo.notes,
                           txn: currentState.txn,
                         );
+                        _onCloseScreen(false);
                       } else if (currentState is PaymentDepositProceeding) {
                         Utils.proceeding(
                           bundleID: widget.bundleId,
                           notes: widget.merchantInfo.notes,
                           txn: currentState.txn,
                         );
+                        _onCloseScreen(false);
                       }
-
-                      _onCloseScreen();
                     }
                   });
                 }
@@ -274,7 +275,8 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
                 }
 
                 final paymentInProcess = state is PaymentDepositShowInfo &&
-                    state.status == PaymentDepositStatus.depositing;
+                    (state.status == PaymentDepositStatus.depositing ||
+                        state.status == PaymentDepositStatus.loading);
 
                 final showLoading = paymentInProcess || isSwapSending;
 
@@ -604,7 +606,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
       notes: '',
     );
 
-    _onCloseScreen();
+    _onCloseScreen(false);
   }
 
   _onPay({Asset? alternativeCoin}) {
@@ -632,14 +634,10 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
     );
   }
 
-  _onCloseScreen() {
-    if (widget.bundleId == null) {
-      Navigator.of(context).pop();
-    } else {
-      final currentContext = tChainNavigatorKey.currentContext;
-      if (currentContext != null) {
-        Navigator.of(currentContext, rootNavigator: true).pop();
-      }
+  _onCloseScreen(bool result) {
+    final currentContext = tChainNavigatorKey.currentContext;
+    if (currentContext != null) {
+      Navigator.of(currentContext, rootNavigator: true).pop(result);
     }
   }
 

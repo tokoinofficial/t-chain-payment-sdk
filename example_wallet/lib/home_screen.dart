@@ -10,6 +10,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Use to demo Qr Code, you can get it when canning a QR Image
+  final qrCode =
+      'TCHAIN.29f5520f929c599412586be97e27b6c226c38365ebd727ac46fdc7a5ef854bf6';
+
   @override
   void initState() {
     super.initState();
@@ -33,14 +37,39 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Wallet example app'),
       ),
       body: Container(
-        padding: const EdgeInsets.all(32),
-        child: const Center(
-          child: Text(
-            'To test T-Chain Payment\nyou can use the example app, click on App to App button to create a deeplink',
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'To test T-Chain Payment\nyou can use the example app, click on App to App button to create a deeplink',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton(
+                onPressed: () async {
+                  final merchantInfo = await TChainPaymentSDK.shared
+                      .getMerchantInfo(qrCode: qrCode);
+                  if (merchantInfo == null) return;
+
+                  final result = await TChainPaymentSDK.shared
+                      .startPaymentWithMerchantInfo(
+                    context,
+                    account:
+                        Account.fromPrivateKeyHex(hex: Constants.privateKeyHex),
+                    merchantInfo: merchantInfo,
+                  );
+
+                  final snackBar = SnackBar(
+                    content: Text(result ? 'SUCCESS' : 'FAIL'),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                },
+                child: const Text('Scan Qr'),
+              )
+            ],
+          )),
     );
   }
 
