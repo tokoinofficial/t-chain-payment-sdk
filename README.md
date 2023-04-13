@@ -15,7 +15,7 @@ and the Flutter guide for
 
 ## Getting Started
 
-- Need register your project at [Tokoin dev page](https://developer.tokoin.io/guides/creating-a-project) to get `merchantId` and `x-api-key` which will be used in SDK
+- Need register your project at [Tokoin dev page](https://developer.tokoin.io/guides/creating-a-project) to get `api-key` which will be used in SDK
 
 ## Flow
 
@@ -29,9 +29,11 @@ and the Flutter guide for
 
 
 ## Integration
+There are 2 parts of SDK, one for merchant app and another one for wallet app. 
 
+### Merchant App
 
-### Android setup:
+#### Android setup:
 
 * Set up your ```AndroidManifest.xml``` as below:
 
@@ -51,7 +53,7 @@ and the Flutter guide for
            
 ```
 
-### iOS setup:
+#### iOS setup:
 
 * Set up your ```Info.plist``` as below
 
@@ -72,14 +74,14 @@ and the Flutter guide for
 <key>LSApplicationQueriesSchemes</key>
 <array>
   <string>$(WALLET_SCHEME)</string>
+  ...
 </array>
 ```
-* WALLET_SCHEME: please define your query scheme , we will use it to create deeplink
+* WALLET_SCHEME: it's query scheme of wallet app that you want to interact with, we will use it to create deeplink also
 
-### How To Use
+#### How To Use
 
-#### Merchant App
-Step 1: Initialize `TChainPaymentSDK`
+Step 1: Config `TChainPaymentSDK`
 ```
     TChainPaymentSDK.shared.configMerchantApp(
       apiKey: Constants.apiKey,
@@ -140,8 +142,45 @@ enum TChainPaymentStatus {
 
 Step 3: Depend on the status, show results to users based on the application design.
 
-#### Wallet App
+### Wallet App
 
+#### Android setup:
+
+* Set up your ```AndroidManifest.xml``` as below:
+
+```xml
+  <intent-filter>
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" /> 
+    <category android:name="android.intent.category.BROWSABLE" /> 
+    <!-- Accepts URIs that begin with YOUR_SCHEME://YOUR_HOST --> 
+    <data android:scheme="${WALLET_SCHEME}" 
+                    android:host="app" /> 
+  </intent-filter>
+```
+
+#### iOS setup:
+
+* Set up your ```Info.plist``` as below
+
+```xml
+  <key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Payment Scheme Callback</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(WALLET_SCHEME)</string>
+			</array>
+		</dict>
+	</array>
+```
+
+#### How To Use
+Step 1: Config `TChainPaymentSDK`
 ```
     TChainPaymentSDK.shared.configWallet(
       apiKey: Constants.apiKey,
@@ -169,7 +208,19 @@ Step 3: Depend on the status, show results to users based on the application des
     );
 ```
 
-- In case you want to implement QR Payment scanning use case, we also provide some utility function to do it easier
+Step 2: Handle logic to open the Payment UI
+```
+    // get qrCode and bundleId from deeplink
+    TChainPaymentSDK.shared.startPaymentWithQrCode(
+      context,
+      account: Account.fromPrivateKeyHex(hex: Constants.privateKeyHex),
+      qrCode: qrCode,
+      bundleId: bundleId, 
+    );
+```
+
+
+- In case, you want to implement scanning screen inside the wallet app, we also provide some utility function to do it easier
 ```
     // get merchant info
     final merchantInfo = await TChainPaymentSDK.shared
