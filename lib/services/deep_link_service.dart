@@ -22,6 +22,7 @@ class DeepLinkService {
 
   close() {
     _streamSubscription?.cancel();
+    _streamSubscription = null;
   }
 
   // handle deep link when the app hasn't started
