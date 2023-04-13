@@ -18,7 +18,6 @@ class PaymentCubit extends Cubit<PaymentState> {
       bundleId: Constants.bundleId,
       delegate: _onHandlePaymentResult,
       env: TChainPaymentEnv.dev,
-      isTestnet: true,
     );
   }
 

@@ -86,7 +86,6 @@ TChainPaymentSDK.instance.init(
       delegate: (TChainPaymentResult result) {
           // handle result (success, cancelled, failed) which has been returned after performing payment method
       },
-      isTestnet: true,
     );
 ```
 

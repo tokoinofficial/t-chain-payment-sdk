@@ -62,7 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Config.setEnvironment(TChainPaymentEnv.dev);
     depositedAsset = Asset.createAsset(shortName: 'USDT')!;
-    TChainPaymentSDK.shared.configWallet(apiKey: apiKey);
+    TChainPaymentSDK.shared.configWallet(
+      apiKey: apiKey,
+      env: TChainPaymentEnv.dev,
+    );
 
     final api = TChainAPI.standard(Config.baseURL);
     _paymentRepo = PaymentRepository(api: api);

@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     TChainPaymentSDK.shared.configWallet(
       apiKey: Constants.apiKey,
+      env: TChainPaymentEnv.dev,
       onDeeplinkReceived: _handleUrl,
     );
   }

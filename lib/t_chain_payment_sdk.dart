@@ -53,8 +53,7 @@ class TChainPaymentSDK {
   /// Environment
   late TChainPaymentEnv env;
 
-  /// what chain id do you want to work with?
-  late bool isTestnet;
+  bool get isTestnet => env == TChainPaymentEnv.dev;
 
   /// user data
   late Account account;
@@ -80,14 +79,13 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
   configMerchantApp({
     required String apiKey,
     required String bundleId,
-    TChainPaymentEnv env = TChainPaymentEnv.dev,
-    bool isTestnet = true,
+    TChainPaymentEnv env = TChainPaymentEnv.prod,
     required Function(TChainPaymentResult) delegate,
   }) {
     this.apiKey = apiKey;
     this.bundleId = bundleId;
     this.env = env;
-    this.isTestnet = isTestnet;
+
     this.delegate = delegate;
     Config.setEnvironment(env);
 
@@ -292,13 +290,11 @@ extension TChainPaymentSDKWalletApp on TChainPaymentSDK {
   /// config payment sdk
   configWallet({
     required String apiKey,
-    TChainPaymentEnv env = TChainPaymentEnv.dev,
-    bool isTestnet = true,
+    TChainPaymentEnv env = TChainPaymentEnv.prod,
     Function(Uri)? onDeeplinkReceived,
   }) {
     this.apiKey = apiKey;
     this.env = env;
-    this.isTestnet = isTestnet;
 
     Config.setEnvironment(env);
 
