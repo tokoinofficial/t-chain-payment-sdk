@@ -15,7 +15,7 @@ and the Flutter guide for
 
 ## Getting Started
 
-- Need register your project at [Tokoin dev page](https://developer.tokoin.io/guides/creating-a-project) to get `merchantID` which will be used in SDK
+- Need register your project at [Tokoin dev page](https://developer.tokoin.io/guides/creating-a-project) to get `merchantId` and `x-api-key` which will be used in SDK
 
 ## Flow
 
@@ -71,18 +71,20 @@ and the Flutter guide for
 </array>
 <key>LSApplicationQueriesSchemes</key>
 <array>
-  <string>mtwallet</string>
-  <string>mtwallet.dev</string>
+  <string>$(WALLET_SCHEME)</string>
 </array>
 ```
+* WALLET_SCHEME: please define your query scheme , we will use it to create deeplink
 
 ### How To Use
 
+#### Merchant App
 Step 1: Initialize `TChainPaymentSDK`
 ```
-TChainPaymentSDK.instance.init(
+    TChainPaymentSDK.shared.configMerchantApp(
       apiKey: Constants.apiKey,
-      bundleID: bundleID,
+      bundleId: Constants.bundleId,
+      env: TChainPaymentEnv.dev, // TChainPaymentEnv.prod as default value
       delegate: (TChainPaymentResult result) {
           // handle result (success, cancelled, failed) which has been returned after performing payment method
       },
@@ -91,7 +93,8 @@ TChainPaymentSDK.instance.init(
 
 Step 2: To pay for an order:
 ```
-final TChainPaymentResult result = await TChainPaymentSDK.instance.deposit(
+final TChainPaymentResult result = await TChainPaymentSDK.shared.deposit(
+      walletScheme: WALLET_SCHEME,
       notes: notes,
       amount: product.price,
       currency: TChainPaymentCurrency.idr,
@@ -124,5 +127,58 @@ enum TChainPaymentStatus {
 }
 ```
 
+- If you only want create a Qr Code, you can use `generateQrCode` below
+```
+  final result = await TChainPaymentSDK.shared.generateQrCode(
+      walletScheme: 'walletExample',
+      notes: notes,
+      amount: amount,
+      currency: currency,
+      imageSize: imageSize,
+    );
+```
+
 Step 3: Depend on the status, show results to users based on the application design.
 
+#### Wallet App
+
+```
+    TChainPaymentSDK.shared.configWallet(
+      apiKey: Constants.apiKey,
+      env: TChainPaymentEnv.dev,
+      onDeeplinkReceived: (uri) {
+        // handle qr code 
+
+        if (deepLink.scheme == 'walletexample' && deepLink.host == 'app') {
+          final qrCode = deepLink.queryParameters['qr_code'] ?? '';
+          final bundleId = deepLink.queryParameters['bundle_id'] ?? '';
+
+          switch (deepLink.path) {
+            case '/payment_deposit':
+              TChainPaymentSDK.shared.startPaymentWithQrCode(
+                context,
+                account: Account.fromPrivateKeyHex(hex: Constants.privateKeyHex),
+                qrCode: qrCode,
+                bundleId: bundleId,
+              );
+
+            break;
+          }
+        }
+      },
+    );
+```
+
+- In case you want to implement QR Payment scanning use case, we also provide some utility function to do it easier
+```
+    // get merchant info
+    final merchantInfo = await TChainPaymentSDK.shared
+                      .getMerchantInfo(qrCode: qrCode);
+
+    // open payment UI
+    TChainPaymentSDK.shared.startPaymentWithMerchantInfo(
+      context,
+      account: Account.fromPrivateKeyHex(hex: Constants.privateKeyHex),
+      merchantInfo: merchantInfo,
+    );
+```
