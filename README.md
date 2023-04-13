@@ -77,7 +77,8 @@ There are 2 parts of SDK, one for merchant app and another one for wallet app.
   ...
 </array>
 ```
-* WALLET_SCHEME: it's query scheme of wallet app that you want to interact with, we will use it to create deeplink also
+* WALLET_SCHEME: It's a query scheme of a wallet app integrated with T-Chain Payment SDK.
+To interact with the My-T Wallet app, which is the first wallet app integrated with T-Chain Payment SDK, you can use the query scheme mtwallet
 
 #### How To Use
 
@@ -92,8 +93,6 @@ Step 1: Config `TChainPaymentSDK`
       },
     );
 ```
-
-* The SDK will listen incoming links automatically once you run configMerchantApp(...). If you don't want to use SDK, don't want to receive incoming links, remember to call `TChainPaymentSDK.shared.close()`
 
 Step 2: To pay for an order:
 ```
@@ -193,8 +192,6 @@ Step 1: Config `TChainPaymentSDK`
     );
 ```
 
-* The SDK will listen incoming links automatically once you run configWallet(...). If you don't want to use SDK, don't want to receive incoming links, remember to call `TChainPaymentSDK.shared.close()`
-
 Step 2: Handle logic to open the Payment UI
 ```
     // get qrCode and bundleId from deeplink
@@ -220,3 +217,5 @@ Step 2: Handle logic to open the Payment UI
       merchantInfo: merchantInfo,
     );
 ```
+
+* After configuring the T-Chain Payment SDK in your app using the `configMerchantApp(...)` function or the `configWallet(...)` function, the SDK will automatically listen for incoming links. This enables your app to receive and process requests between apps seamlessly. However, if you do not want to receive incoming links, it's essential to call the `TChainPaymentSDK.shared.close()` function to properly close the SDK and prevent any potential issues.
