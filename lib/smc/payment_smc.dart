@@ -1,4 +1,3 @@
-import 'package:t_chain_payment_sdk/common/utils.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/common/transaction_waiter.dart';
 import 'package:web3dart/web3dart.dart';
