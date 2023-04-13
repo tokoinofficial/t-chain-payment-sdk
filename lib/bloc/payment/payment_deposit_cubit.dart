@@ -108,12 +108,9 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
       );
 
       Asset tokoAsset = _getTokoinAsset();
-      if (useToko) {
-        final needAllowance =
-            asset.isToko ? assetAmount : discountInfo.deductAmount;
-
+      if (useToko && !asset.isToko) {
         bool hasTokoAllowance = await _hasEnoughAllowance(
-          needAllowance,
+          discountInfo.deductAmount,
           tokoAsset,
           Config.paymentContractAddress,
         );
@@ -121,7 +118,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
         if (!hasTokoAllowance) {
           emit(PaymentDepositAddAllowance(
             asset: tokoAsset,
-            amount: needAllowance,
+            amount: discountInfo.deductAmount,
             contractAddress: Config.paymentContractAddress,
             transferDataList: _createTransferDataList(),
           ));
