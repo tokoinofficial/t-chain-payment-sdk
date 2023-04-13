@@ -93,6 +93,8 @@ Step 1: Config `TChainPaymentSDK`
     );
 ```
 
+* The SDK will listen incoming links automatically once you run configMerchantApp(...). If you don't want to use SDK, don't want to receive incoming links, remember to call `TChainPaymentSDK.shared.close()`
+
 Step 2: To pay for an order:
 ```
 final TChainPaymentResult result = await TChainPaymentSDK.shared.deposit(
@@ -129,10 +131,10 @@ enum TChainPaymentStatus {
 }
 ```
 
-- If you only want create a Qr Code, you can use `generateQrCode` below
+- If you want create a Qr Image (POS QR use case), you can use `generateQrCode` as below
 ```
   final result = await TChainPaymentSDK.shared.generateQrCode(
-      walletScheme: 'walletExample',
+      walletScheme: WALLET_SCHEME,
       notes: notes,
       amount: amount,
       currency: currency,
@@ -187,26 +189,11 @@ Step 1: Config `TChainPaymentSDK`
       env: TChainPaymentEnv.dev,
       onDeeplinkReceived: (uri) {
         // handle qr code 
-
-        if (deepLink.scheme == 'walletexample' && deepLink.host == 'app') {
-          final qrCode = deepLink.queryParameters['qr_code'] ?? '';
-          final bundleId = deepLink.queryParameters['bundle_id'] ?? '';
-
-          switch (deepLink.path) {
-            case '/payment_deposit':
-              TChainPaymentSDK.shared.startPaymentWithQrCode(
-                context,
-                account: Account.fromPrivateKeyHex(hex: Constants.privateKeyHex),
-                qrCode: qrCode,
-                bundleId: bundleId,
-              );
-
-            break;
-          }
-        }
       },
     );
 ```
+
+* The SDK will listen incoming links automatically once you run configWallet(...). If you don't want to use SDK, don't want to receive incoming links, remember to call `TChainPaymentSDK.shared.close()`
 
 Step 2: Handle logic to open the Payment UI
 ```
