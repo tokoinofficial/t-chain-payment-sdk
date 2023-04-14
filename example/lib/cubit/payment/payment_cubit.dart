@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:example/data/fcm_notification.dart';
 import 'package:example/utils/constants.dart';
@@ -70,7 +70,7 @@ class PaymentCubit extends Cubit<PaymentState> {
   }) async {
     emit(PaymentLoading());
     final result = await TChainPaymentSDK.shared.deposit(
-      walletScheme: 'walletExample',
+      walletScheme: 'walletexample',
       notes: notes,
       amount: amount,
       currency: currency,
@@ -92,7 +92,7 @@ class PaymentCubit extends Cubit<PaymentState> {
   }) async {
     emit(PaymentLoading());
     final result = await TChainPaymentSDK.shared.generateQrCode(
-      walletScheme: 'walletExample',
+      walletScheme: 'walletexample',
       notes: notes,
       amount: amount,
       currency: currency,

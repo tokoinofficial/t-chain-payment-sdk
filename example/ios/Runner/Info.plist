@@ -39,7 +39,7 @@
 	<array>
 		<string>mtwallet.dev</string>
 		<string>mtwallet</string>
-		<string>walletExample</string>
+		<string>walletexample</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
