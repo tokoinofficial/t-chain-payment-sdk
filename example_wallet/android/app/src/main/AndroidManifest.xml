@@ -39,7 +39,7 @@
                 <category android:name="android.intent.category.DEFAULT" /> 
                 <category android:name="android.intent.category.BROWSABLE" /> 
                 <!-- Accepts URIs that begin with YOUR_SCHEME://YOUR_HOST --> 
-                <data android:scheme="walletExample" 
+                <data android:scheme="walletexample" 
                     android:host="app" /> 
             </intent-filter>
         </activity>

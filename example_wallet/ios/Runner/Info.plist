@@ -29,7 +29,7 @@
 			<string>Payment Scheme Callback</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>walletExample</string>
+				<string>walletexample</string>
 			</array>
 		</dict>
 	</array>
