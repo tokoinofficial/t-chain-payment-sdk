@@ -11,8 +11,8 @@ class DepositWidget extends StatelessWidget {
   }) : super(key: key);
 
   final TextEditingController amountController;
-  final TChainPaymentCurrency currency;
-  final Function(TChainPaymentCurrency) onCurrencyChanged;
+  final Currency currency;
+  final Function(Currency) onCurrencyChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -53,12 +53,12 @@ class DepositWidget extends StatelessWidget {
   }
 
   Widget _buildCurrencySelection() {
-    return DropdownButton<TChainPaymentCurrency>(
+    return DropdownButton<Currency>(
       key: const Key('btnCurrency'),
       value: currency,
       underline: const SizedBox(),
       isDense: true,
-      items: TChainPaymentCurrency.values.map(
+      items: Currency.values.where((element) => element.available).map(
         (e) {
           return DropdownMenuItem(
             key: Key(e.shortName),

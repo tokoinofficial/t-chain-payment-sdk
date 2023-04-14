@@ -1,39 +1,45 @@
 library t_chain_payment_sdk;
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:http/retry.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
-import 'package:t_chain_payment_sdk/data/t_chain_payment_currency.dart';
+import 'package:t_chain_payment_sdk/data/account.dart';
+import 'package:t_chain_payment_sdk/data/currency.dart';
+import 'package:t_chain_payment_sdk/data/merchant_info.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_action.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
 import 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
-import 'package:uni_links/uni_links.dart';
+import 'package:t_chain_payment_sdk/repo/payment_repo.dart';
+import 'package:t_chain_payment_sdk/repo/storage_repo.dart';
+import 'package:t_chain_payment_sdk/repo/wallet_repos.dart';
+import 'package:t_chain_payment_sdk/screens/t_chain_root.dart';
+import 'package:t_chain_payment_sdk/services/blockchain_service.dart';
+import 'package:t_chain_payment_sdk/services/t_chain_api.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-import 'package:http/http.dart' as http;
+import 'package:t_chain_payment_sdk/services/deep_link_service.dart';
 
 export 'package:t_chain_payment_sdk/data/t_chain_payment_env.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_result.dart';
 export 'package:t_chain_payment_sdk/data/t_chain_payment_qr_result.dart';
-export 'package:t_chain_payment_sdk/data/t_chain_payment_currency.dart';
+export 'package:t_chain_payment_sdk/data/currency.dart';
+export 'package:t_chain_payment_sdk/data/account.dart';
+export 'package:t_chain_payment_sdk/data/merchant_info.dart';
+export 'package:t_chain_payment_sdk/l10n/generated/tchain_payment_localizations.dart';
+export 'package:t_chain_payment_sdk/services/deep_link_service.dart';
 
-/// TChainPaymnentSDK
-/// Helping you communicate with My T-Wallet easily.
+/// T-Chain Paymnent SDK
+/// T-Chain Payment is a B2B service helping small and medium-sized enterprises add another channel for users to purchase using crypto currency with minimum efforts.
 /// Features:
 /// - deposit
 /// - generate QR Code
-/// - withdraw
 ///
 class TChainPaymentSDK {
-  static final TChainPaymentSDK _instance = TChainPaymentSDK._();
-  static TChainPaymentSDK get instance => _instance;
+  static final TChainPaymentSDK _shared = TChainPaymentSDK._();
+  static TChainPaymentSDK get shared => _shared;
 
   TChainPaymentSDK._();
 
@@ -41,44 +47,52 @@ class TChainPaymentSDK {
   late String apiKey;
 
   /// Bundle id of merchant app
-  /// It's used for My T-Wallet callback function
-  late String bundleID;
+  /// It's used for wallet's callback function
+  late String bundleId;
 
   /// Environment
   late TChainPaymentEnv env;
 
-  /// what chain id do you want to work with?
-  late bool isTestnet;
+  bool get isTestnet => env == TChainPaymentEnv.dev;
+
+  /// user data
+  late Account account;
 
   /// To handle payment result
   late Function(TChainPaymentResult) delegate;
 
-  bool _initialURILinkHandled = false;
-  StreamSubscription? _streamSubscription;
+  String get sandboxTitle => isTestnet ? ' - SANDBOX' : '';
 
-  int get chainID => isTestnet ? testnetChainID : mainnetChainID;
+  int get chainID => isTestnet ? kTestnetChainID : kMainnetChainID;
+  String get chainIdString => '$chainID';
 
-  /// Initialize payment sdk
-  init({
-    required String apiKey,
-    required String bundleID,
-    TChainPaymentEnv env = TChainPaymentEnv.dev,
-    bool isTestnet = true,
-    required Function(TChainPaymentResult) delegate,
-  }) {
-    this.apiKey = apiKey;
-    this.bundleID = bundleID;
-    this.env = env;
-    this.isTestnet = isTestnet;
-    this.delegate = delegate;
-
-    _initURIHandler();
-    _incomingLinkHandler();
-  }
+  late PaymentRepository _paymentRepository;
 
   /// Close payment sdk
   close() {
-    _streamSubscription?.cancel();
+    DeepLinkService.shared.close();
+  }
+}
+
+extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
+  /// config payment sdk
+  configMerchantApp({
+    required String apiKey,
+    required String bundleId,
+    TChainPaymentEnv env = TChainPaymentEnv.prod,
+    required Function(TChainPaymentResult) delegate,
+  }) {
+    this.apiKey = apiKey;
+    this.bundleId = bundleId;
+    this.env = env;
+
+    this.delegate = delegate;
+    Config.setEnvironment(env);
+
+    final api = TChainAPI.standard(env.apiUrl);
+    _paymentRepository = PaymentRepository(api: api);
+
+    DeepLinkService.shared.listen(_handleDeepLink);
   }
 
   /// Use case: App to App
@@ -92,12 +106,14 @@ class TChainPaymentSDK {
   /// [notes] unique id of each order. It is called offchain in blockchain terms.
   /// [amount] a sum of money to make a depositary
   Future<TChainPaymentResult> deposit({
+    required String walletScheme,
     required String notes,
     required double amount,
-    required TChainPaymentCurrency currency,
+    required Currency currency,
   }) async {
     return await _callPaymentAction(
       action: TChainPaymentAction.deposit,
+      walletScheme: walletScheme,
       notes: notes,
       amount: amount,
       currency: currency,
@@ -129,9 +145,10 @@ class TChainPaymentSDK {
   /// [notes] unique id of each order. It is called offchain in blockchain terms.
   /// [amount] a sum of money to make a depositary
   Future<TChainPaymentQRResult> generateQrCode({
+    required String walletScheme,
     required String notes,
     required double amount,
-    required TChainPaymentCurrency currency,
+    required Currency currency,
     required double imageSize,
   }) async {
     if (amount <= 0) {
@@ -142,11 +159,13 @@ class TChainPaymentSDK {
       );
     }
 
-    final Uri? uri = await _generateDeeplink(
+    final Uri? uri = await _paymentRepository.generateDeeplink(
       action: TChainPaymentAction.deposit,
+      walletScheme: walletScheme,
       notes: notes,
       amount: amount,
       currency: currency,
+      chainId: '$chainID',
     );
 
     if (uri == null) {
@@ -174,9 +193,10 @@ class TChainPaymentSDK {
 
   Future<TChainPaymentResult> _callPaymentAction({
     required TChainPaymentAction action,
+    required String walletScheme,
     required String notes,
     required double amount,
-    required TChainPaymentCurrency currency,
+    required Currency currency,
   }) async {
     if (amount <= 0) {
       return TChainPaymentResult(
@@ -186,12 +206,14 @@ class TChainPaymentSDK {
       );
     }
 
-    final Uri? uri = await _generateDeeplink(
+    final Uri? uri = await _paymentRepository.generateDeeplink(
+      walletScheme: walletScheme,
       action: action,
       notes: notes,
       amount: amount,
       currency: currency,
-      bundleID: bundleID,
+      bundleID: bundleId,
+      chainId: '$chainID',
     );
 
     if (uri == null) {
@@ -210,8 +232,6 @@ class TChainPaymentSDK {
     }
 
     if (result == false) {
-      launchUrlString(env.downloadUrl);
-
       return TChainPaymentResult(
         status: TChainPaymentStatus.failed,
         notes: notes,
@@ -222,98 +242,6 @@ class TChainPaymentSDK {
       status: TChainPaymentStatus.waiting,
       notes: notes,
     );
-  }
-
-  /// Handle deeplink when user open the app
-  Future<void> _initURIHandler() async {
-    if (!_initialURILinkHandled) {
-      _initialURILinkHandled = true;
-      debugPrint('init URI Handler');
-
-      try {
-        final initialURI = await getInitialUri();
-        // Use the initialURI and warn the user if it is not correct,
-        // but keep in mind it could be `null`.
-        _handleDeepLink(initialURI);
-      } on PlatformException {
-        // Platform messages may fail, so we use a try/catch PlatformException.
-        // Handle exception by warning the user their action did not succeed
-        debugPrint("Failed to receive initial uri");
-      } on FormatException catch (err) {
-        debugPrint('Malformed Initial URI received: $err');
-      }
-    }
-  }
-
-  // use bundleID to callback after having transaction result
-  // in case generating QR code, let the bundleID be empty
-  Future<Uri?> _generateDeeplink({
-    required TChainPaymentAction action,
-    required String notes,
-    required double amount,
-    required TChainPaymentCurrency currency,
-    String? bundleID,
-  }) async {
-    final client = RetryClient(http.Client());
-
-    try {
-      final url = env.generateQrCodeAPI;
-      Map<String, String> headers = {
-        "Content-type": "application/json",
-        "x-api-key": apiKey,
-      };
-
-      String body =
-          '{"notes": "$notes", "amount": $amount, "currency": "${currency.shortName}", "chain_id": "$chainID"}';
-
-      final response = await client.post(url, headers: headers, body: body);
-      if (response.statusCode != 200) return null;
-
-      final json = jsonDecode(response.body);
-      final result = json['result'] as Map<String, dynamic>?;
-      final data = result?['data'] as Map<String, dynamic>?;
-      final qrCode = data?['qr_code'] as String?;
-
-      if (qrCode == null) return null;
-
-      final Map<String, dynamic> params = {
-        'qr_code': qrCode,
-      };
-
-      if (bundleID != null) {
-        params['bundle_id'] = bundleID;
-      }
-
-      final Uri uri = Uri(
-        scheme: env.scheme,
-        host: 'app',
-        path: action.path,
-        queryParameters: params,
-      );
-
-      return uri;
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-
-    return null;
-  }
-
-  /// Handle incoming links - the ones that the app will receive from the OS
-  /// while already started.
-  void _incomingLinkHandler() {
-    if (!kIsWeb) {
-      // It will handle app links while the app is already started - be it in
-      // the foreground or in the background.
-      _streamSubscription = uriLinkStream.listen((Uri? uri) {
-        debugPrint('Received URI: $uri');
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _handleDeepLink(uri);
-        });
-      }, onError: (Object err) {
-        debugPrint('Error occurred: $err');
-      });
-    }
   }
 
   _handleDeepLink(Uri? deepLink) {
@@ -354,6 +282,97 @@ class TChainPaymentSDK {
         );
         delegate.call(result);
         break;
+    }
+  }
+}
+
+extension TChainPaymentSDKWalletApp on TChainPaymentSDK {
+  /// config payment sdk
+  configWallet({
+    required String apiKey,
+    TChainPaymentEnv env = TChainPaymentEnv.prod,
+    Function(Uri)? onDeeplinkReceived,
+  }) {
+    this.apiKey = apiKey;
+    this.env = env;
+
+    Config.setEnvironment(env);
+
+    final api = TChainAPI.standard(env.apiUrl);
+    _paymentRepository = PaymentRepository(api: api);
+
+    DeepLinkService.shared.listen(onDeeplinkReceived);
+  }
+
+  Future<bool> _startPayment(
+    BuildContext context, {
+    required Account account,
+    MerchantInfo? merchantInfo,
+    String? qrCode,
+    String? bundleId,
+  }) async {
+    this.account = account;
+
+    return await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => MultiRepositoryProvider(
+              providers: [
+                RepositoryProvider.value(value: _paymentRepository),
+                RepositoryProvider(create: (context) {
+                  return WalletRepository(
+                    blockchainService: BlockchainService(),
+                  );
+                }),
+                RepositoryProvider(create: (context) {
+                  return StorageRepository();
+                }),
+              ],
+              child: TChainRoot(
+                merchantInfo: merchantInfo,
+                qrCode: qrCode,
+                bundleId: bundleId,
+              ),
+            ),
+            fullscreenDialog: true,
+          ),
+        ) as bool? ??
+        false;
+  }
+
+  // App to App
+  Future<bool> startPaymentWithQrCode(
+    BuildContext context, {
+    required Account account,
+    required String qrCode,
+    required String bundleId,
+  }) {
+    return _startPayment(
+      context,
+      account: account,
+      qrCode: qrCode,
+      bundleId: bundleId,
+    );
+  }
+
+  // Window to App
+  Future<bool> startPaymentWithMerchantInfo(
+    BuildContext context, {
+    required Account account,
+    required MerchantInfo merchantInfo,
+  }) {
+    return _startPayment(
+      context,
+      account: account,
+      merchantInfo: merchantInfo,
+    );
+  }
+
+  Future<MerchantInfo?> getMerchantInfo({required String qrCode}) async {
+    try {
+      final response = await _paymentRepository.getMerchantInfo(qrCode: qrCode);
+      return response?.result;
+    } catch (e) {
+      return null;
     }
   }
 }

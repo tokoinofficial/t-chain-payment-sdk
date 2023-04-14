@@ -53,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   child: const Text('POS QR'),
                 ),
+                const SizedBox(height: 12),
               ],
             ),
           ),

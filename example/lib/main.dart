@@ -5,6 +5,7 @@ import 'package:example/router/screen_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,13 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'T-Chain Payment SDK Demo',
+        localizationsDelegates: const [
+          TChainPaymentLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'), // English
+          Locale('id'), // Indonesia
+        ],
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

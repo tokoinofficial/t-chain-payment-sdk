@@ -1,28 +1,61 @@
 name: t_chain_payment_sdk
 description: T-Chain Payment is a B2B service helping SMEs add another channel to convert in-app point/money into crypto currency and vice versa using blockchain technology with minimum efforts
-version: 1.0.2
+version: 2.0.0
 homepage: https://www.tokoin.io/
 repository: https://github.com/tokoinofficial/t-chain-payment-sdk
 issue_tracker: https://github.com/tokoinofficial/t-chain-payment-sdk/issues
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   url_launcher: ^6.1.5
   uni_links: ^0.5.1
   qr_flutter: ^4.0.0
-  http: ^0.13.5
+  flutter_bloc: ^8.1.2
+  equatable: ^2.0.5
+  dio: ^5.1.0
+  retrofit: ^4.0.1
+  json_annotation: ^4.8.0
+  copy_with_extension: ^5.0.2
+  fluttertoast: ^8.2.1
+  flutter_svg: ^1.1.6
+  web3dart: ^2.6.1
+  modal_progress_hud_nsn: ^0.3.0
+  shimmer_animation: ^2.1.0+1
+  auto_size_text: ^3.0.0
+  shared_preferences: ^2.1.0
+  decimal: ^2.3.2
+  pigeon: ^9.2.2
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  bloc_test: ^9.1.1
   flutter_lints: ^1.0.0
+  build_runner: ^2.3.3
+  retrofit_generator: ^6.0.0+1
+  json_serializable: ^6.6.1
+  copy_with_extension_gen: ^5.0.2
   url_launcher_platform_interface: ^2.1.0
   plugin_platform_interface: ^2.1.2
+  mockito: ^5.4.0
+
+
+flutter:
+  # uses-material-design: true
+  # generate: true
+
+  assets:
+    - assets/
+    - lib/smc/abis/
 
 # ref: https://stackoverflow.com/a/37484053/1654338
 false_secrets:

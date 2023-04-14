@@ -34,7 +34,7 @@ void main() {
     await tester.tap(currencyDropdownFinder);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(Key(TChainPaymentCurrency.usd.shortName)).last);
+    await tester.tap(find.byKey(Key(Currency.usd.shortName)).last);
     await tester.pumpAndSettle();
 
     // Tap on Show QR
@@ -59,7 +59,7 @@ void main() {
     await tester.tap(currencyDropdownFinder);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(Key(TChainPaymentCurrency.idr.shortName)).last);
+    await tester.tap(find.byKey(Key(Currency.idr.shortName)).last);
     await tester.pumpAndSettle();
 
     // Tap on Show QR
