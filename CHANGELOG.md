@@ -1,3 +1,14 @@
+## 2.0.0
+* Support one merchant one vault 
+* Support opening the UI of T-Chain Payment
+* Change the UI of T-Chain Payment
+
+## 1.0.2
+* Update example for USD
+
+## 1.0.1
+* Update endpoint
+
 ## 1.0.0
 * Can access and interact with a production environment
 * Authenticate using x-api-key 

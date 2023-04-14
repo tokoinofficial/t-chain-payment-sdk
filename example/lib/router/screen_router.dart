@@ -36,6 +36,7 @@ class ScreenRouter {
         screen = PaymentResultScreen(
           notes: data.notes,
           amount: data.amount,
+          currency: data.currency,
           useQRCode: data.useQRCode,
         );
         break;

@@ -13,12 +13,11 @@ class PaymentCubit extends Cubit<PaymentState> {
   static const double defaultQrImageSize = 400;
 
   initial() {
-    TChainPaymentSDK.instance.init(
+    TChainPaymentSDK.shared.configMerchantApp(
       apiKey: Constants.apiKey,
-      bundleID: Constants.bundleID,
+      bundleId: Constants.bundleId,
       delegate: _onHandlePaymentResult,
       env: TChainPaymentEnv.dev,
-      isTestnet: true,
     );
   }
 
@@ -55,7 +54,7 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   @override
   close() async {
-    TChainPaymentSDK.instance.close();
+    TChainPaymentSDK.shared.close();
 
     super.close();
   }
@@ -64,11 +63,17 @@ class PaymentCubit extends Cubit<PaymentState> {
     emit(PaymentInitial());
   }
 
-  deposit({required String notes, required double amount}) async {
-    final result = await TChainPaymentSDK.instance.deposit(
+  deposit({
+    required String notes,
+    required double amount,
+    required Currency currency,
+  }) async {
+    emit(PaymentLoading());
+    final result = await TChainPaymentSDK.shared.deposit(
+      walletScheme: 'walletExample',
       notes: notes,
       amount: amount,
-      currency: TChainPaymentCurrency.idr,
+      currency: currency,
     );
 
     emit(PaymentDepositState(
@@ -82,12 +87,15 @@ class PaymentCubit extends Cubit<PaymentState> {
   generateQrCode({
     required String notes,
     required double amount,
+    required Currency currency,
     double imageSize = defaultQrImageSize,
   }) async {
-    final result = await TChainPaymentSDK.instance.generateQrCode(
+    emit(PaymentLoading());
+    final result = await TChainPaymentSDK.shared.generateQrCode(
+      walletScheme: 'walletExample',
       notes: notes,
       amount: amount,
-      currency: TChainPaymentCurrency.idr,
+      currency: currency,
       imageSize: imageSize,
     );
 

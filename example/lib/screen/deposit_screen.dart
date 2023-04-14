@@ -1,7 +1,7 @@
 import 'package:example/data/pay_result_route_data.dart';
 import 'package:example/router/screen_router.dart';
-import 'package:example/utils/input_formatter.dart';
 import 'package:example/utils/utility.dart';
+import 'package:example/widgets/deposit_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 
@@ -14,6 +14,7 @@ class DepositScreen extends StatefulWidget {
 
 class _DepositScreenState extends State<DepositScreen> {
   final TextEditingController _amountController = TextEditingController();
+  Currency _currency = Currency.usd;
 
   @override
   void dispose() {
@@ -31,20 +32,14 @@ class _DepositScreenState extends State<DepositScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextField(
-                controller: _amountController,
-                decoration: InputDecoration(
-                  labelText: 'Deposit amount',
-                  prefix: Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Text(TChainPaymentCurrency.idr.shortName),
-                  ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                ),
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: InputFormatter.positiveNumberAndZero(),
-                onEditingComplete: () => {FocusScope.of(context).unfocus()},
+              DepositWidget(
+                amountController: _amountController,
+                currency: _currency,
+                onCurrencyChanged: (value) {
+                  setState(() {
+                    _currency = value;
+                  });
+                },
               ),
               const SizedBox(height: 12),
               ElevatedButton(
@@ -70,6 +65,7 @@ class _DepositScreenState extends State<DepositScreen> {
       arguments: PayResultRouteData(
         notes: notes,
         amount: amount,
+        currency: _currency,
         useQRCode: false,
       ),
     );

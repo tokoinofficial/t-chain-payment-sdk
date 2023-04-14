@@ -39,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ElevatedButton(
+                  key: const Key('btnAppToApp'),
                   onPressed: () {
                     Navigator.of(context).pushNamed(ScreenRouter.appToApp);
                   },
@@ -46,11 +47,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
+                  key: const Key('btnPosQr'),
                   onPressed: () {
                     Navigator.of(context).pushNamed(ScreenRouter.posQr);
                   },
                   child: const Text('POS QR'),
                 ),
+                const SizedBox(height: 12),
               ],
             ),
           ),
