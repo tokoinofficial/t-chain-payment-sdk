@@ -167,13 +167,13 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
 
       final transactionSignedHash =
           await paymentRepository.createMerchantTransaction(
-        account.privateKey.address.hex,
-        amount.toDouble(),
-        currency,
-        notes,
-        asset.shortName,
-        merchantId,
-        chainId,
+        address: account.privateKey.address.hex,
+        amount: amount.toDouble(),
+        currency: currency,
+        notes: notes,
+        tokenName: asset.shortName,
+        externalMerchantId: merchantId,
+        chainId: chainId,
       );
 
       if (transactionSignedHash == null) {

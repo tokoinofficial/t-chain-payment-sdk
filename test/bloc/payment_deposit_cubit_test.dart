@@ -427,10 +427,10 @@ void main() {
         await cubit.getAllInfo();
 
         when(mockWalletRepos.allowance(
-                privateKey: account.privateKey,
-                asset: toko!,
-                contractAddress: anyNamed('contractAddress')))
-            .thenAnswer((realInvocation) async => 0);
+          privateKey: account.privateKey,
+          asset: toko!,
+          contractAddress: anyNamed('contractAddress'),
+        )).thenAnswer((realInvocation) async => 0);
 
         // emits PaymentDepositAddAllowance event
         await cubit.deposit(
@@ -442,42 +442,50 @@ void main() {
         );
 
         when(mockWalletRepos.allowance(
-                privateKey: account.privateKey,
-                asset: toko!,
-                contractAddress: anyNamed('contractAddress')))
-            .thenAnswer((realInvocation) async => 10000);
+          privateKey: account.privateKey,
+          asset: toko!,
+          contractAddress: anyNamed('contractAddress'),
+        )).thenAnswer((realInvocation) async => 10000);
 
         when(mockPaymentRepos.createMerchantTransaction(
-                any, any, any, any, any, any, any))
-            .thenAnswer((realInvocation) async => MerchantTransaction(
-                  transactionID: 'id',
-                  offchain: 'offchain',
-                  amount: 1,
-                  amountUint256: BigInt.one.toString(),
-                  fee: 10,
-                  feeUint256: BigInt.one.toString(),
-                  signedHash: 'signedHash',
-                  expiredTime: 1,
-                  rate: 1,
-                ));
+          address: anyNamed('address'),
+          amount: anyNamed('amount'),
+          currency: anyNamed('currency'),
+          notes: anyNamed('notes'),
+          tokenName: anyNamed('tokenName'),
+          externalMerchantId: anyNamed('externalMerchantId'),
+          chainId: anyNamed('chainId'),
+        )).thenAnswer((realInvocation) async => MerchantTransaction(
+              merchantId: 'merchant_id',
+              transactionId: 'id',
+              offchain: 'offchain',
+              amount: 1,
+              amountUint256: BigInt.one.toString(),
+              fee: 10,
+              feeUint256: BigInt.one.toString(),
+              signedHash: 'signedHash',
+              expiredTime: 1,
+              rate: 1,
+            ));
 
         when(mockWalletRepos.balanceOf(
-                smcAddressHex: anyNamed('smcAddressHex'),
-                privateKey: account.privateKey))
-            .thenAnswer((_) async => 10000);
+          smcAddressHex: anyNamed('smcAddressHex'),
+          privateKey: account.privateKey,
+        )).thenAnswer((_) async => 10000);
 
         when(mockWalletRepos.estimateGas(
-                address: anyNamed('address'),
-                transaction: anyNamed('transaction')))
-            .thenAnswer((realInvocation) async => 1);
+            address: anyNamed('address'),
+            transaction: anyNamed(
+              'transaction',
+            ))).thenAnswer((realInvocation) async => 1);
 
         when(mockWalletRepos.isEnoughBnb(
-                privateKey: account.privateKey,
-                asset: toko!,
-                amount: 1.0 / 0.0031312488078522826,
-                gasPrice: 10,
-                estimatedGas: 1))
-            .thenAnswer((realInvocation) async => true);
+          privateKey: account.privateKey,
+          asset: toko!,
+          amount: 1.0 / 0.0031312488078522826,
+          gasPrice: 10,
+          estimatedGas: 1,
+        )).thenAnswer((realInvocation) async => true);
 
         when(mockWalletRepos.sendPaymentTransaction(
           privateKey: account.privateKey,

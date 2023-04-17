@@ -8,7 +8,8 @@ part of 'merchant_transaction.dart';
 
 MerchantTransaction _$MerchantTransactionFromJson(Map<String, dynamic> json) =>
     MerchantTransaction(
-      transactionID: json['transaction_id'] as String? ?? '',
+      merchantId: json['merchant_id'] as String? ?? '',
+      transactionId: json['transaction_id'] as String? ?? '',
       offchain: json['offchain'] as String? ?? '',
       amount: (json['amount'] as num?)?.toDouble() ?? 0,
       amountUint256: json['amount_usd_big'] as String? ?? '',
@@ -22,7 +23,8 @@ MerchantTransaction _$MerchantTransactionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$MerchantTransactionToJson(
         MerchantTransaction instance) =>
     <String, dynamic>{
-      'transaction_id': instance.transactionID,
+      'merchant_id': instance.merchantId,
+      'transaction_id': instance.transactionId,
       'offchain': instance.offchain,
       'amount': instance.amount,
       'amount_usd_big': instance.amountUint256,
