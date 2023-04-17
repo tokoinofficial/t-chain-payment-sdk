@@ -23,6 +23,7 @@ import 'payment_deposit_cubit_test.mocks.dart';
 void main() {
   const privateKeyHex =
       '0097ad7d1294e0268bbaaf4642c6ccb4c4a76421bff0285023716e354c605513ee';
+  const merchantId = '0x00';
   final mockWalletRepos = MockWalletRepository();
 
   final mockPaymentRepos = MockPaymentRepository();
@@ -319,6 +320,7 @@ void main() {
 
         await cubit.getAllInfo();
 
+        // increase toko allowance
         when(mockWalletRepos.allowance(
                 privateKey: account.privateKey,
                 asset: toko!,
@@ -330,7 +332,7 @@ void main() {
           asset: bnb!,
           useToko: true,
           notes: 'notes',
-          merchantId: 'merchantId',
+          merchantId: merchantId,
           chainId: 'chainId',
         );
       },
@@ -437,7 +439,7 @@ void main() {
           asset: toko!,
           useToko: true,
           notes: 'notes',
-          merchantId: 'merchantId',
+          merchantId: merchantId,
           chainId: 'chainId',
         );
 
@@ -456,14 +458,14 @@ void main() {
           externalMerchantId: anyNamed('externalMerchantId'),
           chainId: anyNamed('chainId'),
         )).thenAnswer((realInvocation) async => MerchantTransaction(
-              merchantId: 'merchant_id',
+              merchantId: merchantId,
               transactionId: 'id',
-              offchain: 'offchain',
+              offchain: 'bb',
               amount: 1,
               amountUint256: BigInt.one.toString(),
               fee: 10,
               feeUint256: BigInt.one.toString(),
-              signedHash: 'signedHash',
+              signedHash: 'aa',
               expiredTime: 1,
               rate: 1,
             ));
@@ -500,7 +502,7 @@ void main() {
           asset: toko!,
           useToko: true,
           notes: 'notes',
-          merchantId: 'merchantId',
+          merchantId: merchantId,
           chainId: 'chainId',
         );
       },
@@ -553,8 +555,10 @@ void main() {
         ),
         PaymentDepositAddAllowance(
           asset: toko!,
-          amount: 1.0 / 0.0031312488078522826,
-          contractAddress: Config.paymentContractAddress,
+          amount: 1.0 /
+              0.0031312488078522826 *
+              1.01, // useToko: fee 2% - 1% discount
+          contractAddress: Config.paymentTokenRegistry,
           transferDataList: [tokoTransferData],
         ),
         PaymentDepositShowInfo(
