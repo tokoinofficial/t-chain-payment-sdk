@@ -34,4 +34,4 @@ jobs:
       # package:test for this step to succeed. Note that Flutter projects will
       # want to change this to 'flutter test'.
       - name: Run tests
-        run: flutter test --no-sound-null-safety
+        run: flutter test test --no-sound-null-safety
