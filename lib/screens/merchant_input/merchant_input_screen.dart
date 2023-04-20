@@ -326,10 +326,13 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
     final amount = double.tryParse(_amountController.text) ?? 0;
     if (amount <= 0) return;
 
-    // to make sure the payment info contains the amount and currency
+    // to make sure the payment info contains the amount, currency and chain id
     _paymentInfo = _paymentInfo!.copyWith(
       amount: amount,
       currency: _paymentInfo!.currency.toCurrency().shortName,
+      chainId: _paymentInfo!.chainId == null || _paymentInfo!.chainId!.isEmpty
+          ? TChainPaymentSDK.shared.chainIdString
+          : _paymentInfo!.chainId,
     );
 
     Navigator.of(context).pushNamed(TChainRouterConst.kDeposit, arguments: {

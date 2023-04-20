@@ -39,6 +39,8 @@ class PaymentDepositSwapRequest extends PaymentDepositState {
     ]);
 }
 
+class PaymentDepositWaitForSetup extends PaymentDepositState {}
+
 class PaymentDepositSetUpCompleted extends PaymentDepositState {}
 
 class PaymentDepositShowInfo extends PaymentDepositState {

@@ -274,11 +274,14 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
                   isEnoughBnb = state.isEnoughBnb;
                 }
 
+                final waitForSetup = state is PaymentDepositWaitForSetup;
+
                 final paymentInProcess = state is PaymentDepositShowInfo &&
                     (state.status == PaymentDepositStatus.depositing ||
                         state.status == PaymentDepositStatus.loading);
 
-                final showLoading = paymentInProcess || isSwapSending;
+                final showLoading =
+                    paymentInProcess || isSwapSending || waitForSetup;
 
                 List<TransferData> transferDataList = [];
                 bool isLoaded = false;

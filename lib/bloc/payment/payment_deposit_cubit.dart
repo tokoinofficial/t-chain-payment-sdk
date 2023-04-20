@@ -43,6 +43,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
   ExchangeRate _exchangeRate = ExchangeRate({});
 
   Future setup() async {
+    emit(PaymentDepositWaitForSetup());
     try {
       final address = account.privateKey.address.hex;
 
@@ -181,7 +182,7 @@ class PaymentDepositCubit extends Cubit<PaymentDepositState> {
       }
 
       var signatureBytes = hexToBytes(transactionSignedHash.signedHash);
-      final merchantIdBytes32 = keccakUtf8(merchantId);
+      final merchantIdBytes32 = keccakUtf8(transactionSignedHash.merchantId);
       var offchainBytes32 = transactionSignedHash.offchain.toBytes32();
 
       final params = [

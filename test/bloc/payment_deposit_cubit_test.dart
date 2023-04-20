@@ -112,9 +112,11 @@ void main() {
         await cubit.setup();
       },
       expect: () => [
+        PaymentDepositWaitForSetup(),
         PaymentDepositError(
           error: translations.something_went_wrong_please_try_later,
         ),
+        PaymentDepositWaitForSetup(),
         PaymentDepositSetUpCompleted(),
       ],
     );
