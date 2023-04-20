@@ -37,7 +37,7 @@ class ApproveRequestPendingWidget extends StatelessWidget with UIStyle {
           )),
           Gaps.px12,
           applyPadding(Text(
-            Utils.getLocalizations(context).duration_of_approve_request,
+            Utils.getLocalizations(context).approve_request_pending_desc,
             textAlign: TextAlign.center,
             style: TextStyles.footnote.copyWith(
               color: themeColors.textPrimary,
