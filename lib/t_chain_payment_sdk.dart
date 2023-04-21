@@ -53,15 +53,11 @@ class TChainPaymentSDK {
   /// Environment
   late TChainPaymentEnv env;
 
-  bool get isTestnet => env == TChainPaymentEnv.dev;
-
   /// user data
   late Account account;
 
   /// To handle payment result
   late Function(TChainPaymentResult) delegate;
-
-  String get sandboxTitle => isTestnet ? ' - SANDBOX' : '';
 
   late PaymentRepository _paymentRepository;
 

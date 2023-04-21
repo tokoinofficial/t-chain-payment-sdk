@@ -31,24 +31,14 @@ class Config {
 
   static get sandboxTitle => isProd() ? '' : ' - SANDBOX';
 
-  static get iconName => 'my_t_wallet${isProd() ? '' : '_sandbox'}';
-
   static bool isProd() => _config == _ConfigMap.prodConfig;
 
   static String get baseURL {
     return _config[_ConfigMap.BASE_URL];
   }
 
-  static get infuraURL {
-    return _config[_ConfigMap.INFURA_URL];
-  }
-
   static get maxGas {
     return _config[_ConfigMap.MAX_GAS];
-  }
-
-  static get ethSzoContractAddress {
-    return _config[_ConfigMap.ETH_SZO_CONTRACT_ADDRESS];
   }
 
   static get bscSzoContractAddress {
@@ -95,20 +85,12 @@ class Config {
     return _config[_ConfigMap.BTC_TX_URL];
   }
 
-  static get wssInfura {
-    return _config[_ConfigMap.WSS_INFURA_URL];
-  }
-
   static get binanceDataSeed {
     return _config[_ConfigMap.BINANCE_DATA_SEED_KEY];
   }
 
   static get bscTxUrl {
     return _config[_ConfigMap.BINANCE_TX_URL];
-  }
-
-  static get bscTokenUrl {
-    return _config[_ConfigMap.BINANCE_TOKEN_URL];
   }
 
   static get bnbContractAddress {
@@ -138,14 +120,11 @@ class Config {
 
 class _ConfigMap {
   static const BASE_URL = "BASE_URL";
-  static const INFURA_URL = "INFURA_URL";
   static const MAX_GAS = "MAX_GAS";
   static const BTC_TX_URL = "BTC_TX_URL";
-  static const WSS_INFURA_URL = "WSS_INFURA_URL";
   static const BSC_CHAIN_ID = "BSC_CHAIN_ID";
   static const BINANCE_DATA_SEED_KEY = 'BINANCE_DATA_SEED_KEY';
   static const BINANCE_TX_URL = 'BINANCE_TX_URL';
-  static const BINANCE_TOKEN_URL = 'BINANCE_TOKEN_URL';
   static const BNB_CONTRACT_ADDRESS = "BNB_CONTRACT_ADDRESS";
   static const BSC_TOKOIN_CONTRACT_ADDRESS = 'BSC_TOKOIN_CONTRACT_ADDRESS';
   static const BSC_USDT_CONTRACT_ADDRESS = 'BSC_USDT_CONTRACT_ADDRESS';
@@ -156,7 +135,6 @@ class _ConfigMap {
   static const BSC_DOGE_CONTRACT_ADDRESS = 'BSC_DOGE_CONTRACT_ADDRESS';
   static const BSC_DOT_CONTRACT_ADDRESS = 'BSC_DOT_CONTRACT_ADDRESS';
   static const BSC_C98_CONTRACT_ADDRESS = 'BSC_C98_CONTRACT_ADDRESS';
-  static const ETH_SZO_CONTRACT_ADDRESS = 'ETH_SZO_CONTRACT_ADDRESS';
   static const BSC_SZO_CONTRACT_ADDRESS = 'BSC_SZO_CONTRACT_ADDRESS';
   static const WBNB_CONTRACT_ADDRESS = 'WBNB_CONTRACT_ADDRESS';
   static const PANCAKE_ROUTER = 'PANCAKE_ROUTER';
@@ -167,18 +145,12 @@ class _ConfigMap {
     PAYMENT_CONTRACT_ADDRESS: '0x804C7762FbEaB64Ac554aEc644E43Ab934d23Ff0',
     PAYMENT_TOKEN_REGISTRY: '0x5B19B6aAB8f96a219262bDB4DDdbA54BAE890625',
     BASE_URL: "https://staging-api.tokoin.io/api",
-    INFURA_URL: [
-      "https://goerli.infura.io/v3/ccf3f12262e34a4aa989b8035b4d693e"
-    ],
-    WSS_INFURA_URL:
-        "wss://goerli.infura.io/ws/v3/ccf3f12262e34a4aa989b8035b4d693e",
     BINANCE_DATA_SEED_KEY: [
       "https://data-seed-prebsc-1-s1.binance.org:8545/",
       "https://apis.ankr.com/f45dd2313e094d33bc84c6954c18b81a/5220d6fa11cfaaeb98526c6ed64c052d/binance/full/test",
       "https://rpc.ankr.com/bsc_testnet_chapel"
     ],
     BINANCE_TX_URL: "https://testnet.bscscan.com/tx/",
-    BINANCE_TOKEN_URL: "https://testnet.bscscan.com/token/",
     MAX_GAS: 350000,
     BSC_TOKOIN_CONTRACT_ADDRESS: "0x09b9d0e083a8dc25b979e402c304dbcab574c7af",
     BSC_USDT_CONTRACT_ADDRESS: "0x15d0c6710a6989945134100ffae44e5e2dee1789",
@@ -190,7 +162,6 @@ class _ConfigMap {
     BSC_DOT_CONTRACT_ADDRESS: "0x57eb566f9bC798253931facCAbB8CE99adAf31ee",
     BSC_C98_CONTRACT_ADDRESS: "0xCF897975F64d45c499873bdf14aD6F664C2DdD28",
     BSC_SZO_CONTRACT_ADDRESS: "0x6B688CD42885114E83f0829cFDd336bFC01a85B8",
-    ETH_SZO_CONTRACT_ADDRESS: "0xAD095cDBfD77A63994Fdcf0923b8e99405207A3b",
     WBNB_CONTRACT_ADDRESS: "0xae13d989dac2f0debff460ac112a837c89baa7cd",
     PANCAKE_ROUTER: "0xd99d1c33f9fc3444f8101754abc46c52416550d1",
     BNB_CONTRACT_ADDRESS: "0x78A27e2Abf6E181825aA09325e1C132Df061D797",
@@ -201,11 +172,6 @@ class _ConfigMap {
     PAYMENT_CONTRACT_ADDRESS: '0x8cfeB1a66E28bAb0Cd81CeE6621cdBD0963D13bB',
     PAYMENT_TOKEN_REGISTRY: '0x5b318cA1491805DA49FA7C4DB6c1260F17aE8F45',
     BASE_URL: "https://api.tokoin.io/api",
-    INFURA_URL: [
-      "https://mainnet.infura.io/v3/5e6e040c544a411aa401449407914f38"
-    ],
-    WSS_INFURA_URL:
-        "wss://mainnet.infura.io/ws/v3/5e6e040c544a411aa401449407914f38",
     BINANCE_DATA_SEED_KEY: [
       "https://bsc-dataseed1.defibit.io/",
       "https://bsc-dataseed1.ninicoin.io/",
@@ -213,7 +179,6 @@ class _ConfigMap {
       "https://rpc.ankr.com/bsc"
     ],
     BINANCE_TX_URL: "https://bscscan.com/tx/",
-    BINANCE_TOKEN_URL: "https://bscscan.com/token/",
     MAX_GAS: 350000,
     BSC_TOKOIN_CONTRACT_ADDRESS: "0x45f7967926e95fd161e56ed66b663c9114c5226f",
     BSC_USDT_CONTRACT_ADDRESS: "0x55d398326f99059ff775485246999027b3197955",
