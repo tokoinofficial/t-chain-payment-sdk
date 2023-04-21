@@ -56,7 +56,6 @@ class Assets {
   static const String refreshCircle = 'assets/refresh_circle.svg';
   static const String tokenBnb = 'assets/token_bnb.svg';
   static const String tokenBusd = 'assets/token_busd.svg';
-  static const String tokenEth = 'assets/token_eth.svg';
   static const String tokenToko = 'assets/token_toko.svg';
   static const String tokenUsdt = 'assets/token_usdt.svg';
   static const $LibGen lib = $LibGen();
@@ -79,7 +78,6 @@ class Assets {
         refreshCircle,
         tokenBnb,
         tokenBusd,
-        tokenEth,
         tokenToko,
         tokenUsdt
       ];

@@ -96,10 +96,8 @@ class WalletRepository {
 
     final value = await smc.getBalance(privateKey.address);
 
-    return TokoinNumber.fromBigInt(value,
-        exponent: TokoinNumber.getExponentWithAssetContractAddress(
-          smcAddressHex,
-        )).doubleValue;
+    return TokoinNumber.fromBigInt(value, exponent: kEthPowExponent)
+        .doubleValue;
   }
 
   Future<num> allowance({
@@ -165,8 +163,7 @@ class WalletRepository {
       contractAddress: contractAddress,
       amount: TokoinNumber.fromNumber(
         kDefaultApprovedValue,
-        exponent: TokoinNumber.getExponentWithAssetContractAddress(
-            tokenContractAddress),
+        exponent: kEthPowExponent,
       ).bigIntValue,
       gasPrice: gasPrice,
       nonce: nonce,
@@ -376,7 +373,6 @@ class WalletRepository {
     List parameters = [
       TokoinNumber.fromNumber(
               pancakeSwap.amountOut! * (100 - kMaxSlippage) / 100)
-          .toTokoinNumberWithAsset(pancakeSwap.assetOut)
           .bigIntValue,
       _getPaths(pancakeSwap).map((e) => EthereumAddress.fromHex(e)).toList(),
       privateKey.address,
@@ -384,9 +380,8 @@ class WalletRepository {
     ];
     String functionName = _getFunctionName(pancakeSwap);
     bool isPayableFunction = _isPayableFunction(functionName);
-    BigInt amountIn = TokoinNumber.fromNumber(pancakeSwap.amountIn ?? 0)
-        .toTokoinNumberWithAsset(pancakeSwap.assetIn)
-        .bigIntValue;
+    BigInt amountIn =
+        TokoinNumber.fromNumber(pancakeSwap.amountIn ?? 0).bigIntValue;
     if (!isPayableFunction) parameters.insert(0, amountIn);
     return await smc.buildSwapTransaction(
         privateKey: privateKey,
@@ -410,8 +405,7 @@ class WalletRepository {
   List<String> _getPaths(PancakeSwap pancakeSwap) {
     Asset assetOut = pancakeSwap.assetOut;
     Asset assetIn = pancakeSwap.assetIn;
-    bool withoutBridge =
-        assetOut.isUsdt || assetIn.isUsdt || assetIn.isTko || assetOut.isTko;
+    bool withoutBridge = assetOut.isUsdt || assetIn.isUsdt;
 
     if (assetOut.isBnb) assetOut = Asset.wbnb();
     if (assetIn.isBnb) assetIn = Asset.wbnb();

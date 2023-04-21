@@ -32,10 +32,9 @@ void main() {
       required Asset assetOut,
       required BigInt amountOutBigInt,
     }) {
-      final exponent = TokoinNumber.getExponentWithAsset(assetOut);
       final amountOut = TokoinNumber.fromBigInt(
         amountOutBigInt,
-        exponent: exponent,
+        exponent: kEthPowExponent,
       ).doubleValue;
       return amountOut;
     }

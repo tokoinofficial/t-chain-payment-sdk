@@ -31,7 +31,7 @@ void main() {
     final busd = Asset.createAsset(shortName: CONST.kAssetNameBUSD)!;
 
     // token that doesn't exist in exchangeRate
-    final unsupportedToken = Asset.createAsset(shortName: CONST.kAssetNameTKO);
+    final unsupportedToken = Asset.createAsset(shortName: 'TKO');
 
     doTest(
       Currency currency, {
@@ -39,6 +39,11 @@ void main() {
       required Asset? asset,
       required double? expected,
     }) {
+      if (asset == null) {
+        expect(expected, null);
+        return;
+      }
+
       expect(
         exchangeRate.calculateAssetAmount(
           amountCurrency: amount,

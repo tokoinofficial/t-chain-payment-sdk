@@ -27,7 +27,7 @@ class ExchangeRate {
   double? calculateAssetAmount({
     required double amountCurrency,
     required Currency currency,
-    required asset,
+    required Asset asset,
   }) {
     final usdPerFiatCurrency = getUsdPerFiatCurrency(currency);
     if (usdPerFiatCurrency == null) return null;

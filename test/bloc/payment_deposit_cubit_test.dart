@@ -41,7 +41,6 @@ void main() {
   group('PaymentDepositCubit', () {
     Asset? bnb;
     Asset? toko;
-    Asset? cake;
     Asset? usdt;
     const gasFee = GasFee(10, 10);
     const discountInfo = PaymentDiscountInfo(
@@ -52,9 +51,10 @@ void main() {
     late TransferData bnbTransferData;
 
     setUp(() {
+      Config.setEnvironment(TChainPaymentEnv.dev);
+
       bnb = Asset.createAsset(shortName: 'BNB')!.copyWith(balance: 0.0);
       toko = Asset.createAsset(shortName: 'TOKO')!.copyWith(balance: 0.0);
-      cake = Asset.createAsset(shortName: 'CAKE')!.copyWith(balance: 0.0);
       usdt = Asset.createAsset(shortName: 'USDT')!.copyWith(balance: 0.0);
 
       tokoTransferData = TransferData(
@@ -149,9 +149,6 @@ void main() {
         when(mockWalletRepos.getPaymentDiscountFee(
                 contractAddress: Config.bscTokoinContractAddress, amount: 1))
             .thenAnswer((realInvocation) => Future.value(discountInfo));
-        when(mockWalletRepos.getPaymentDiscountFee(
-                contractAddress: Config.bscCakeContractAddress, amount: 1))
-            .thenAnswer((realInvocation) => Future.value(discountInfo));
 
         when(mockPaymentRepos.getExchangeRate())
             .thenAnswer((realInvocation) async => DataResponse(result: {
@@ -202,13 +199,6 @@ void main() {
               amount: 1.0,
               currency: Currency.usd,
             ),
-            TransferData(
-              asset: cake!,
-              tokoAsset: toko,
-              exchangeRate: 3.672811044613,
-              amount: 1.0,
-              currency: Currency.usd,
-            ),
           ],
         ),
         PaymentDepositShowInfo(
@@ -232,16 +222,6 @@ void main() {
               gasFee: gasFee,
               serviceFeePercent: 0.0,
               exchangeRate: 0.0031312488078522826,
-              amount: 1.0,
-              currency: Currency.usd,
-            ),
-            TransferData(
-              asset: cake!,
-              tokoAsset: toko,
-              discountInfo: discountInfo,
-              gasFee: gasFee,
-              serviceFeePercent: 2.0,
-              exchangeRate: 3.672811044613,
               amount: 1.0,
               currency: Currency.usd,
             ),
