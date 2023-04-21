@@ -33,7 +33,7 @@ class WalletRepository {
 
   Future<bool> setup() async {
     _web3Client ??=
-        await blockchainService.createWeb3Client(Config.binanceDataSeed);
+        await blockchainService.createWeb3Client(Config.binanceRpcNodes);
 
     return isReady;
   }

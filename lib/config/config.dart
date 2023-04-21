@@ -85,8 +85,8 @@ class Config {
     return _config[_ConfigMap.BTC_TX_URL];
   }
 
-  static get binanceDataSeed {
-    return _config[_ConfigMap.BINANCE_DATA_SEED_KEY];
+  static get binanceRpcNodes {
+    return _config[_ConfigMap.BINANCE_RPC_NODES];
   }
 
   static get bscTxUrl {
@@ -123,7 +123,7 @@ class _ConfigMap {
   static const MAX_GAS = "MAX_GAS";
   static const BTC_TX_URL = "BTC_TX_URL";
   static const BSC_CHAIN_ID = "BSC_CHAIN_ID";
-  static const BINANCE_DATA_SEED_KEY = 'BINANCE_DATA_SEED_KEY';
+  static const BINANCE_RPC_NODES = 'BINANCE_RPC_NODES';
   static const BINANCE_TX_URL = 'BINANCE_TX_URL';
   static const BNB_CONTRACT_ADDRESS = "BNB_CONTRACT_ADDRESS";
   static const BSC_TOKOIN_CONTRACT_ADDRESS = 'BSC_TOKOIN_CONTRACT_ADDRESS';
@@ -145,9 +145,8 @@ class _ConfigMap {
     PAYMENT_CONTRACT_ADDRESS: '0x804C7762FbEaB64Ac554aEc644E43Ab934d23Ff0',
     PAYMENT_TOKEN_REGISTRY: '0x5B19B6aAB8f96a219262bDB4DDdbA54BAE890625',
     BASE_URL: "https://staging-api.tokoin.io/api",
-    BINANCE_DATA_SEED_KEY: [
+    BINANCE_RPC_NODES: [
       "https://data-seed-prebsc-1-s1.binance.org:8545/",
-      "https://apis.ankr.com/f45dd2313e094d33bc84c6954c18b81a/5220d6fa11cfaaeb98526c6ed64c052d/binance/full/test",
       "https://rpc.ankr.com/bsc_testnet_chapel"
     ],
     BINANCE_TX_URL: "https://testnet.bscscan.com/tx/",
@@ -172,7 +171,7 @@ class _ConfigMap {
     PAYMENT_CONTRACT_ADDRESS: '0x8cfeB1a66E28bAb0Cd81CeE6621cdBD0963D13bB',
     PAYMENT_TOKEN_REGISTRY: '0x5b318cA1491805DA49FA7C4DB6c1260F17aE8F45',
     BASE_URL: "https://api.tokoin.io/api",
-    BINANCE_DATA_SEED_KEY: [
+    BINANCE_RPC_NODES: [
       "https://bsc-dataseed1.defibit.io/",
       "https://bsc-dataseed1.ninicoin.io/",
       "https://bsc-dataseed.binance.org/",
