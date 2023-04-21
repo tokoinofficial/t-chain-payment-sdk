@@ -63,9 +63,6 @@ class TChainPaymentSDK {
 
   String get sandboxTitle => isTestnet ? ' - SANDBOX' : '';
 
-  int get chainID => isTestnet ? kTestnetChainID : kMainnetChainID;
-  String get chainIdString => '$chainID';
-
   late PaymentRepository _paymentRepository;
 
   /// Close payment sdk
@@ -89,7 +86,7 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
     this.delegate = delegate;
     Config.setEnvironment(env);
 
-    final api = TChainAPI.standard(env.apiUrl);
+    final api = TChainAPI.standard(Config.baseURL);
     _paymentRepository = PaymentRepository(api: api);
 
     DeepLinkService.shared.listen(_handleDeepLink);
@@ -165,7 +162,7 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
       notes: notes,
       amount: amount,
       currency: currency,
-      chainId: '$chainID',
+      chainId: Config.bscChainId.toString(),
     );
 
     if (uri == null) {
@@ -213,7 +210,7 @@ extension TChainPaymentSDKMerchantApp on TChainPaymentSDK {
       amount: amount,
       currency: currency,
       bundleID: bundleId,
-      chainId: '$chainID',
+      chainId: Config.bscChainId.toString(),
     );
 
     if (uri == null) {
@@ -298,7 +295,7 @@ extension TChainPaymentSDKWalletApp on TChainPaymentSDK {
 
     Config.setEnvironment(env);
 
-    final api = TChainAPI.standard(env.apiUrl);
+    final api = TChainAPI.standard(Config.baseURL);
     _paymentRepository = PaymentRepository(api: api);
 
     DeepLinkService.shared.listen(onDeeplinkReceived);

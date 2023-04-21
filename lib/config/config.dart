@@ -15,21 +15,6 @@ extension TChainPaymentActionExtension on TChainPaymentAction {
   }
 }
 
-extension TChainPaymentEnvExt on TChainPaymentEnv {
-  String get apiUrl {
-    switch (this) {
-      case TChainPaymentEnv.dev:
-        return "https://staging-api.tokoin.io/api";
-
-      case TChainPaymentEnv.prod:
-        return "https://api.tokoin.io/api";
-    }
-  }
-}
-
-const int kMainnetChainID = 56;
-const int kTestnetChainID = 97;
-
 class Config {
   static late Map<String, dynamic> _config;
 
@@ -50,7 +35,7 @@ class Config {
 
   static bool isProd() => _config == _ConfigMap.prodConfig;
 
-  static get baseURL {
+  static String get baseURL {
     return _config[_ConfigMap.BASE_URL];
   }
 
@@ -138,7 +123,7 @@ class Config {
     return _config[_ConfigMap.PANCAKE_ROUTER];
   }
 
-  static get bscChainID {
+  static int get bscChainId {
     return _config[_ConfigMap.BSC_CHAIN_ID];
   }
 

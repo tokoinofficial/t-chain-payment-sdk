@@ -633,7 +633,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
       merchantId: widget.merchantInfo.merchantId,
       chainId: widget.merchantInfo.chainId != null
           ? widget.merchantInfo.chainId.toString()
-          : Config.bscChainID.toString(),
+          : Config.bscChainId.toString(),
     );
   }
 

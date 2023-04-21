@@ -13,7 +13,6 @@ import 'package:t_chain_payment_sdk/services/gas_station_api.dart';
 import 'package:t_chain_payment_sdk/smc/bep_20_smc.dart';
 import 'package:t_chain_payment_sdk/smc/pancake_swap_smc.dart';
 import 'package:t_chain_payment_sdk/smc/payment_smc.dart';
-import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:web3dart/web3dart.dart';
 
 const kWaitForReceiptTimeoutInSecond = 300;
@@ -48,7 +47,7 @@ class WalletRepository {
     final newSmc = await blockchainService.createBep20Smc(
       address: address,
       client: _web3Client!,
-      chainId: TChainPaymentSDK.shared.chainID,
+      chainId: Config.bscChainId,
     );
 
     _bep20SmcMap[addressHex] = newSmc;
@@ -64,7 +63,7 @@ class WalletRepository {
     final newSmc = await blockchainService.createPaymentSmc(
       address: address,
       client: _web3Client!,
-      chainId: TChainPaymentSDK.shared.chainID,
+      chainId: Config.bscChainId,
     );
 
     _paymentSmc = newSmc;
@@ -78,7 +77,7 @@ class WalletRepository {
     final newSmc = await blockchainService.createPancakeSwapSmc(
       address: address,
       client: _web3Client!,
-      chainId: TChainPaymentSDK.shared.chainID,
+      chainId: Config.bscChainId,
     );
 
     _pancakeSwapSmc = newSmc;
