@@ -106,9 +106,12 @@ class WalletRepository {
     required EthPrivateKey privateKey,
     required String contractAddress,
   }) async {
-    final tokenContractAddress =
-        asset.isBnb ? Asset.wbnb().contractAddress : asset.contractAddress;
-    final smc = await getBep20Smc(tokenContractAddress);
+    if (asset.isBnb) {
+      // only check allowance if asset is bep20
+      return double.maxFinite;
+    }
+
+    final smc = await getBep20Smc(asset.contractAddress);
 
     return await smc.allowance(
       walletAddress: privateKey.address.hex,
@@ -134,9 +137,11 @@ class WalletRepository {
     num gasPrice = 0,
     int? nonce,
   }) async {
-    final tokenContractAddress =
-        asset.isBnb ? Asset.wbnb().contractAddress : asset.contractAddress;
-    final smc = await getBep20Smc(tokenContractAddress);
+    if (asset.isBnb) {
+      throw Exception('Required a bep20 token');
+    }
+
+    final smc = await getBep20Smc(asset.contractAddress);
 
     return await smc.buildApprovalTransaction(
       privateKey: privateKey,
@@ -154,9 +159,11 @@ class WalletRepository {
     num gasPrice = 0,
     int? nonce,
   }) async {
-    final tokenContractAddress =
-        asset.isBnb ? Asset.wbnb().contractAddress : asset.contractAddress;
-    final smc = await getBep20Smc(tokenContractAddress);
+    if (asset.isBnb) {
+      throw Exception('Required a bep20 token');
+    }
+
+    final smc = await getBep20Smc(asset.contractAddress);
 
     final tnx = await buildApproveTransaction(
       privateKey: privateKey,
@@ -313,19 +320,19 @@ class WalletRepository {
 
   Future<BigInt?> getSwapAmountOut({required PancakeSwap pancakeSwap}) async {
     final smc = await getPancakeSwapSmc();
-
+    final paths = await _getPaths(pancakeSwap);
     return await smc.getAmountOut(
       amountIn: pancakeSwap.amountIn!,
-      paths: _getPaths(pancakeSwap),
+      paths: paths,
     );
   }
 
   Future<BigInt?> getSwapAmountIn({required PancakeSwap pancakeSwap}) async {
     final smc = await getPancakeSwapSmc();
-
+    final paths = await _getPaths(pancakeSwap);
     return await smc.getAmountIn(
       amountOut: pancakeSwap.amountOut!,
-      paths: _getPaths(pancakeSwap),
+      paths: paths,
     );
   }
 
@@ -371,12 +378,13 @@ class WalletRepository {
     int? nonce,
   }) async {
     final smc = await getPancakeSwapSmc();
+    final paths = await _getPaths(pancakeSwap);
 
     List parameters = [
       TokoinNumber.fromNumber(
               pancakeSwap.amountOut! * (100 - kMaxSlippage) / 100)
           .bigIntValue,
-      _getPaths(pancakeSwap).map((e) => EthereumAddress.fromHex(e)).toList(),
+      paths.map((e) => EthereumAddress.fromHex(e)).toList(),
       privateKey.address,
       PancakeSwapSmc.deadline
     ];
@@ -404,20 +412,34 @@ class WalletRepository {
     }
   }
 
-  List<String> _getPaths(PancakeSwap pancakeSwap) {
+  Future<List<String>> _getPaths(PancakeSwap pancakeSwap) async {
     Asset assetOut = pancakeSwap.assetOut;
     Asset assetIn = pancakeSwap.assetIn;
     bool withoutBridge = assetOut.isUsdt || assetIn.isUsdt;
 
-    if (assetOut.isBnb) assetOut = Asset.wbnb();
-    if (assetIn.isBnb) assetIn = Asset.wbnb();
+    String addressIn = assetIn.contractAddress;
+    String addressOut = assetOut.contractAddress;
+
+    EthereumAddress? weth;
+    if (assetOut.isBnb) {
+      final smc = await getPancakeSwapSmc();
+      weth = await smc.getWETH();
+      addressOut = weth.hex;
+    }
+
+    if (assetIn.isBnb) {
+      if (weth != null) {
+        addressIn = weth.hex;
+      } else {
+        final smc = await getPancakeSwapSmc();
+        weth = await smc.getWETH();
+        addressIn = weth.hex;
+      }
+    }
+
     return withoutBridge
-        ? [assetIn.contractAddress, assetOut.contractAddress]
-        : [
-            assetIn.contractAddress,
-            Config.bscUsdtContractAddress,
-            assetOut.contractAddress
-          ];
+        ? [addressIn, addressOut]
+        : [addressIn, Config.bscUsdtContractAddress, addressOut];
   }
 
   Future<bool> waitForReceiptResult(Asset asset, String txHash) async {

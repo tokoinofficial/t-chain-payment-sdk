@@ -47,18 +47,6 @@ class Asset extends Equatable {
     );
   }
 
-  factory Asset.wbnb() {
-    const shortName = CONST.kAssetNameBNB;
-    final fullName = CONST.kAssetFullnameMap[shortName] ?? shortName;
-    final iconName = CONST.kAssetIconMap[shortName] ?? '';
-    return Asset(
-      contractAddress: Config.wbnbContractAddress,
-      fullName: fullName,
-      shortName: shortName,
-      iconName: iconName,
-    );
-  }
-
   final String contractAddress;
   final String shortName;
   final String fullName;
