@@ -1,5 +1,5 @@
 ## 2.1.0
-* Support external merchant
+* Add `external_merchant_id`
 
 ## 2.0.0
 * Support one merchant one vault 
