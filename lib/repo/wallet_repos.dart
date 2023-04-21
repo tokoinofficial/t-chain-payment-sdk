@@ -88,7 +88,8 @@ class WalletRepository {
     required String smcAddressHex,
     required EthPrivateKey privateKey,
   }) async {
-    if (smcAddressHex == Config.bnbContractAddress) {
+    if (smcAddressHex.isEmpty) {
+      // BNB
       EtherAmount balance = await _web3Client!.getBalance(privateKey.address);
       return balance.getValueInUnit(EtherUnit.ether);
     }
@@ -256,7 +257,8 @@ class WalletRepository {
   }) async {
     final smc = await getPaymentSmc();
     return await smc.getDiscountFee(
-      tokenAddress: contractAddress,
+      tokenAddress:
+          contractAddress.isEmpty ? Config.bnbTokenAddress : contractAddress,
       amount: amount,
     );
   }

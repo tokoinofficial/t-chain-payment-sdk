@@ -144,7 +144,7 @@ void main() {
             .thenAnswer((realInvocation) => Future.value(2));
 
         when(mockWalletRepos.getPaymentDiscountFee(
-                contractAddress: Config.bnbContractAddress, amount: 1))
+                contractAddress: '', amount: 1)) // BNB
             .thenAnswer((realInvocation) => Future.value(discountInfo));
         when(mockWalletRepos.getPaymentDiscountFee(
                 contractAddress: Config.bscTokoinContractAddress, amount: 1))

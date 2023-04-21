@@ -21,7 +21,7 @@ class Asset extends Equatable {
     String? contractAddress;
     switch (shortName.toUpperCase()) {
       case CONST.kAssetNameBNB:
-        contractAddress = Config.bnbContractAddress;
+        contractAddress = '';
         break;
       case CONST.kAssetNameTOKO:
         contractAddress = Config.bscTokoinContractAddress;
@@ -80,7 +80,7 @@ class Asset extends Equatable {
   bool get isStableCoin =>
       contractAddress == Config.bscUsdtContractAddress ||
       contractAddress == Config.bscBinanceUsdContractAddress;
-  bool get isBnb => contractAddress == Config.bnbContractAddress;
+  bool get isBnb => contractAddress == '';
   bool get isToko => contractAddress == Config.bscTokoinContractAddress;
   bool get isNotToko => contractAddress != Config.bscTokoinContractAddress;
   bool get isUsdt => contractAddress == Config.bscUsdtContractAddress;
