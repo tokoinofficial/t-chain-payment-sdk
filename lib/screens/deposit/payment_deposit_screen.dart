@@ -274,11 +274,14 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
                   isEnoughBnb = state.isEnoughBnb;
                 }
 
+                final waitForSetup = state is PaymentDepositWaitForSetup;
+
                 final paymentInProcess = state is PaymentDepositShowInfo &&
                     (state.status == PaymentDepositStatus.depositing ||
                         state.status == PaymentDepositStatus.loading);
 
-                final showLoading = paymentInProcess || isSwapSending;
+                final showLoading =
+                    paymentInProcess || isSwapSending || waitForSetup;
 
                 List<TransferData> transferDataList = [];
                 bool isLoaded = false;
@@ -630,7 +633,7 @@ class _PaymentDepositScreenState extends State<PaymentDepositScreen>
       merchantId: widget.merchantInfo.merchantId,
       chainId: widget.merchantInfo.chainId != null
           ? widget.merchantInfo.chainId.toString()
-          : Config.bscChainID.toString(),
+          : Config.bscChainId.toString(),
     );
   }
 

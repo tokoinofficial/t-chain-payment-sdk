@@ -14,15 +14,13 @@ class PancakeSwapSmc extends GeneratedContract {
     required int? chainId,
   }) : super(DeployedContract(contractAbi, address), client, chainId);
 
-  Future<BigInt> getBalance(
-    EthereumAddress walletAddress, {
-    BlockNum? atBlock,
-  }) async {
-    final function = self.abi.functions[0];
+  // Returns the canonical address for Binance: WBNB token
+  Future<EthereumAddress> getWETH() async {
+    final function = self.function('WETH');
 
-    final params = [walletAddress];
-    final response = await read(function, params, atBlock);
-    return (response[0] as BigInt);
+    final params = [];
+    final response = await read(function, params, null);
+    return (response[0] as EthereumAddress);
   }
 
   /// call getAmountOut func with params: [amountIn], [reserveIn], [reserveOut]

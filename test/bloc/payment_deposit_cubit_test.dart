@@ -23,6 +23,7 @@ import 'payment_deposit_cubit_test.mocks.dart';
 void main() {
   const privateKeyHex =
       '0097ad7d1294e0268bbaaf4642c6ccb4c4a76421bff0285023716e354c605513ee';
+  const merchantId = '0x00';
   final mockWalletRepos = MockWalletRepository();
 
   final mockPaymentRepos = MockPaymentRepository();
@@ -40,7 +41,6 @@ void main() {
   group('PaymentDepositCubit', () {
     Asset? bnb;
     Asset? toko;
-    Asset? cake;
     Asset? usdt;
     const gasFee = GasFee(10, 10);
     const discountInfo = PaymentDiscountInfo(
@@ -51,9 +51,10 @@ void main() {
     late TransferData bnbTransferData;
 
     setUp(() {
+      Config.setEnvironment(TChainPaymentEnv.dev);
+
       bnb = Asset.createAsset(shortName: 'BNB')!.copyWith(balance: 0.0);
       toko = Asset.createAsset(shortName: 'TOKO')!.copyWith(balance: 0.0);
-      cake = Asset.createAsset(shortName: 'CAKE')!.copyWith(balance: 0.0);
       usdt = Asset.createAsset(shortName: 'USDT')!.copyWith(balance: 0.0);
 
       tokoTransferData = TransferData(
@@ -111,9 +112,11 @@ void main() {
         await cubit.setup();
       },
       expect: () => [
+        PaymentDepositWaitForSetup(),
         PaymentDepositError(
           error: translations.something_went_wrong_please_try_later,
         ),
+        PaymentDepositWaitForSetup(),
         PaymentDepositSetUpCompleted(),
       ],
     );
@@ -141,13 +144,10 @@ void main() {
             .thenAnswer((realInvocation) => Future.value(2));
 
         when(mockWalletRepos.getPaymentDiscountFee(
-                contractAddress: Config.bnbContractAddress, amount: 1))
+                contractAddress: '', amount: 1)) // BNB
             .thenAnswer((realInvocation) => Future.value(discountInfo));
         when(mockWalletRepos.getPaymentDiscountFee(
                 contractAddress: Config.bscTokoinContractAddress, amount: 1))
-            .thenAnswer((realInvocation) => Future.value(discountInfo));
-        when(mockWalletRepos.getPaymentDiscountFee(
-                contractAddress: Config.bscCakeContractAddress, amount: 1))
             .thenAnswer((realInvocation) => Future.value(discountInfo));
 
         when(mockPaymentRepos.getExchangeRate())
@@ -199,13 +199,6 @@ void main() {
               amount: 1.0,
               currency: Currency.usd,
             ),
-            TransferData(
-              asset: cake!,
-              tokoAsset: toko,
-              exchangeRate: 3.672811044613,
-              amount: 1.0,
-              currency: Currency.usd,
-            ),
           ],
         ),
         PaymentDepositShowInfo(
@@ -229,16 +222,6 @@ void main() {
               gasFee: gasFee,
               serviceFeePercent: 0.0,
               exchangeRate: 0.0031312488078522826,
-              amount: 1.0,
-              currency: Currency.usd,
-            ),
-            TransferData(
-              asset: cake!,
-              tokoAsset: toko,
-              discountInfo: discountInfo,
-              gasFee: gasFee,
-              serviceFeePercent: 2.0,
-              exchangeRate: 3.672811044613,
               amount: 1.0,
               currency: Currency.usd,
             ),
@@ -319,6 +302,7 @@ void main() {
 
         await cubit.getAllInfo();
 
+        // increase toko allowance
         when(mockWalletRepos.allowance(
                 privateKey: account.privateKey,
                 asset: toko!,
@@ -330,7 +314,7 @@ void main() {
           asset: bnb!,
           useToko: true,
           notes: 'notes',
-          merchantId: 'merchantId',
+          merchantId: merchantId,
           chainId: 'chainId',
         );
       },
@@ -427,57 +411,65 @@ void main() {
         await cubit.getAllInfo();
 
         when(mockWalletRepos.allowance(
-                privateKey: account.privateKey,
-                asset: toko!,
-                contractAddress: anyNamed('contractAddress')))
-            .thenAnswer((realInvocation) async => 0);
+          privateKey: account.privateKey,
+          asset: toko!,
+          contractAddress: anyNamed('contractAddress'),
+        )).thenAnswer((realInvocation) async => 0);
 
         // emits PaymentDepositAddAllowance event
         await cubit.deposit(
           asset: toko!,
           useToko: true,
           notes: 'notes',
-          merchantId: 'merchantId',
+          merchantId: merchantId,
           chainId: 'chainId',
         );
 
         when(mockWalletRepos.allowance(
-                privateKey: account.privateKey,
-                asset: toko!,
-                contractAddress: anyNamed('contractAddress')))
-            .thenAnswer((realInvocation) async => 10000);
+          privateKey: account.privateKey,
+          asset: toko!,
+          contractAddress: anyNamed('contractAddress'),
+        )).thenAnswer((realInvocation) async => 10000);
 
         when(mockPaymentRepos.createMerchantTransaction(
-                any, any, any, any, any, any, any))
-            .thenAnswer((realInvocation) async => MerchantTransaction(
-                  transactionID: 'id',
-                  offchain: 'offchain',
-                  amount: 1,
-                  amountUint256: BigInt.one.toString(),
-                  fee: 10,
-                  feeUint256: BigInt.one.toString(),
-                  signedHash: 'signedHash',
-                  expiredTime: 1,
-                  rate: 1,
-                ));
+          address: anyNamed('address'),
+          amount: anyNamed('amount'),
+          currency: anyNamed('currency'),
+          notes: anyNamed('notes'),
+          tokenName: anyNamed('tokenName'),
+          externalMerchantId: anyNamed('externalMerchantId'),
+          chainId: anyNamed('chainId'),
+        )).thenAnswer((realInvocation) async => MerchantTransaction(
+              merchantId: merchantId,
+              transactionId: 'id',
+              offchain: 'bb',
+              amount: 1,
+              amountUint256: BigInt.one.toString(),
+              fee: 10,
+              feeUint256: BigInt.one.toString(),
+              signedHash: 'aa',
+              expiredTime: 1,
+              rate: 1,
+            ));
 
         when(mockWalletRepos.balanceOf(
-                smcAddressHex: anyNamed('smcAddressHex'),
-                privateKey: account.privateKey))
-            .thenAnswer((_) async => 10000);
+          smcAddressHex: anyNamed('smcAddressHex'),
+          privateKey: account.privateKey,
+        )).thenAnswer((_) async => 10000);
 
         when(mockWalletRepos.estimateGas(
-                address: anyNamed('address'),
-                transaction: anyNamed('transaction')))
-            .thenAnswer((realInvocation) async => 1);
+            address: anyNamed('address'),
+            transaction: anyNamed(
+              'transaction',
+            ))).thenAnswer((realInvocation) async => 1);
 
         when(mockWalletRepos.isEnoughBnb(
-                privateKey: account.privateKey,
-                asset: toko!,
-                amount: 1.0 / 0.0031312488078522826,
-                gasPrice: 10,
-                estimatedGas: 1))
-            .thenAnswer((realInvocation) async => true);
+          privateKey: account.privateKey,
+          asset: toko!,
+          amount: 1.0 / 0.0031312488078522826,
+          gasPrice: 10,
+          estimatedGas: 1,
+        )).thenAnswer((realInvocation) async => true);
 
         when(mockWalletRepos.sendPaymentTransaction(
           privateKey: account.privateKey,
@@ -492,7 +484,7 @@ void main() {
           asset: toko!,
           useToko: true,
           notes: 'notes',
-          merchantId: 'merchantId',
+          merchantId: merchantId,
           chainId: 'chainId',
         );
       },
@@ -545,8 +537,10 @@ void main() {
         ),
         PaymentDepositAddAllowance(
           asset: toko!,
-          amount: 1.0 / 0.0031312488078522826,
-          contractAddress: Config.paymentContractAddress,
+          amount: 1.0 /
+              0.0031312488078522826 *
+              1.01, // useToko: fee 2% - 1% discount
+          contractAddress: Config.paymentTokenRegistry,
           transferDataList: [tokoTransferData],
         ),
         PaymentDepositShowInfo(

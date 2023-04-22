@@ -13,22 +13,25 @@ import 'payment_info_cubit_test.mocks.dart';
 
 void main() {
   final mockPaymentRepos = MockPaymentRepository();
+  late MerchantInfo merchantInfoTestnet;
+  const int kMainnetChainId = 56;
+  const int kTestnetChainId = 97;
 
   setUp(() {
     Config.setEnvironment(TChainPaymentEnv.dev);
+
+    merchantInfoTestnet = MerchantInfo(
+      merchantId: 'merchantId',
+      currency: Currency.idr.shortName,
+      qrCode: 'qrCode',
+      chainId: Config.bscChainId.toString(),
+      status: 1,
+    );
   });
 
   tearDown(() {});
 
   group('PaymentInfoCubit', () {
-    final merchantInfoTestnet = MerchantInfo(
-      merchantId: 'merchantId',
-      currency: Currency.idr.shortName,
-      qrCode: 'qrCode',
-      chainId: kTestnetChainID.toString(),
-      status: 1,
-    );
-
     blocTest<PaymentInfoCubit, PaymentInfoState>(
       'emits [] when nothing is called',
       build: () => PaymentInfoCubit(
@@ -43,9 +46,9 @@ void main() {
         paymentRepository: mockPaymentRepos,
       ),
       act: (bloc) async {
-        await bloc.getPaymentInfo(currentChainId: kTestnetChainID.toString());
+        await bloc.getPaymentInfo(currentChainId: kTestnetChainId.toString());
         await bloc.getPaymentInfo(
-            qrCode: '', currentChainId: kTestnetChainID.toString());
+            qrCode: '', currentChainId: kTestnetChainId.toString());
 
         when(mockPaymentRepos.getMerchantInfo(qrCode: 'qrCode')).thenAnswer(
             (realInvocation) async =>
@@ -53,11 +56,11 @@ void main() {
 
         await bloc.getPaymentInfo(
           qrCode: 'qrCode',
-          currentChainId: kMainnetChainID.toString(),
+          currentChainId: kMainnetChainId.toString(),
         );
         await bloc.getPaymentInfo(
           qrCode: 'qrCode',
-          currentChainId: kTestnetChainID.toString(),
+          currentChainId: kTestnetChainId.toString(),
         );
       },
       expect: () => [

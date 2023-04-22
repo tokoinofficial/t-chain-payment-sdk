@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:t_chain_payment_sdk/bloc/payment/payment_info_cubit.dart';
 import 'package:t_chain_payment_sdk/common/utils.dart';
+import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
@@ -51,7 +52,7 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
     } else {
       _paymentInfoCubit.getPaymentInfo(
         qrCode: widget.qrCode,
-        currentChainId: TChainPaymentSDK.shared.chainIdString,
+        currentChainId: Config.bscChainId.toString(),
       );
     }
 
@@ -326,10 +327,13 @@ class _MerchantInputScreenState extends State<MerchantInputScreen>
     final amount = double.tryParse(_amountController.text) ?? 0;
     if (amount <= 0) return;
 
-    // to make sure the payment info contains the amount and currency
+    // to make sure the payment info contains the amount, currency and chain id
     _paymentInfo = _paymentInfo!.copyWith(
       amount: amount,
       currency: _paymentInfo!.currency.toCurrency().shortName,
+      chainId: _paymentInfo!.chainId == null || _paymentInfo!.chainId!.isEmpty
+          ? Config.bscChainId.toString()
+          : _paymentInfo!.chainId,
     );
 
     Navigator.of(context).pushNamed(TChainRouterConst.kDeposit, arguments: {

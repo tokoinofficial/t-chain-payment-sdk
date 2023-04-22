@@ -39,10 +39,9 @@ class SwapCubit extends Cubit<SwapState> {
       if (pancakeSwap.amountIn == null) {
         BigInt? amountInBigInt =
             await walletRepository.getSwapAmountIn(pancakeSwap: pancakeSwap);
-        final exponent = TokoinNumber.getExponentWithAsset(pancakeSwap.assetIn);
         final amountIn = TokoinNumber.fromBigInt(
           amountInBigInt ?? BigInt.zero,
-          exponent: exponent,
+          exponent: kEthPowExponent,
         ).doubleValue;
 
         pancakeSwap = pancakeSwap.copyWith(
@@ -51,11 +50,9 @@ class SwapCubit extends Cubit<SwapState> {
       } else if (pancakeSwap.amountOut == null) {
         BigInt? amountOutBigInt =
             await walletRepository.getSwapAmountOut(pancakeSwap: pancakeSwap);
-        final exponent =
-            TokoinNumber.getExponentWithAsset(pancakeSwap.assetOut);
         final amountOut = TokoinNumber.fromBigInt(
           amountOutBigInt ?? BigInt.zero,
-          exponent: exponent,
+          exponent: kEthPowExponent,
         ).doubleValue;
         pancakeSwap = pancakeSwap.copyWith(amountOut: amountOut);
       }

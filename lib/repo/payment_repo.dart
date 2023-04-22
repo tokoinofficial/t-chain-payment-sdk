@@ -96,19 +96,19 @@ class PaymentRepository {
     return null;
   }
 
-  Future<MerchantTransaction?> createMerchantTransaction(
-    String address,
-    double amount,
-    Currency currency,
-    String notes,
-    String tokenName,
-    String merchantId,
-    String chainId,
-  ) async {
+  Future<MerchantTransaction?> createMerchantTransaction({
+    required String address,
+    required double amount,
+    required Currency currency,
+    required String notes,
+    required String tokenName,
+    required String externalMerchantId,
+    required String chainId,
+  }) async {
     try {
       final body = CreateTransactionBody(
         walletAddress: address,
-        merchantId: merchantId,
+        externalMerchantId: externalMerchantId,
         amount: amount,
         currency: currency.shortName,
         tokenName: tokenName,

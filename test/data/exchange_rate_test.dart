@@ -1,6 +1,3 @@
-// @dart=2.9
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/config/const.dart';
@@ -28,20 +25,25 @@ void main() {
     });
 
     // token
-    final toko = Asset.createAsset(shortName: CONST.kAssetNameTOKO);
-    final bnb = Asset.createAsset(shortName: CONST.kAssetNameBNB);
-    final usdt = Asset.createAsset(shortName: CONST.kAssetNameUSDT);
-    final busd = Asset.createAsset(shortName: CONST.kAssetNameBUSD);
+    final toko = Asset.createAsset(shortName: CONST.kAssetNameTOKO)!;
+    final bnb = Asset.createAsset(shortName: CONST.kAssetNameBNB)!;
+    final usdt = Asset.createAsset(shortName: CONST.kAssetNameUSDT)!;
+    final busd = Asset.createAsset(shortName: CONST.kAssetNameBUSD)!;
 
     // token that doesn't exist in exchangeRate
-    final unsupportedToken = Asset.createAsset(shortName: CONST.kAssetNameTKO);
+    final unsupportedToken = Asset.createAsset(shortName: 'TKO');
 
     doTest(
       Currency currency, {
-      @required double amount,
-      @required Asset asset,
-      @required double expected,
+      required double amount,
+      required Asset? asset,
+      required double? expected,
     }) {
+      if (asset == null) {
+        expect(expected, null);
+        return;
+      }
+
       expect(
         exchangeRate.calculateAssetAmount(
           amountCurrency: amount,

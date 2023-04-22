@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:flutter_test/flutter_test.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/asset.dart';

@@ -38,8 +38,7 @@ class Bep20Smc extends GeneratedContract {
 
     return TokoinNumber.fromBigInt(
       allowance.first,
-      exponent:
-          TokoinNumber.getExponentWithAssetContractAddress(self.address.hex),
+      exponent: kEthPowExponent,
     ).doubleValue;
   }
 
