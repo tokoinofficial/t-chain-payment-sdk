@@ -6,7 +6,7 @@ part 'create_transaction_body.g.dart';
 class CreateTransactionBody {
   CreateTransactionBody({
     required this.walletAddress,
-    required this.merchantId,
+    required this.externalMerchantId,
     required this.amount,
     required this.currency,
     required this.tokenName,
@@ -17,8 +17,8 @@ class CreateTransactionBody {
   @JsonKey(name: 'wallet_address')
   final String walletAddress;
 
-  @JsonKey(name: 'merchant_id')
-  final String merchantId;
+  @JsonKey(name: 'external_merchant_id')
+  final String externalMerchantId;
 
   final double amount;
 

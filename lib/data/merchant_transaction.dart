@@ -6,7 +6,8 @@ part 'merchant_transaction.g.dart';
 @JsonSerializable()
 class MerchantTransaction extends Equatable {
   const MerchantTransaction({
-    required this.transactionID,
+    required this.merchantId,
+    required this.transactionId,
     required this.offchain,
     required this.amount,
     required this.amountUint256,
@@ -17,8 +18,10 @@ class MerchantTransaction extends Equatable {
     required this.rate,
   });
 
+  @JsonKey(name: 'merchant_id', defaultValue: '')
+  final String merchantId;
   @JsonKey(name: 'transaction_id', defaultValue: '')
-  final String transactionID;
+  final String transactionId;
   @JsonKey(name: 'offchain', defaultValue: '')
   final String offchain;
   @JsonKey(name: 'amount', defaultValue: 0)
@@ -42,7 +45,8 @@ class MerchantTransaction extends Equatable {
 
   @override
   List<Object?> get props => [
-        transactionID,
+        merchantId,
+        transactionId,
         offchain,
         amount,
         amountUint256,

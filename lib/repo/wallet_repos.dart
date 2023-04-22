@@ -13,7 +13,6 @@ import 'package:t_chain_payment_sdk/services/gas_station_api.dart';
 import 'package:t_chain_payment_sdk/smc/bep_20_smc.dart';
 import 'package:t_chain_payment_sdk/smc/pancake_swap_smc.dart';
 import 'package:t_chain_payment_sdk/smc/payment_smc.dart';
-import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:web3dart/web3dart.dart';
 
 const kWaitForReceiptTimeoutInSecond = 300;
@@ -34,7 +33,7 @@ class WalletRepository {
 
   Future<bool> setup() async {
     _web3Client ??=
-        await blockchainService.createWeb3Client(Config.binanceDataSeed);
+        await blockchainService.createWeb3Client(Config.binanceRpcNodes);
 
     return isReady;
   }
@@ -48,7 +47,7 @@ class WalletRepository {
     final newSmc = await blockchainService.createBep20Smc(
       address: address,
       client: _web3Client!,
-      chainId: TChainPaymentSDK.shared.chainID,
+      chainId: Config.bscChainId,
     );
 
     _bep20SmcMap[addressHex] = newSmc;
@@ -64,7 +63,7 @@ class WalletRepository {
     final newSmc = await blockchainService.createPaymentSmc(
       address: address,
       client: _web3Client!,
-      chainId: TChainPaymentSDK.shared.chainID,
+      chainId: Config.bscChainId,
     );
 
     _paymentSmc = newSmc;
@@ -78,7 +77,7 @@ class WalletRepository {
     final newSmc = await blockchainService.createPancakeSwapSmc(
       address: address,
       client: _web3Client!,
-      chainId: TChainPaymentSDK.shared.chainID,
+      chainId: Config.bscChainId,
     );
 
     _pancakeSwapSmc = newSmc;
@@ -89,7 +88,8 @@ class WalletRepository {
     required String smcAddressHex,
     required EthPrivateKey privateKey,
   }) async {
-    if (smcAddressHex == Config.bnbContractAddress) {
+    if (smcAddressHex.isEmpty) {
+      // BNB
       EtherAmount balance = await _web3Client!.getBalance(privateKey.address);
       return balance.getValueInUnit(EtherUnit.ether);
     }
@@ -97,10 +97,8 @@ class WalletRepository {
 
     final value = await smc.getBalance(privateKey.address);
 
-    return TokoinNumber.fromBigInt(value,
-        exponent: TokoinNumber.getExponentWithAssetContractAddress(
-          smcAddressHex,
-        )).doubleValue;
+    return TokoinNumber.fromBigInt(value, exponent: kEthPowExponent)
+        .doubleValue;
   }
 
   Future<num> allowance({
@@ -108,9 +106,12 @@ class WalletRepository {
     required EthPrivateKey privateKey,
     required String contractAddress,
   }) async {
-    final tokenContractAddress =
-        asset.isBnb ? Asset.wbnb().contractAddress : asset.contractAddress;
-    final smc = await getBep20Smc(tokenContractAddress);
+    if (asset.isBnb) {
+      // only check allowance if asset is bep20
+      return double.maxFinite;
+    }
+
+    final smc = await getBep20Smc(asset.contractAddress);
 
     return await smc.allowance(
       walletAddress: privateKey.address.hex,
@@ -136,9 +137,11 @@ class WalletRepository {
     num gasPrice = 0,
     int? nonce,
   }) async {
-    final tokenContractAddress =
-        asset.isBnb ? Asset.wbnb().contractAddress : asset.contractAddress;
-    final smc = await getBep20Smc(tokenContractAddress);
+    if (asset.isBnb) {
+      throw Exception('Required a bep20 token');
+    }
+
+    final smc = await getBep20Smc(asset.contractAddress);
 
     return await smc.buildApprovalTransaction(
       privateKey: privateKey,
@@ -156,9 +159,11 @@ class WalletRepository {
     num gasPrice = 0,
     int? nonce,
   }) async {
-    final tokenContractAddress =
-        asset.isBnb ? Asset.wbnb().contractAddress : asset.contractAddress;
-    final smc = await getBep20Smc(tokenContractAddress);
+    if (asset.isBnb) {
+      throw Exception('Required a bep20 token');
+    }
+
+    final smc = await getBep20Smc(asset.contractAddress);
 
     final tnx = await buildApproveTransaction(
       privateKey: privateKey,
@@ -166,8 +171,7 @@ class WalletRepository {
       contractAddress: contractAddress,
       amount: TokoinNumber.fromNumber(
         kDefaultApprovedValue,
-        exponent: TokoinNumber.getExponentWithAssetContractAddress(
-            tokenContractAddress),
+        exponent: kEthPowExponent,
       ).bigIntValue,
       gasPrice: gasPrice,
       nonce: nonce,
@@ -260,7 +264,8 @@ class WalletRepository {
   }) async {
     final smc = await getPaymentSmc();
     return await smc.getDiscountFee(
-      tokenAddress: contractAddress,
+      tokenAddress:
+          contractAddress.isEmpty ? Config.bnbTokenAddress : contractAddress,
       amount: amount,
     );
   }
@@ -315,19 +320,19 @@ class WalletRepository {
 
   Future<BigInt?> getSwapAmountOut({required PancakeSwap pancakeSwap}) async {
     final smc = await getPancakeSwapSmc();
-
+    final paths = await _getPaths(pancakeSwap);
     return await smc.getAmountOut(
       amountIn: pancakeSwap.amountIn!,
-      paths: _getPaths(pancakeSwap),
+      paths: paths,
     );
   }
 
   Future<BigInt?> getSwapAmountIn({required PancakeSwap pancakeSwap}) async {
     final smc = await getPancakeSwapSmc();
-
+    final paths = await _getPaths(pancakeSwap);
     return await smc.getAmountIn(
       amountOut: pancakeSwap.amountOut!,
-      paths: _getPaths(pancakeSwap),
+      paths: paths,
     );
   }
 
@@ -373,21 +378,20 @@ class WalletRepository {
     int? nonce,
   }) async {
     final smc = await getPancakeSwapSmc();
+    final paths = await _getPaths(pancakeSwap);
 
     List parameters = [
       TokoinNumber.fromNumber(
               pancakeSwap.amountOut! * (100 - kMaxSlippage) / 100)
-          .toTokoinNumberWithAsset(pancakeSwap.assetOut)
           .bigIntValue,
-      _getPaths(pancakeSwap).map((e) => EthereumAddress.fromHex(e)).toList(),
+      paths.map((e) => EthereumAddress.fromHex(e)).toList(),
       privateKey.address,
       PancakeSwapSmc.deadline
     ];
     String functionName = _getFunctionName(pancakeSwap);
     bool isPayableFunction = _isPayableFunction(functionName);
-    BigInt amountIn = TokoinNumber.fromNumber(pancakeSwap.amountIn ?? 0)
-        .toTokoinNumberWithAsset(pancakeSwap.assetIn)
-        .bigIntValue;
+    BigInt amountIn =
+        TokoinNumber.fromNumber(pancakeSwap.amountIn ?? 0).bigIntValue;
     if (!isPayableFunction) parameters.insert(0, amountIn);
     return await smc.buildSwapTransaction(
         privateKey: privateKey,
@@ -408,21 +412,34 @@ class WalletRepository {
     }
   }
 
-  List<String> _getPaths(PancakeSwap pancakeSwap) {
+  Future<List<String>> _getPaths(PancakeSwap pancakeSwap) async {
     Asset assetOut = pancakeSwap.assetOut;
     Asset assetIn = pancakeSwap.assetIn;
-    bool withoutBridge =
-        assetOut.isUsdt || assetIn.isUsdt || assetIn.isTko || assetOut.isTko;
+    bool withoutBridge = assetOut.isUsdt || assetIn.isUsdt;
 
-    if (assetOut.isBnb) assetOut = Asset.wbnb();
-    if (assetIn.isBnb) assetIn = Asset.wbnb();
+    String addressIn = assetIn.contractAddress;
+    String addressOut = assetOut.contractAddress;
+
+    EthereumAddress? weth;
+    if (assetOut.isBnb) {
+      final smc = await getPancakeSwapSmc();
+      weth = await smc.getWETH();
+      addressOut = weth.hex;
+    }
+
+    if (assetIn.isBnb) {
+      if (weth != null) {
+        addressIn = weth.hex;
+      } else {
+        final smc = await getPancakeSwapSmc();
+        weth = await smc.getWETH();
+        addressIn = weth.hex;
+      }
+    }
+
     return withoutBridge
-        ? [assetIn.contractAddress, assetOut.contractAddress]
-        : [
-            assetIn.contractAddress,
-            Config.bscUsdtContractAddress,
-            assetOut.contractAddress
-          ];
+        ? [addressIn, addressOut]
+        : [addressIn, Config.bscUsdtContractAddress, addressOut];
   }
 
   Future<bool> waitForReceiptResult(Asset asset, String txHash) async {

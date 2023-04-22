@@ -10,7 +10,7 @@ CreateTransactionBody _$CreateTransactionBodyFromJson(
         Map<String, dynamic> json) =>
     CreateTransactionBody(
       walletAddress: json['wallet_address'] as String,
-      merchantId: json['merchant_id'] as String,
+      externalMerchantId: json['external_merchant_id'] as String,
       amount: (json['amount'] as num).toDouble(),
       currency: json['currency'] as String,
       tokenName: json['token_name'] as String,
@@ -22,7 +22,7 @@ Map<String, dynamic> _$CreateTransactionBodyToJson(
         CreateTransactionBody instance) =>
     <String, dynamic>{
       'wallet_address': instance.walletAddress,
-      'merchant_id': instance.merchantId,
+      'external_merchant_id': instance.externalMerchantId,
       'amount': instance.amount,
       'currency': instance.currency,
       'token_name': instance.tokenName,

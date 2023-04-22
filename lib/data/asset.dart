@@ -21,7 +21,7 @@ class Asset extends Equatable {
     String? contractAddress;
     switch (shortName.toUpperCase()) {
       case CONST.kAssetNameBNB:
-        contractAddress = Config.bnbContractAddress;
+        contractAddress = '';
         break;
       case CONST.kAssetNameTOKO:
         contractAddress = Config.bscTokoinContractAddress;
@@ -29,29 +29,8 @@ class Asset extends Equatable {
       case CONST.kAssetNameUSDT:
         contractAddress = Config.bscUsdtContractAddress;
         break;
-      case CONST.kAssetNameCAKE:
-        contractAddress = Config.bscCakeContractAddress;
-        break;
       case CONST.kAssetNameBUSD:
         contractAddress = Config.bscBinanceUsdContractAddress;
-        break;
-      case CONST.kAssetNameTKO:
-        contractAddress = Config.bscTkoContractAddress;
-        break;
-      case CONST.kAssetNameSZO:
-        contractAddress = Config.bscSzoContractAddress;
-        break;
-      case CONST.kAssetNameDEP:
-        contractAddress = Config.bscDepContractAddress;
-        break;
-      case CONST.kAssetNameDOT:
-        contractAddress = Config.bscDotContractAddress;
-        break;
-      case CONST.kAssetNameDOGE:
-        contractAddress = Config.bscDogeContractAddress;
-        break;
-      case CONST.kAssetNameC98:
-        contractAddress = Config.bscC98ContractAddress;
         break;
     }
 
@@ -64,18 +43,6 @@ class Asset extends Equatable {
       contractAddress: contractAddress,
       shortName: shortName.toUpperCase(),
       fullName: fullName,
-      iconName: iconName,
-    );
-  }
-
-  factory Asset.wbnb() {
-    const shortName = CONST.kAssetNameBNB;
-    final fullName = CONST.kAssetFullnameMap[shortName] ?? shortName;
-    final iconName = CONST.kAssetIconMap[shortName] ?? '';
-    return Asset(
-      contractAddress: Config.wbnbContractAddress,
-      fullName: fullName,
-      shortName: shortName,
       iconName: iconName,
     );
   }
@@ -101,9 +68,8 @@ class Asset extends Equatable {
   bool get isStableCoin =>
       contractAddress == Config.bscUsdtContractAddress ||
       contractAddress == Config.bscBinanceUsdContractAddress;
-  bool get isBnb => contractAddress == Config.bnbContractAddress;
+  bool get isBnb => contractAddress == '';
   bool get isToko => contractAddress == Config.bscTokoinContractAddress;
   bool get isNotToko => contractAddress != Config.bscTokoinContractAddress;
   bool get isUsdt => contractAddress == Config.bscUsdtContractAddress;
-  bool get isTko => contractAddress == Config.bscTkoContractAddress;
 }

@@ -186,27 +186,28 @@ class MockPaymentRepository extends _i1.Mock implements _i9.PaymentRepository {
             _i10.Future<_i13.DataResponse<Map<String, dynamic>>?>.value(),
       ) as _i10.Future<_i13.DataResponse<Map<String, dynamic>>?>);
   @override
-  _i10.Future<_i14.MerchantTransaction?> createMerchantTransaction(
-    String? address,
-    double? amount,
-    _i12.Currency? currency,
-    String? notes,
-    String? tokenName,
-    String? merchantId,
-    String? chainId,
-  ) =>
+  _i10.Future<_i14.MerchantTransaction?> createMerchantTransaction({
+    required String? address,
+    required double? amount,
+    required _i12.Currency? currency,
+    required String? notes,
+    required String? tokenName,
+    required String? externalMerchantId,
+    required String? chainId,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #createMerchantTransaction,
-          [
-            address,
-            amount,
-            currency,
-            notes,
-            tokenName,
-            merchantId,
-            chainId,
-          ],
+          [],
+          {
+            #address: address,
+            #amount: amount,
+            #currency: currency,
+            #notes: notes,
+            #tokenName: tokenName,
+            #externalMerchantId: externalMerchantId,
+            #chainId: chainId,
+          },
         ),
         returnValue: _i10.Future<_i14.MerchantTransaction?>.value(),
         returnValueForMissingStub:

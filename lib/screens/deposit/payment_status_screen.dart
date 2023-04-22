@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:t_chain_payment_sdk/common/utils.dart';
+import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/config/text_styles.dart';
 import 'package:t_chain_payment_sdk/config/theme.dart';
 import 'package:t_chain_payment_sdk/gen/assets.gen.dart';
 import 'package:t_chain_payment_sdk/screens/t_chain_root.dart';
-import 'package:t_chain_payment_sdk/t_chain_payment_sdk.dart';
 import 'package:t_chain_payment_sdk/common/app_bar_widget.dart';
 import 'package:t_chain_payment_sdk/common/gaps.dart';
 import 'package:t_chain_payment_sdk/common/ui_style.dart';
@@ -244,11 +244,7 @@ class PaymentStatusScreen extends StatelessWidget with UIStyle {
               buildTextButton(
                 context,
                 onPressed: () {
-                  if (TChainPaymentSDK.shared.isTestnet) {
-                    launchUrlString('https://testnet.bscscan.com/tx/$txn');
-                  } else {
-                    launchUrlString('https://bscscan.com/tx/$txn');
-                  }
+                  launchUrlString('${Config.bscTxUrl}$txn');
                 },
                 title: Utils.getLocalizations(context).view_transaction_detail,
               ),

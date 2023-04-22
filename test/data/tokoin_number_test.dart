@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:flutter_test/flutter_test.dart';
 import 'package:t_chain_payment_sdk/common/tokoin_number.dart';
 
@@ -88,7 +87,7 @@ void main() {
     var n_1_000000001 = TokoinNumber.fromNumber(1.000000001);
     var n_1000000000 = TokoinNumber.fromNumber(1000000000);
 
-    expect(n_1_000000001.getClosestStringValue(), '1');
+    expect(n_1_000000001.getClosestStringValue(), '1.000000001');
     expect(n_1_000000001.getClosestStringValue(decimals: 9), '1.000000001');
     expect(n_1000000000.getClosestStringValue(decimals: 9), '1000000000');
   });

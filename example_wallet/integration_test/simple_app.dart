@@ -257,17 +257,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final transactionSignedHash =
           await _paymentRepo.createMerchantTransaction(
-        privateKey.address.hex,
-        amount,
-        _merchantInfo!.currency.toCurrency(),
-        'test',
-        depositedAsset.shortName,
-        _merchantInfo!.merchantId,
-        _merchantInfo!.chainId.toString(),
+        address: privateKey.address.hex,
+        amount: amount,
+        currency: _merchantInfo!.currency.toCurrency(),
+        notes: 'test',
+        tokenName: depositedAsset.shortName,
+        externalMerchantId: _merchantInfo!.merchantId,
+        chainId: _merchantInfo!.chainId.toString(),
       );
 
       var signatureBytes = hexToBytes(transactionSignedHash!.signedHash);
-      final merchantIdBytes32 = keccakUtf8(_merchantInfo!.merchantId);
+      final merchantIdBytes32 = keccakUtf8(transactionSignedHash.merchantId);
       var offchainBytes32 = transactionSignedHash.offchain.toBytes32();
 
       final params = [
@@ -285,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
         logs += 'contractAddress: ${depositedAsset.contractAddress}\n';
         logs += 'useToko: $useToko\n';
         logs += 'signature: ${transactionSignedHash.signedHash}\n';
-        logs += 'merchantId: ${_merchantInfo!.merchantId}\n';
+        logs += 'merchantId: ${transactionSignedHash.merchantId}\n';
         logs += 'offchain: ${transactionSignedHash.offchain}\n';
         logs += 'assetAmount: $assetAmount\n';
         logs += 'feeAmount: $feeAmount\n';

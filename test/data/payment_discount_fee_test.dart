@@ -1,6 +1,3 @@
-// @dart=2.9
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:t_chain_payment_sdk/config/config.dart';
 import 'package:t_chain_payment_sdk/data/payment_discount_fee.dart';
@@ -19,9 +16,9 @@ void main() {
     );
 
     doTest({
-      @required double amount,
-      @required bool useToko,
-      @required double expected,
+      required double amount,
+      required bool useToko,
+      required double expected,
     }) {
       expect(
         discountInfo.getDiscountedServiceFee(

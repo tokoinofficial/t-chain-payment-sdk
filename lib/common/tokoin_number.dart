@@ -2,13 +2,8 @@ import 'dart:math';
 
 import 'package:decimal/decimal.dart';
 import 'package:intl/intl.dart';
-import 'package:t_chain_payment_sdk/config/config.dart';
-import 'package:t_chain_payment_sdk/data/asset.dart';
 
-const kBtcPowExponent = 8;
 const kEthPowExponent = 18;
-const kDogePowExponent = 8;
-const kTetherEthPowExponent = 6;
 final currencyNumberFormat = NumberFormat("#,##0", "en_US");
 
 /// TokoinNumber class is created to
@@ -53,7 +48,7 @@ class TokoinNumber {
 // Examples: doubleValue is 4321.12345678
 // (4321.12345678).toStringAsFixed(3);  // 4321.123
 // (4321.12345678).toStringAsFixed(5);  // 4321.12346
-  double getClosestDoubleValue({int decimals = kBtcPowExponent}) {
+  double getClosestDoubleValue({int decimals = kEthPowExponent}) {
     return double.parse(doubleValue.toStringAsFixed(decimals));
   }
 
@@ -87,7 +82,7 @@ class TokoinNumber {
 // Examples: doubleValue is 4321.12345678
 // (4321.12345678).toStringAsFixed(3);  // 4321.123
 // (4321.12345678).toStringAsFixed(5);  // 4321.12346
-  String getClosestStringValue({int decimals = kBtcPowExponent}) {
+  String getClosestStringValue({int decimals = kEthPowExponent}) {
     final txt = bigIntValue.toString();
 
     if (txt.length > exponent) {
@@ -123,7 +118,7 @@ class TokoinNumber {
 // Examples: doubleValue is 4321.12345678
 // (4321.12345678).toStringAsFixed(3);  // 4,321.123
 // (4321.12345678).toStringAsFixed(5);  // 4,321.12346
-  String getFormalizedString({int decimals = kBtcPowExponent}) {
+  String getFormalizedString({int decimals = kEthPowExponent}) {
     String string = stringValue;
     if (string.contains('e')) {
       string = doubleValue.toStringAsFixed(
@@ -146,23 +141,6 @@ class TokoinNumber {
     }
 
     return formattedNumber;
-  }
-
-  num toBTC() {
-    // 100000000 satoshi = 1 BTC
-    return double.parse((doubleValue / pow(10, kBtcPowExponent))
-        .toStringAsFixed(kBtcPowExponent));
-  }
-
-  num toSatoshi() {
-    // 100000000 satoshi = 1 BTC
-    return toTokoinNumberWithExponent(kBtcPowExponent).doubleValue;
-  }
-
-  TokoinNumber toTokoinNumberWithAsset(Asset asset) {
-    int exponent = getExponentWithAsset(asset);
-
-    return toTokoinNumberWithExponent(exponent);
   }
 
   TokoinNumber toTokoinNumberWithExponent(int destinationExponent) {
@@ -244,22 +222,6 @@ class TokoinNumber {
     return (this - other).doubleValue <= 0;
   }
 
-  static int getExponentWithAsset(Asset? asset) {
-    if (asset?.contractAddress == Config.bscDogeContractAddress) {
-      return kDogePowExponent;
-    }
-
-    return kEthPowExponent;
-  }
-
-  static int getExponentWithAssetContractAddress(String? contractAddress) {
-    if (contractAddress == Config.bscDogeContractAddress) {
-      return kDogePowExponent;
-    }
-
-    return kEthPowExponent;
-  }
-
   @override
   int get hashCode => bigIntValue.hashCode + exponent.hashCode;
 }
@@ -269,7 +231,7 @@ extension DoubleExt on num {
   // expected: 65278412429009720
   // if you use `toBigInt`, the result will be 65278412429009728
   BigInt toBigIntBasedOnDecimal({decimals = kEthPowExponent}) {
-    String string = Decimal.parse(toString()).toString();
+    String string = Decimal.tryParse(toString())?.toString() ?? '0';
     final strings = string.split('.');
 
     // decimal number
