@@ -1,3 +1,6 @@
+## 2.1.1
+* Fix production configuration
+
 ## 2.1.0
 * Add `external_merchant_id`
 
