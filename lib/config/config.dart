@@ -116,8 +116,8 @@ class _ConfigMap {
 
   static Map<String, dynamic> prodConfig = {
     BASE_URL: "https://api.tokoin.io/api",
-    PAYMENT_CONTRACT_ADDRESS: '0x8cfeB1a66E28bAb0Cd81CeE6621cdBD0963D13bB',
-    PAYMENT_TOKEN_REGISTRY: '0x5b318cA1491805DA49FA7C4DB6c1260F17aE8F45',
+    PAYMENT_CONTRACT_ADDRESS: '0xCF53BE45090E2F69293de75c37c0FD29c03607bD',
+    PAYMENT_TOKEN_REGISTRY: '0xe45b13927BE19bb34bD31fabA2661F8B458fF4F7',
     BINANCE_RPC_NODES: [
       "https://bsc-dataseed1.defibit.io/",
       "https://bsc-dataseed1.ninicoin.io/",
