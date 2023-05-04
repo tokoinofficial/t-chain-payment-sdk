@@ -217,12 +217,7 @@ class WalletRepository {
   }
 
   Future<List<GasFee>> getBSCGasFees() async {
-    /*
-    The current minimum gas price is 15 Gwei.
-    Since the latest adjustment of gas price, BNB price has doubled.
-    The proposed minimum gas price is 10 Gwei.
-     */
-    const minimumGasPriceInBsc = 10;
+    int minimumGasPriceInBsc = Config.minGasPrice;
 
     var response = await gasStationAPI.getBscGas();
     var map = response.data;

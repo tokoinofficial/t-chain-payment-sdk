@@ -53,6 +53,10 @@ class Config {
     return _config[_ConfigMap.BINANCE_TX_URL];
   }
 
+  static get minGasPrice {
+    return _config[_ConfigMap.MIN_GAS_PRICE];
+  }
+
   static get maxGas {
     return _config[_ConfigMap.MAX_GAS];
   }
@@ -83,18 +87,19 @@ class Config {
 }
 
 class _ConfigMap {
-  static const BASE_URL = "BASE_URL";
+  static const BASE_URL = 'BASE_URL';
   static const PAYMENT_CONTRACT_ADDRESS = 'PAYMENT_CONTRACT_ADDRESS';
   static const PAYMENT_TOKEN_REGISTRY = 'PAYMENT_TOKEN_REGISTRY';
   static const BINANCE_RPC_NODES = 'BINANCE_RPC_NODES';
   static const BINANCE_TX_URL = 'BINANCE_TX_URL';
-  static const MAX_GAS = "MAX_GAS";
-  static const BNB_TOKEN_ADDRESS = "BNB_TOKEN_ADDRESS";
+  static const MIN_GAS_PRICE = 'MIN_GAS_PRICE';
+  static const MAX_GAS = 'MAX_GAS';
+  static const BNB_TOKEN_ADDRESS = 'BNB_TOKEN_ADDRESS';
   static const BSC_TOKOIN_CONTRACT_ADDRESS = 'BSC_TOKOIN_CONTRACT_ADDRESS';
   static const BSC_USDT_CONTRACT_ADDRESS = 'BSC_USDT_CONTRACT_ADDRESS';
   static const BSC_BUSD_CONTRACT_ADDRESS = 'BSC_BUSD_CONTRACT_ADDRESS';
   static const PANCAKE_ROUTER = 'PANCAKE_ROUTER';
-  static const BSC_CHAIN_ID = "BSC_CHAIN_ID";
+  static const BSC_CHAIN_ID = 'BSC_CHAIN_ID';
 
   static Map<String, dynamic> devConfig = {
     BASE_URL: "https://staging-api.tokoin.io/api",
@@ -105,6 +110,7 @@ class _ConfigMap {
       "https://rpc.ankr.com/bsc_testnet_chapel"
     ],
     BINANCE_TX_URL: "https://testnet.bscscan.com/tx/",
+    MIN_GAS_PRICE: 10,
     MAX_GAS: 350000,
     BNB_TOKEN_ADDRESS: "0x78A27e2Abf6E181825aA09325e1C132Df061D797",
     BSC_TOKOIN_CONTRACT_ADDRESS: "0x09b9d0e083a8dc25b979e402c304dbcab574c7af",
@@ -125,6 +131,7 @@ class _ConfigMap {
       "https://rpc.ankr.com/bsc"
     ],
     BINANCE_TX_URL: "https://bscscan.com/tx/",
+    MIN_GAS_PRICE: 5,
     MAX_GAS: 350000,
     BNB_TOKEN_ADDRESS: "0xB8c77482e45F1F44dE1745F52C74426C631bDD52",
     BSC_TOKOIN_CONTRACT_ADDRESS: "0x45f7967926e95fd161e56ed66b663c9114c5226f",
