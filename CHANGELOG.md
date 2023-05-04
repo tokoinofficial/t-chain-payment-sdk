@@ -1,4 +1,4 @@
-## 2.1.1
+## 2.1.2
 * Update the minimum gas price on the production environment
 
 ## 2.1.1
