@@ -1,4 +1,7 @@
 ## 2.1.1
+* Update the minimum gas price on the production environment
+
+## 2.1.1
 * Fix production configuration
 
 ## 2.1.0
